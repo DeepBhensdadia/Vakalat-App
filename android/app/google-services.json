@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "121735109137",
+    "project_id": "vakalat-c380d",
+    "storage_bucket": "vakalat-c380d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121735109137:android:159564c80d5e71a767efb0",
+        "android_client_info": {
+          "package_name": "com.imaginations.vakalat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "121735109137-8irdd1k38noop1jgk86kgl14iqm8ggjl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.imaginations.vakalat",
+            "certificate_hash": "4621bb96790dc297c375f277358e747d48cf6a44"
+          }
+        },
+        {
+          "client_id": "121735109137-9h9ejjecdhj6fr9kc1hklolel67kfl71.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.imaginations.vakalat",
+            "certificate_hash": "561fa3dce924317a52d649d7d9511484614296fd"
+          }
+        },
+        {
+          "client_id": "121735109137-rhmmo4p9rf7ehl6l5cdnk4o46st34reg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYtkbrUWctnhNmuftesnRrZ5qiApbkfvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "121735109137-rhmmo4p9rf7ehl6l5cdnk4o46st34reg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "121735109137-5obvf2q9uvm4f1h1sknql25eubummghb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.capitalist.vakalat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
