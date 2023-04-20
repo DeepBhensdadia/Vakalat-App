@@ -10,12 +10,17 @@ import '../../model/clsLoginResponseModel.dart';
 import '../../pages/dashboard.dart';
 import '../../utils/constant.dart';
 import '../../widgets/massage_page.dart';
+import '../Client Mnagemet/client mangement.dart';
+import '../DMS/Document Type/Document Type.dart';
+import '../DMS/Upload Document/Upload_Documnet.dart';
 import '../Dashboard_screens/Dashboard_Screen.dart';
 import '../My Account/Achivement/Achivement.dart';
 import '../My Account/Participation/Participation.dart';
 import '../My Account/Profile/profile.dart';
+import '../Topic Video/Topic Video.dart';
 import '../User_Inquries/Get_User_Inquries.dart';
 import '../handler_search/handler_search.dart';
+import '../legale notice/legal_notice.dart';
 
 class Drawer_Screen extends StatefulWidget {
   const Drawer_Screen({Key? key}) : super(key: key);
@@ -182,13 +187,13 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                             button('Document Type', Icons.arrow_forward, () {      Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => Message_page(title:'Document Type'),
+                                  builder: (context) => Document_Type(title:'Document Type'),
                                 ));}),
                             button(
                                 'Upload Document', Icons.arrow_forward, () {      Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => Message_page(title:'Upload Document'),
+                                  builder: (context) => Upload_Document(title:'Upload Document'),
                                 ));}),
                           ],
                         ),
@@ -199,7 +204,7 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Message_page(title:'Client Management'),
+                          builder: (context) => Client_Management(title:'Client Management'),
                         ));
                   }),
                   button('Services', FontAwesomeIcons.balanceScale, () {
@@ -226,14 +231,14 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Message_page(title:'Topic Video'),
+                          builder: (context) => Topic_Video(title:'Topic Video'),
                         ));
                   }),
                   button('Legel Notice', FontAwesomeIcons.noteSticky, () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Message_page(title:'Legel Notice'),
+                          builder: (context) => Legal_Notice(title:'Legel Notice'),
                         ));
                   }),
                 ],
