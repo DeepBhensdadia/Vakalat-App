@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../color/customcolor.dart';
+import '../../../utils/constant.dart';
 import '../Document Type/Add document.dart';
+import 'add_upload_document.dart';
 
 class Upload_Document extends StatefulWidget {
   final String title;
@@ -28,7 +30,7 @@ class _Upload_DocumentState extends State<Upload_Document> {
             Navigator.push(
                 context,
                 CupertinoPageRoute(
-                  builder: (context) => Add_Document(),
+                  builder: (context) => Add_Upload_Documents(),
                 ));
           },
           child: Icon(Icons.add)),
@@ -74,7 +76,7 @@ class _Upload_DocumentState extends State<Upload_Document> {
                               ),
                             ),
                             MaterialButton(
-                              color: const Color(0xffAF3F3F),
+                              color: buttonred,
                               height: 25,
                               minWidth: 35,
                               padding: EdgeInsets.zero,

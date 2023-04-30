@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../color/customcolor.dart';
 import '../DMS/Document Type/Add document.dart';
+import 'Add_Topic_Video.dart';
 
 class Topic_Video extends StatefulWidget {
   final String title;
@@ -28,7 +29,7 @@ class _Topic_VideoState extends State<Topic_Video> {
             Navigator.push(
                 context,
                 CupertinoPageRoute(
-                  builder: (context) => Add_Document(),
+                  builder: (context) => Add_Topic_Video(),
                 ));
           },
           child: Icon(Icons.add)),

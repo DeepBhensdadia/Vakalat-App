@@ -1,10 +1,12 @@
 import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vakalat_flutter/New%20UI/Services/services_screen.dart';
 import 'package:vakalat_flutter/New%20UI/login.dart';
 import 'package:vakalat_flutter/Sharedpref/shared_pref.dart';
+import '../../api/postapi.dart';
 import '../../model/Get_Profile.dart';
 import '../../model/clsLoginResponseModel.dart';
 import '../../pages/dashboard.dart';
@@ -83,16 +85,34 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Handler_Search(),
+                          builder: (context) => DashboardPage(title: '',),
                         ));
                     log(logindetails.accessToken);
                   }),
-                  button('DashBoard', FontAwesomeIcons.dashboard, () {
-                    Navigator.pushReplacement(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => DashBoard_Screen(),
-                        ));
+                  button('DashBoard', FontAwesomeIcons.dashboard, () async {
+                    Map<String, dynamic> parameters = {
+                      "apiKey": apikey,
+                      'device': '2',
+                      "accessToken": logindetails.accessToken,
+                      "user_id": logindetails.userData.userId,
+                      "csrf_token": ""
+                    };
+                    EasyLoading.show(status: 'loading...');
+                    await get_Deshboard(body: parameters)
+                        .then((value) {
+                      EasyLoading.dismiss();
+
+                      log(value.toString());
+                      Navigator.pushReplacement(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => DashBoard_Screen(data :value),
+                          ));
+                    }).onError((error, stackTrace) {
+                      print(error);
+                      EasyLoading.dismiss();
+                    });
+
                   }),
                   ExpansionTile(
                     // style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) => Color(0xFF112d4e))),
@@ -134,19 +154,41 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                                   ));
                             }),
                             button('Subscription', Icons.arrow_forward, () {}),
-                            button('Achivement', Icons.arrow_forward, () {
+                            button('Achivement', Icons.arrow_forward, ()  {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => Achivement_Screen(),
                                   ));
+
+
                             }),
-                            button('Participation', Icons.arrow_forward, () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Participation(),
-                                  ));
+                            button('Participation', Icons.arrow_forward, () async {
+                              Map<String, dynamic> parameters = {
+                                "apiKey": apikey,
+                                'device': '2',
+                                "accessToken": logindetails.accessToken,
+                                "user_id": logindetails.userData.userId,
+                                "csrf_token": "",
+                                "page_no": "1",
+                              };
+                              EasyLoading.show(status: 'loading...');
+                              await get_Participation(body: parameters)
+                                  .then((value) {
+                                EasyLoading.dismiss();
+
+                                log(value.toString());
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Partocipation_myacc(value : value),
+                                    ));
+                              }).onError((error, stackTrace) {
+                                print(error);
+                                EasyLoading.dismiss();
+                              });
+
+
                             }),
                           ],
                         ),

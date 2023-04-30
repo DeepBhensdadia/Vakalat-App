@@ -16,17 +16,30 @@ import '../../../helper.dart';
 import '../../../model/AddServicesResponceModel.dart';
 import '../../../model/addAchivements.dart';
 import '../../../model/clsLoginResponseModel.dart';
+import '../../../model/editAchivement.dart';
 import '../../../utils/constant.dart';
 import 'Achivement.dart';
 
-class Add_Achivements extends StatefulWidget {
-  const Add_Achivements({Key? key}) : super(key: key);
+class Edit_Achivement extends StatefulWidget {
+  final String title;
+  final String month;
+  final String year;
+  final String image;
+  final String detail;
+  final String achievementId;
+  const Edit_Achivement(
+      {Key? key,
+      required this.title,
+      required this.month,
+      required this.year,
+      required this.image, required this.detail, required this.achievementId})
+      : super(key: key);
 
   @override
-  State<Add_Achivements> createState() => _Add_AchivementsState();
+  State<Edit_Achivement> createState() => _Edit_AchivementState();
 }
 
-class _Add_AchivementsState extends State<Add_Achivements> {
+class _Edit_AchivementState extends State<Edit_Achivement> {
   TextEditingController titlecontroller = TextEditingController();
   TextEditingController monthcontroller = TextEditingController();
   TextEditingController yearcontroller = TextEditingController();
@@ -69,7 +82,16 @@ class _Add_AchivementsState extends State<Add_Achivements> {
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+@override
+  void initState() {
+    // TODO: implement initState
+  coverpic = File(widget.image);
+  titlecontroller.text = widget.title;
+  monthcontroller.text =widget.month;
+  yearcontroller.text =widget.year;
+  detailscontoller.text = widget.detail;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,8 +223,10 @@ class _Add_AchivementsState extends State<Add_Achivements> {
               Button_For_Update_Save(
                 text: 'Save',
                 onpressed: () {
-                  if (_formKey.currentState!.validate())
-                    return add_Achivement.call();
+                  if (_formKey.currentState!.validate()){
+                    add_Achivement.call();
+                  }
+
                 },
               ),
             ],
@@ -219,11 +243,12 @@ class _Add_AchivementsState extends State<Add_Achivements> {
           SharedPref.get(prefKey: PrefKey.loginDetails)!);
       EasyLoading.show(status: 'Loading...');
 
-      AddAchivementModel addAchivementDataModel = AddAchivementModel(
+      EditAchivementModel addAchivementDataModel = EditAchivementModel(
           userId: logindetails.userData.userId,
           apiKey: apikey,
           device: device,
           accessToken: logindetails.accessToken,
+          achievementId: widget.achievementId,
           title: titlecontroller.text,
           coverPic: coverpic!.path,
           csrfToken: "",
@@ -232,7 +257,7 @@ class _Add_AchivementsState extends State<Add_Achivements> {
           otherImages: otherpic!.path,
           detail: detailscontoller.text);
 
-      String uri = ('https://www.vakalat.com/user_api//achivements_master_add');
+      String uri = ('https://www.vakalat.com/user_api//achivements_master_update');
 
       final Response response = await _webService.postFormRequest(
         url: uri,
@@ -249,8 +274,10 @@ class _Add_AchivementsState extends State<Add_Achivements> {
         EasyLoading.dismiss();
         Fluttertoast.showToast(msg: servi.message);
         Navigator.pushReplacement(
-          context,MaterialPageRoute(builder: (context) => Achivement_Screen(),)
-        );
+            context,
+            MaterialPageRoute(
+              builder: (context) => Achivement_Screen(),
+            ));
         print('image uploaded');
       } else {
         EasyLoading.dismiss();

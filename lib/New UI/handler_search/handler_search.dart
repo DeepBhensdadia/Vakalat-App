@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easy_rich_text/easy_rich_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../Sharedpref/shared_pref.dart';
 import '../../api/postapi.dart';
 import '../../color/customcolor.dart';
+import '../../model/GetAllCategory.dart';
 import '../../model/Get_Profile.dart';
 import '../../model/clsCitiesResponseModel.dart';
 import '../../model/clsLoginResponseModel.dart';
@@ -27,29 +30,51 @@ class _Handler_SearchState extends State<Handler_Search> {
   String citicode_home = '';
   ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
       SharedPref.get(prefKey: PrefKey.loginDetails)!);
-  GetProfileModel getprofile = getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.get_profile)!);
+  GetProfileModel getprofile =
+      getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.get_profile)!);
+  late GetAllCategory allcategori;
+  late List<String> selectedcategori = [];
+  bool show = false;
   @override
   void initState() {
     // TODO: implement initState
     getcities();
+    categorypostapi();
     super.initState();
   }
-  Future<void> getcities() async {
 
+  Future<void> getcities() async {
     EasyLoading.show(status: "Loading...");
     Map<String, dynamic> parameters = {
       "apiKey": apikey,
       'device': '2',
       "state_id": getprofile.profile.stateId,
     };
-    await userCities(body: parameters)
-        .then((value) {
+    await userCities(body: parameters).then((value) {
       EasyLoading.dismiss();
       citiesBuilder.value = value.cities;
     }).onError((error, stackTrace) {
       EasyLoading.dismiss();
     });
   }
+
+  void categorypostapi() async {
+    Map<String, dynamic> parameters = {
+      "apiKey": apikey,
+      'device': '2',
+    };
+    EasyLoading.show(status: 'loading...');
+    await All_Categories(body: parameters).then((value) {
+      setState(() {
+        allcategori = value;
+        show = true;
+      });
+      EasyLoading.dismiss();
+    }).onError((error, stackTrace) {
+      EasyLoading.dismiss();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,37 +111,78 @@ class _Handler_SearchState extends State<Handler_Search> {
                         },
                       ),
                       CustomTextfield(
-                          labelname: 'Enter last Name', Controller: lastname,  validator: (p0) {
-                        if (p0!.isEmpty) {
-                          return 'Enter last Name';
-                        }
-                        return null;
-                      },),
+                        labelname: 'Enter last Name',
+                        Controller: lastname,
+                        validator: (p0) {
+                          if (p0!.isEmpty) {
+                            return 'Enter last Name';
+                          }
+                          return null;
+                        },
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: ValueListenableBuilder(
                           valueListenable: citiesBuilder,
                           builder: (context, value, child) => value.isNotEmpty
                               ? CustomDropCities(
-                            citi: value,
-                            onSelection: (p0) {
-                              citicode_home = p0.toString();
-                            },
-                          )
+                                  citi: value,
+                                  onSelection: (p0) {
+                                    citicode_home = p0.toString();
+                                  },
+                                )
                               : const SizedBox.shrink(),
                         ),
                       ),
-                      // CustomTextfield(
-                      //     labelname: 'Enter Your City',
-                      //     suffixicon: Icons.expand_more),
-                      CustomTextfield(
-                          labelname: 'Enter Categories(Max-3)',
-                          suffixicon: Icons.expand_more),
+                      show
+                          ? Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Select_Category(
+                                categori: allcategori,
+                                onSelection: (var value) {
+                                  setState(() {
+                                    selectedcategori.add(value.toString());
+                                  });
+                                },
+                              ),
+                            )
+                          : SizedBox(),
                       Button_For_Update_Save(
                         text: 'SEARCH',
-                        onpressed: () {
-                          Navigator.push(context,MaterialPageRoute(builder: (context) => const Handler_Serach_list(),));
-                          // if(_formKey.currentState!.validate()){}
+                        onpressed: () async {
+
+                          if (_formKey.currentState!.validate()) {
+                            if (citicode_home.isNotEmpty) {
+                              if (selectedcategori.isNotEmpty) {
+                                Map<String, dynamic> parameters = {
+                                  "apiKey": apikey,
+                                  'device': '2',
+                                  "city_id" : citicode_home,
+                                  "first_name" : firstname.text,
+                                  "last_name" : lastname.text,
+                                  "category_ids" : "24"
+                                };
+                                EasyLoading.show(status: 'loading...');
+                                await get_handler_list(body: parameters).then((value) {
+                                  print(value.toString());
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                             Handler_Serach_list(value:value),
+                                      ));
+                                  EasyLoading.dismiss();
+                                }).onError((error, stackTrace) {
+                                  EasyLoading.dismiss();
+                                });
+                              } else {
+                                EasyLoading.showToast(
+                                    'Please Select Categories');
+                              }
+                            } else {
+                              EasyLoading.showToast('Please Select City');
+                            }
+                          }
                         },
                       )
                     ],

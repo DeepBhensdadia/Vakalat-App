@@ -119,7 +119,7 @@ class _MyTabbedPageState extends State<Profile_Tabs>
                           Contact_Details(detail: detail),
                           Social_Media(detail: detail),
                           const Professional_Detail(),
-                          const Portfolio_screen(),
+                           Portfolio_screen(detail: detail),
                           const Change_Password(),
                         ],
                       ),

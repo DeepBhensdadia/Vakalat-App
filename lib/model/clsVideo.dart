@@ -51,7 +51,7 @@ class clsVideo {
       id: json['id'] == null ? "" : json['id'] as String?,
       topic_id: json['topic_id'] == null ? "" : json['topic_id'] as String?,
       user_id: json['user_id'] == null ? "" : json['user_id'] as String?,
-      plain_url: json['plain_url'] == null ? "" : json['plain_url'] as String?,
+      plain_url: json['plain_url'] == null ? "" : json['plain_url'].toString(),
       url: json['url'] == null ? "" : json['url'] as String?,
       title: json['title'] == null ? "" : json['title'] as String?,
       desc: json['desc'] == null ? "" : json['desc'] as String?,

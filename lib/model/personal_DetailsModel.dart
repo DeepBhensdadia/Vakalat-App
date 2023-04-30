@@ -25,6 +25,7 @@ class PersonalDetailsModel {
     required this.organization,
     required this.since,
     required this.logo,
+    required this.profile,
   });
 
   String? apiKey;
@@ -43,6 +44,7 @@ class PersonalDetailsModel {
   String? organization;
   String? since;
   String? logo;
+  dynamic profile;
 
   PersonalDetailsModel copyWith({
     String? apiKey,
@@ -61,6 +63,7 @@ class PersonalDetailsModel {
     String? organization,
     String? since,
     String? logo,
+    dynamic profile,
   }) =>
       PersonalDetailsModel(
         apiKey: apiKey ?? this.apiKey,
@@ -79,6 +82,7 @@ class PersonalDetailsModel {
         organization: organization ?? this.organization,
         since: since ?? this.since,
         logo: logo ?? this.logo,
+        profile: profile ?? this.profile,
       );
 
   factory PersonalDetailsModel.fromJson(Map<String, dynamic> json) => PersonalDetailsModel(
@@ -98,6 +102,7 @@ class PersonalDetailsModel {
     organization: json["organization"],
     since: json["since"],
     logo: json["logo"],
+    profile: json["profile"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -117,9 +122,11 @@ class PersonalDetailsModel {
     "organization": organization,
     "since": since,
     "logo": logo,
+    "profile": profile,
   };
   Future<FormData> toFormData() async {
-    MultipartFile video = await MultipartFile.fromFile(videoProfile.toString());
-    return FormData.fromMap(copyWith(videoProfile: video).toJson());
+    MultipartFile video = await MultipartFile.fromFile(videoProfile.toString(),);
+    MultipartFile image = await MultipartFile.fromFile(profile.toString(),);
+    return FormData.fromMap(copyWith(videoProfile: video,profile: image).toJson());
   }
 }

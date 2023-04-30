@@ -26,6 +26,9 @@ import 'package:vakalat_flutter/model/clsVideoResponseModel.dart';
 import 'package:vakalat_flutter/model/clsLoginResponseModel.dart';
 
 import '../model/DeleteServicesModel.dart';
+import '../model/GetAllCategory.dart';
+import '../model/GetDashboard.dart';
+import '../model/GetHandlerList.dart';
 import '../model/GetPackageModel.dart';
 import '../model/GetServicesModel.dart';
 import '../model/GetUserInquriesResponseModel.dart';
@@ -34,12 +37,15 @@ import '../model/UpdateContactDetails.dart';
 import '../model/UpdatePersonalDetails.dart';
 import '../model/UpdateSocialDetails.dart';
 import '../model/UserInquriesResponseModel.dart';
+import '../model/change_password.dart';
 import '../model/clsCitiesResponseModel.dart';
 import '../model/clsCountriesResponseModel.dart';
 import '../model/clsForgotPasswordResponseModel.dart';
 import '../model/clsRegisterResponseModel.dart';
 import '../model/clsStateResponseModel.dart';
 import '../model/clsUserTypeResponseModel.dart';
+import '../model/getAchivements.dart';
+import '../model/getParticipation.dart';
 import 'apiclient.dart';
 
 Map<String, String> headers = {
@@ -144,8 +150,9 @@ Future<ClsCitiesResponseModel>  userCities({required Map body}) {
     return clsCitiesResponseModelFromJson(response.body);
   });
 }
-Future<ClsUpdatePersonalResponseModel>  Update_Personal_Details({required Map body}) {
-  String url = '$baseUrl/update_personal_detail';
+
+Future<ClsUpdatePersonalResponseModel>  change_password({required Map body}) {
+  String url = '$baseUrl//user_change_password';
   return http.post(Uri.parse(url), body: body ).then((http.Response response) {
     if (kDebugMode) {
       // print(json.decode(response.body));
@@ -208,6 +215,86 @@ Future<UserInquriesDetailsResponceModel> get_user_inqury_Details({required Map b
     return userInquriesDetailsResponceModelFromJson(response.body);
   });
 }
+
+Future<GetAchivements> get_Achivement({required Map body}) {
+  String url = '$baseUrl/get_achievements_view';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getAchivementsFromJson(response.body);
+  });
+}
+
+Future<DeleteServicesModel>  Delete_Achivement({required Map body}) {
+  String url = '$baseUrl//achivements_master_delete';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return deleteServicesModelFromJson(response.body);
+  });
+}
+
+Future<GetParticipation> get_Participation({required Map body}) {
+  String url = '$baseUrl/get_participations_view';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getParticipationFromJson(response.body);
+  });
+}
+
+Future<GetAllCategory> All_Categories({required Map body}) {
+  String url = '$baseUrl/get_category_main';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getAllCategoryFromJson(response.body);
+  });
+}
+Future<GetHandlerList> get_handler_list({required Map body}) {
+  String url = '$baseUrl/get_handler_list_view';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getHandlerListFromJson(response.body);
+  });
+}
+
+Future<Getdashboard> get_Deshboard({required Map body}) {
+  String url = '$baseUrl/get_dashboard';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getdashboardFromJson(response.body);
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // RegisterDevice
 //-----Parameters--------

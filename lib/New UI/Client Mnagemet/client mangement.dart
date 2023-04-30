@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../color/customcolor.dart';
 import '../DMS/Document Type/Add document.dart';
+import 'Add_Client_Management.dart';
 
 class Client_Management extends StatefulWidget {
   final String title;
@@ -28,7 +29,7 @@ class _Client_ManagementState extends State<Client_Management> {
             Navigator.push(
                 context,
                 CupertinoPageRoute(
-                  builder: (context) => Add_Document(),
+                  builder: (context) => Add_Client_Management(),
                 ));
           },
           child: Icon(Icons.add)),

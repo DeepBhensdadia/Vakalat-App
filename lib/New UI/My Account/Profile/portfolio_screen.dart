@@ -1,21 +1,84 @@
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:vakalat_flutter/model/Get_Profile.dart';
 
+import '../../../Sharedpref/shared_pref.dart';
+import '../../../api/postapi.dart';
+import '../../../api/web_service.dart';
 import '../../../helper.dart';
+import '../../../model/GetAllCategory.dart';
+import '../../../model/UpdatePersonalDetails.dart';
+import '../../../model/clsLoginResponseModel.dart';
+import '../../../model/updatePortfoliodetails.dart';
 import '../../../utils/constant.dart';
 import '../../../utils/design.dart';
 
 class Portfolio_screen extends StatefulWidget {
-  const Portfolio_screen({Key? key}) : super(key: key);
+  final GetProfileModel detail;
+  const Portfolio_screen({Key? key, required  this.detail}) : super(key: key);
 
   @override
   State<Portfolio_screen> createState() => _Portfolio_screenState();
 }
 
 class _Portfolio_screenState extends State<Portfolio_screen> {
-TextEditingController aboutyou = TextEditingController();
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController aboutyou = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late GetAllCategory allcategori;
+  late List<String> selectedcategori = [];
+  bool show = false;
+  void categorypostapi() async {
+    Map<String, dynamic> parameters = {
+      "apiKey": apikey,
+      'device': '2',
+    };
+    EasyLoading.show(status: 'loading...');
+    await All_Categories(body: parameters).then((value) {
+      setState(() {
+        allcategori = value;
+        show = true;
+      });
+      EasyLoading.dismiss();
+    }).onError((error, stackTrace) {
+      EasyLoading.dismiss();
+    });
+  }
+
+  File? _selectedFile;
+
+  void _openFileExplorer() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      setState(() {
+        _selectedFile = file;
+      });
+      Fluttertoast.showToast(msg: 'Pick File Suceessfully');
+
+    } else {
+      Fluttertoast.showToast(msg: 'File not Pick');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    selectedcategori = widget.detail.profile.categoryId;
+    aboutyou.text = widget.detail.profile.aboutUser;
+    categorypostapi();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +87,37 @@ final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
         key: _formKey,
         child: Column(
           children: [
-            CustomTextfield(labelname: 'About You',Controller: aboutyou,validator: (p0) {
-              if(p0!.isEmpty){
-                return 'Enter About You';
-              }
-              return null;
-            },),
-            CustomTextfield(labelname: 'Category/Sub Category',suffixicon: Icons.expand_more,),
+            CustomTextfield(
+              labelname: 'About You',
+              Controller: aboutyou,
+              validator: (p0) {
+                if (p0!.isEmpty) {
+                  return 'Enter About You';
+                }
+                return null;
+              },
+            ),
+            show
+                ? Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Select_Category(
+                      categori: allcategori,
+                      initialValue: widget.detail.profile.categoryId.first,
+                      onSelection: (var value) {
+                        setState(() {
+                          selectedcategori.add(value.toString());
+                        });
+                      },
+                    ),
+                  )
+                : SizedBox(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  _openFileExplorer();
+                },
                 child: Container(
                   height: 50,
                   width: screenwidth(context, dividedby: 1),
@@ -45,20 +128,19 @@ final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Bio Data',
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        SizedBox(
+                          width: screenwidth(context,dividedby: 2),
+                          child: Text(
+                            _selectedFile != null ? _selectedFile!.path : 'Click to Upload BioData',
+                            style:  const TextStyle(fontSize: 16, color: Colors.black54,overflow: TextOverflow.ellipsis),
+                          ),
                         ),
                         ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              // _openFileExplorer();
+                            },
                             child: Row(
                               children: const [
-                                Icon(FontAwesomeIcons.add, size: 16),
-                                VerticalDivider(
-                                    thickness: 2,
-                                    color: Colors.white,
-                                    endIndent: 5,
-                                    indent: 5),
                                 Icon(
                                   FontAwesomeIcons.download,
                                   size: 16,
@@ -71,13 +153,65 @@ final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
                 ),
               ),
             ),
-            Button_For_Update_Save(text: 'Update', onpressed: () {
-              if(_formKey.currentState!.validate()){}
-            },),
-
+            Button_For_Update_Save(
+              text: 'Update',
+              onpressed: () {
+                if (_formKey.currentState!.validate()) {
+                  update_portfolio_details.call();
+                }
+              },
+            ),
           ],
         ),
       ),
     );
+  }
+  final WebService _webService = WebService();
+  Future<void> update_portfolio_details() async {
+    ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
+        SharedPref.get(prefKey: PrefKey.loginDetails)!);
+    EasyLoading.show(status: 'Loading...');
+
+    Updateportfoliodetails updateportfolio = Updateportfoliodetails(
+        apiKey: apikey,
+        device: '2',
+        accessToken: logindetails.accessToken,
+        userId: logindetails.userData.userId,
+        aboutUser: aboutyou.text,
+      biodata: _selectedFile!.path,
+      category: selectedcategori.first
+    );
+
+    String uri = ('https://www.vakalat.com/user_api/update_portfolio_detail');
+
+    final Response response = await _webService.postFormRequest(
+      url: uri,
+      formData: await updateportfolio.toFormData(),
+    );
+    ClsUpdatePersonalResponseModel servi =
+    clsUpdatePersonalResponseModelFromJson(response.data);
+
+    debugPrint(JsonEncoder.withIndent(" " * 4).convert(response.data),
+        wrapWidth: 100000);
+
+    if (response.statusCode == 200) {
+      // late clsAddServicesResponseModel addservices;
+      EasyLoading.dismiss();
+      Fluttertoast.showToast(msg: servi.message);
+      setState(() {});
+      // Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) => DashboardPage(
+      //         title: '',
+      //       ),
+      //     ));
+      // print('image uploaded');
+    } else {
+      EasyLoading.dismiss();
+      Fluttertoast.showToast(msg: servi.message);
+
+      print('failed');
+    }
   }
 }

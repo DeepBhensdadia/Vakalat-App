@@ -4,20 +4,20 @@ import 'package:intl/intl.dart';
 import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/model/GetDashboard.dart';
 
-class Latest_Case extends StatefulWidget {
+class Latest_Inquiries extends StatefulWidget {
   final Getdashboard value;
-  const Latest_Case({Key? key, required this.value}) : super(key: key);
+  const Latest_Inquiries({Key? key, required this.value}) : super(key: key);
 
   @override
-  State<Latest_Case> createState() => _Latest_CaseState();
+  State<Latest_Inquiries> createState() => _Latest_InquiriesState();
 }
 
-class _Latest_CaseState extends State<Latest_Case> {
+class _Latest_InquiriesState extends State<Latest_Inquiries> {
   @override
   Widget build(BuildContext context) {
 
-    return ListView.builder(
-      itemCount: widget.value.data.cases.length,
+    return widget.value.data.inquiries.isNotEmpty ? ListView.builder(
+      itemCount: 10,
       itemBuilder: (context, index) {
         Case latestcase = widget.value.data.cases[index];
         final formattedDate = DateFormat('yyyy-MM-dd').format(widget.value.data.cases[index].caseHearingDate);
@@ -43,7 +43,7 @@ class _Latest_CaseState extends State<Latest_Case> {
                           child: Text(
                             '${latestcase.caseDetailsId}  ${latestcase.caseTitle}',
                             style: const TextStyle(
-                              overflow: TextOverflow.ellipsis,
+                                overflow: TextOverflow.ellipsis,
                                 color: Colors.blue,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600),
@@ -79,7 +79,7 @@ class _Latest_CaseState extends State<Latest_Case> {
                             child: Text(
                               'in process',
                               style:
-                                  TextStyle(fontSize: 12, color: Colors.green),
+                              TextStyle(fontSize: 12, color: Colors.green),
                             ),
                           ),
                         ),
@@ -107,6 +107,6 @@ class _Latest_CaseState extends State<Latest_Case> {
           ),
         );
       },
-    );
+    ) : Center(child: Text('No Data'),);
   }
 }

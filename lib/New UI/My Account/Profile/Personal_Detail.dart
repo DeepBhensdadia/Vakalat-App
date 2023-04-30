@@ -57,7 +57,7 @@ class _Personal_DetailState extends State<Personal_Detail> {
     }
   }
 
-  File? Profilpic;
+  File? imagepic;
 
   Future<void> pickImage() async {
     XFile? SelectedImage = await ImagePicker().pickImage(
@@ -67,7 +67,7 @@ class _Personal_DetailState extends State<Personal_Detail> {
     if (SelectedImage != null) {
       File convertedFile = File(SelectedImage.path);
       setState(() {
-        Profilpic = convertedFile;
+        imagepic = convertedFile;
       });
 
       Fluttertoast.showToast(msg: "Image Selected");
@@ -161,12 +161,12 @@ class _Personal_DetailState extends State<Personal_Detail> {
                           // color: Colors.red,
                           child: Stack(
                             children: [
-                              Profilpic != null
+                              imagepic != null
                                   ? Container(
                                       decoration: BoxDecoration(
                                         // shape: BoxShape.circle,
                                         image: DecorationImage(
-                                          image: FileImage(Profilpic!),
+                                          image: FileImage(imagepic!),
                                           fit: BoxFit.cover,
                                           // colorFilter:
                                           //     ColorFilter.mode(Colors.red, BlendMode.colorBurn),
@@ -331,7 +331,8 @@ class _Personal_DetailState extends State<Personal_Detail> {
                       children: [
                         Text(
                           formattedDate.toString(),
-                          style: const TextStyle(fontSize: 16, color: Colors.black54),
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.black54),
                         ),
                       ],
                     ),
@@ -539,12 +540,7 @@ class _Personal_DetailState extends State<Personal_Detail> {
               onpressed: () {
                 if (_formKey.currentState!.validate()) {
                   if (formattedDate.toString().isNotEmpty) {
-                    if (video != null) {
-                      personal_details.call();
-                      // do something with the form data
-                    } else {
-                      ToastMessage().showmessage('Plz Select Video Profile');
-                    }
+                    personal_details.call();
                   } else {
                     ToastMessage().showmessage('Plz Select Date of Birth');
                   }
@@ -576,10 +572,11 @@ class _Personal_DetailState extends State<Personal_Detail> {
       gender: _selectedGender.name,
       bloodGroup: selectedBlood,
       isPhysicalChal: _selectedphycally.name,
-      videoProfile: video!.path,
+      videoProfile: video!.path ,
       organization: '',
       since: '',
       logo: '',
+      profile: imagepic!.path
     );
 
     String uri = ('https://www.vakalat.com/user_api/update_personal_detail');

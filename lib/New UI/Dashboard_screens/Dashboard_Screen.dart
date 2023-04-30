@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vakalat_flutter/Sharedpref/shared_pref.dart';
+import 'package:vakalat_flutter/model/GetDashboard.dart';
 import 'package:vakalat_flutter/model/Get_Profile.dart';
 
 import '../../color/customcolor.dart';
 import '../Drawer/Drawer_screen.dart';
+import 'Inquiries.dart';
+import 'Jobs/Jobs_Main.dart';
+import 'Joined_Event.dart';
+import 'Your_Videos.dart';
 import 'latest_case.dart';
 
 class DashBoard_Screen extends StatefulWidget {
-  const DashBoard_Screen({Key? key}) : super(key: key);
+  final Getdashboard data;
+  const DashBoard_Screen({Key? key, required  this.data}) : super(key: key);
 
   @override
   State<DashBoard_Screen> createState() => _DashBoard_ScreenState();
@@ -88,12 +94,12 @@ class _DashBoard_ScreenState extends State<DashBoard_Screen> with SingleTickerPr
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children:  const [
-                    Latest_Case(),
-                    Center(child: Text('hello'),),
-                    Center(child: Text('hello'),),
-                    Center(child: Text('hello'),),
-                    Center(child: Text('hello'),),
+                  children:   [
+                    Latest_Case(value : widget.data),
+                    Latest_Inquiries(value : widget.data),
+                    Joined_Event(value : widget.data),
+                    Jobs_Main(value : widget.data),
+                    your_Videos(value : widget.data),
 
 
                   ],

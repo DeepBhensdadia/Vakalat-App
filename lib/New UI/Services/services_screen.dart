@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -28,7 +27,7 @@ class _Services_screenState extends State<Services_screen> {
       SharedPref.get(prefKey: PrefKey.loginDetails)!);
   bool show = false;
 
-  Future<void> get_services()  async {
+  Future<void> get_services() async {
     Map<String, dynamic> parameters = {
       "apiKey": apikey,
       'device': '2',
@@ -96,8 +95,8 @@ class _Services_screenState extends State<Services_screen> {
                       margin: EdgeInsets.zero,
                       elevation: 2,
                       child: Container(
-                        margin:
-                            const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
                         // height: 150,
                         child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -147,7 +146,7 @@ class _Services_screenState extends State<Services_screen> {
                                         height: 5,
                                       ),
                                       HtmlWidget(
-                                        '${services.services[index].smDetails}fljh,dsjkfgsdbvmdsnvkshdvmdsk ghcnvad hcmadv chjadmncv ahdcnv ahdcnvd cghadnvc gh',
+                                        '${services.services[index].smDetails}',
                                         textStyle: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -183,15 +182,15 @@ class _Services_screenState extends State<Services_screen> {
                                                           service_id: services
                                                               .services[index]
                                                               .smId,
-                                                              title:services
-                                                                  .services[index]
-                                                                  .smTitle,
-                                                              amount:services
-                                                                  .services[index]
-                                                                  .smAmount,
-                                                              detail:services
-                                                                  .services[index]
-                                                                  .smDetails,
+                                                          title: services
+                                                              .services[index]
+                                                              .smTitle,
+                                                          amount: services
+                                                              .services[index]
+                                                              .smAmount,
+                                                          detail: services
+                                                              .services[index]
+                                                              .smDetails,
                                                         ),
                                                       ));
                                                 },

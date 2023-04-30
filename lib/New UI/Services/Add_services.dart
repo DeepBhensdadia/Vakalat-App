@@ -48,6 +48,7 @@ class _Add_ServicesState extends State<Add_Services> {
   TextEditingController titlecontroller = TextEditingController();
   TextEditingController Amountcontroller = TextEditingController();
   TextEditingController Detailscontroller = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -63,56 +64,75 @@ class _Add_ServicesState extends State<Add_Services> {
         centerTitle: true,
         backgroundColor: CustomColor().colorPrimary,
       ),
-      body: Column(children: [
-        CustomTextfield(labelname: 'Enter Title', Controller: titlecontroller),
-        CustomTextfield(
-            labelname: 'Enter Amount', Controller: Amountcontroller),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-          child: InkWell(
-            onTap: () {
-              pickimage();
+      body: Form(
+        key: _formKey,
+        child: Column(children: [
+          CustomTextfield(
+            labelname: 'Enter Title',
+            Controller: titlecontroller,
+            validator: (p0) {
+              if (p0!.isEmpty) {
+                return "please enter title";
+              }
+              return null;
             },
-            child: Container(
-              height: 50,
-              width: screenwidth(context, dividedby: 1),
-              decoration: Const().decorationfield,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      profilepic != null ? 'Image Selected' : 'Upload Image',
-                      style: const TextStyle(fontSize: 16, color: Colors.black54),
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          pickimage();
-                        },
-                        child: const Icon(FontAwesomeIcons.add, size: 16))
-                  ],
+          ),
+          CustomTextfield(
+              labelname: 'Enter Amount', Controller: Amountcontroller,validator: (p0) {
+            if (p0!.isEmpty) {
+              return "please enter amount";
+            }
+            return null;
+          },),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+            child: InkWell(
+              onTap: () {
+                pickimage();
+              },
+              child: Container(
+                height: 50,
+                width: screenwidth(context, dividedby: 1),
+                decoration: Const().decorationfield,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        profilepic != null ? 'Image Selected' : 'Upload Image',
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.black54),
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            pickimage();
+                          },
+                          child: const Icon(FontAwesomeIcons.add, size: 16))
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        CustomTextfield(
-            labelname: 'Enter Details', Controller: Detailscontroller),
-        Button_For_Update_Save(
-          text: 'Save',
-          onpressed: () {
-            if (titlecontroller.text.isNotEmpty &&
-                Amountcontroller.text.isNotEmpty &&
-                Detailscontroller.text.isNotEmpty) {
-              add_services.call();
-            } else {
-              Fluttertoast.showToast(msg: 'Plz Fill All Details');
+          CustomTextfield(
+              labelname: 'Enter Details', Controller: Detailscontroller,validator: (p0) {
+            if (p0!.isEmpty) {
+              return "please enter details";
             }
-          },
-        ),
-      ]),
+            return null;
+          },),
+          Button_For_Update_Save(
+            text: 'Save',
+            onpressed: () {
+              if (_formKey.currentState!.validate()) {
+                add_services.call();
+              }
+            },
+          ),
+        ]),
+      ),
     );
   }
 

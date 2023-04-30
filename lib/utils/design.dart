@@ -5,6 +5,7 @@ import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/utils/constant.dart';
 
 import '../color/customcolor.dart';
+import '../model/GetAllCategory.dart';
 import '../model/clsCitiesResponseModel.dart';
 import '../model/clsCountriesResponseModel.dart';
 import '../model/clsStateResponseModel.dart';
@@ -612,5 +613,133 @@ class Button_For_Update_Save extends StatelessWidget {
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             onPressed: onpressed,
             child: Text(text)));
+  }
+}
+
+
+class Select_Category extends StatefulWidget {
+  const Select_Category({
+    Key? key,
+    required this.categori,
+    required this.onSelection,
+    this.isSelectFirst = false,
+    this.initialValue,
+  }) : super(key: key);
+
+  final GetAllCategory categori;
+  final void Function(String?) onSelection;
+  final String? initialValue;
+  final bool isSelectFirst;
+
+  @override
+  State<Select_Category> createState() => _Select_CategoryState();
+}
+
+class _Select_CategoryState extends State<Select_Category> {
+ String? _selectedcategori ;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedcategori = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 50,
+      width: screenwidth(context, dividedby: 1),
+      decoration: Const().decorationfield,
+      child: SearchChoices<String>.single(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        underline: Container(
+          color: Colors.transparent,
+        ),
+        items: widget.categori.getAllCategory()
+            .map<DropdownMenuItem<String>>(
+              (element) => DropdownMenuItem<String>(
+            value: element.id,
+            child: Text(element.name),
+          ),
+        )
+            .toList(),
+        // futureSelectedValues: ,
+       value: _selectedcategori,
+//         selectedItems: _selectedcategori.map((e) => int.pa).toList(),
+        hint: "Select Categories",
+        searchHint: "Select Categories",
+        onChanged: (value) {
+          setState(() {
+            _selectedcategori = value;
+            print(value);
+          });
+          widget.onSelection(value);
+        },
+        searchFn: (String keyword, List<DropdownMenuItem> items) {
+          List<int> filterdata = [];
+          if (items.isNotEmpty && keyword.isNotEmpty) {
+            keyword.split(" ").forEach((k) {
+              int i = 0;
+              for (DropdownMenuItem item in items) {
+                if (!filterdata.contains(i) &&
+                    k.isNotEmpty &&
+                    ((item.child as Text).data
+                        .toString()
+                        .toLowerCase()
+                        .contains(k.toLowerCase()))) {
+                  filterdata.add(i);
+                }
+                i++;
+              }
+            });
+          }
+          if (keyword.isEmpty) {
+            filterdata = Iterable<int>.generate(items.length).toList();
+          }
+          return (filterdata);
+        },
+        searchResultDisplayFn: (
+            {required displayItem,
+              required emptyListWidget,
+              required itemTapped,
+              required itemsToDisplay,
+              required scrollController,
+              required thumbVisibility}) {
+          return Expanded(
+            child: Scrollbar(
+              controller: scrollController,
+              thumbVisibility: thumbVisibility,
+              child: itemsToDisplay.isEmpty
+                  ? emptyListWidget
+                  : ListView.builder(
+                controller: scrollController,
+                itemBuilder: (context, index) {
+                  int itemIndex = itemsToDisplay[index].item1;
+                  DropdownMenuItem item = itemsToDisplay[index].item2;
+                  bool isItemSelected = itemsToDisplay[index].item3;
+                  return InkWell(
+                    onTap: () {
+                      itemTapped(
+                        itemIndex,
+                        item.value,
+                        isItemSelected,
+                      );
+                    },
+                    child: displayItem(
+                      item,
+                      isItemSelected,
+                    ),
+                  );
+                },
+                itemCount: itemsToDisplay.length,
+              ),
+            ),
+          );
+        },
+        isExpanded: true,
+        displayClearIcon: false,
+        dialogBox: true,
+      ),
+    );
   }
 }

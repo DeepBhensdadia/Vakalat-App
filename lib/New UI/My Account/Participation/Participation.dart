@@ -1,19 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:vakalat_flutter/model/getParticipation.dart';
 
 import '../../../color/customcolor.dart';
 import '../../../utils/constant.dart';
 import '../Achivement/Add_Achivements.dart';
 
-class Participation extends StatefulWidget {
-  const Participation({Key? key}) : super(key: key);
+class Partocipation_myacc extends StatefulWidget {
+  final GetParticipation value;
+  const Partocipation_myacc({Key? key, required  this.value}) : super(key: key);
 
   @override
-  State<Participation> createState() => _ParticipationState();
+  State<Partocipation_myacc> createState() => _Partocipation_myaccState();
 }
 
-class _ParticipationState extends State<Participation> {
+class _Partocipation_myaccState extends State<Partocipation_myacc> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,8 +30,10 @@ class _ParticipationState extends State<Participation> {
         elevation: 0,
       ),
       body: ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, index) => Padding(
+        itemCount: widget.value.participations.length,
+        itemBuilder: (context, index) {
+          Participation participation = widget.value.participations[index];
+          return Padding(
           padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
           child: Card(
             margin: EdgeInsets.zero,
@@ -40,11 +45,30 @@ class _ParticipationState extends State<Participation> {
                   crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Image.asset(
-                    'assets/images/logo.png',
+                  child: CachedNetworkImage(
+                    imageUrl: Const().URL_participation_image +
+                        participation.achievementCoverImage,
+                    imageBuilder: (context, imageProvider) =>
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            image: DecorationImage(
+
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                              // colorFilter:
+                              //     ColorFilter.mode(Colors.red, BlendMode.colorBurn),
+                            ),
+                          ),
+                        ),
+                    placeholder: (context, url) =>
+                        Image.asset('assets/images/loading.gif'),
+                    errorWidget: (context, url, error) =>
+                        Image.asset('assets/images/default.png'),
                     height: 100,
                     width: 100,
                   ),
+
                 ),
 
                 Padding(
@@ -53,9 +77,9 @@ class _ParticipationState extends State<Participation> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Const().Textinscreen('Title', 'Case achivement',context),
-                      Const().Textinscreen('Month', 'February',context),
-                      Const().Textinscreen('Year', '2022',context),
+                      Const().Textinscreen('Title', participation.achievementBody,context),
+                      Const().Textinscreen('Month', participation.achievementMonth,context),
+                      Const().Textinscreen('Year', participation.achievementYear,context),
                       Row(
                         children: [
                           const SizedBox(
@@ -96,7 +120,8 @@ class _ParticipationState extends State<Participation> {
               ]),
             ),
           ),
-        ),
+        );
+        },
       ),
     );
   }
