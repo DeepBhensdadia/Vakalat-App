@@ -64,7 +64,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
     //     child: const DashboardPage(title: 'Vakalat'),
     //   ),
     // );
-    EasyLoading.showSuccess('Success!');
+    // EasyLoading.showSuccess('Success!');
 
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (BuildContext context) =>
@@ -92,33 +92,44 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
         alignment: Alignment.center,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                child: TextFormField(
-                  maxLength: 10,
-                  keyboardType: TextInputType.phone,
-                  controller: PhoneController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Phone Number',
+          child: Form(
+            key: _loginFormKey,
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+
+                  child: TextFormField(
+                    validator: (value) {
+                      if(value!.isEmpty){
+                        return 'Please Enter Mobile Number';
+                      }
+                      return null;
+                    },
+                    maxLength: 10,
+                    keyboardType: TextInputType.phone,
+                    controller: PhoneController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Phone Number',
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                  height: 75,
-                  padding: const EdgeInsets.all(10),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: CustomColor().colorPrimary,
-                          textStyle: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      onPressed: () {
-                        APICALL_userForgotPassword.call();
-                      },
-                      child: const Text('Submit'))),
-            ],
+                Container(
+                    height: 75,
+                    padding: const EdgeInsets.all(10),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: CustomColor().colorPrimary,
+                            textStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        onPressed: () {
+                          if(_loginFormKey.currentState!.validate()){
+                          APICALL_userForgotPassword.call();}
+                        },
+                        child: const Text('Submit'))),
+              ],
+            ),
           ),
         ),
       ),
@@ -145,8 +156,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
       }
 
       if (userResponseModel.status == 1) {
-        ToastMessage().showmessage("Welcome ${userResponseModel.message}");
-
+        EasyLoading.showToast(userResponseModel.message);
         // Const.currentUser = userResponseModel.Data!;
 
         // APICALL_RegisterDevice(userResponseModel);

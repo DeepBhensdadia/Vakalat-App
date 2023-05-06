@@ -33,6 +33,8 @@ class GetAllCategory {
     for (Category element in categories) {
       temp.addAll(element.getMainWithSub());
     }
+    temp.sort((a, b) => a.name.compareTo(b.name));
+
     return temp;
   }
 

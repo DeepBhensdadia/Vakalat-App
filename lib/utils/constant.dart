@@ -13,6 +13,34 @@ const drawertextstyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
 final buttonred = Color(0xffAF3F3F);
 
 class Const {
+  List<String> month = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12'
+  ];
+  // List<String> month = [
+  //   'January',
+  //   'February',
+  //   'March',
+  //   'April',
+  //   'May',
+  //   'June',
+  //   'July',
+  //   'August',
+  //   'September',
+  //   'October',
+  //   'November',
+  //   'December'
+  // ];
   final decorationfield = BoxDecoration(
       borderRadius: const BorderRadius.all(Radius.circular(5)),
       border: Border.all(width: 1, color: Colors.grey));
@@ -66,28 +94,31 @@ class Const {
     // prefs.setString(Const().KEY_accountId, userResponseModel.Data!.accountId!);
   }
 
-  textrow(String text, String answer, context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0, top: 5, bottom: 5),
-      child: Row(
-        children: [
-          Container(
-              width: screenwidth(context, dividedby: 2.5),
-              child: Text(
-                text,
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: CustomColor().colorPrimary),
-              )),
-          Text(
-            answer,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+  textrow(String text, String answer, context,Function() ontap) {
+    return InkWell(
+      onTap: ontap,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10.0, top: 5, bottom: 5),
+        child: Row(
+          children: [
+            Container(
+                width: screenwidth(context, dividedby: 2.5),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                      fontSize: screenwidth(context, dividedby: 30),
+                      fontWeight: FontWeight.w600,
+                      color: CustomColor().colorPrimary),
+                )),
+            Text(
+              answer,
+              style: TextStyle(
+                fontSize: screenwidth(context, dividedby: 30),
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -98,24 +129,52 @@ class Const {
       children: [
         SizedBox(
             // color: Colors.blue,
-            width: screenwidth(context, dividedby: 7),
+            width: screenwidth(context, dividedby: 6),
             child: Text(
               text,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              style:  TextStyle(fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30),),
             )),
-        const SizedBox(
-          width: 10,
-        ),
         Container(
           // color: Colors.blueAccent,
           width: screenwidth(context, dividedby: 2.2),
           child: Text(
             text2,
-            style: const TextStyle(
-                fontWeight: FontWeight.w600, fontSize: 14, color: Colors.grey),
+            style:  TextStyle(
+                fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30), color: Colors.grey),
           ),
         ),
       ],
+    );
+  }
+  Textinscreen2(String text, String text2, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+              // color: Colors.blue,
+              width: screenwidth(context, dividedby: 3),
+              child: Text(
+                text,
+                style:  TextStyle(fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30),),
+              )),
+          Text(
+            ':',
+            style:  TextStyle(fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30),),
+          ),
+          SizedBox(width: 10,),
+          Container(
+            // color: Colors.blueAccent,
+            width: screenwidth(context, dividedby: 2.2),
+            child: Text(
+              text2,
+              style:  TextStyle(
+                  fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30), color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

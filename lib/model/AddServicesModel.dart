@@ -73,7 +73,12 @@ class AddServicesDataModel {
       };
 
   Future<FormData> toFormData() async {
-    MultipartFile image = await MultipartFile.fromFile(smImage.toString());
+
+    MultipartFile? image;
+    if(smImage != null){
+      image = await MultipartFile.fromFile(smImage.toString());
+
+    }
     return FormData.fromMap(copyWith(smImage: image).toJson());
   }
 }

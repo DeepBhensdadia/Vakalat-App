@@ -38,6 +38,8 @@ class _Playing_VideoState extends State<Playing_Video> {
         child: _controller.value.isInitialized
             ? Card(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,

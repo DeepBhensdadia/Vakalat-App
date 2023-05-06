@@ -1,16 +1,14 @@
-// To parse this JSON data, do
-//
-//     final EditAchivementModel = EditAchivementModelFromJson(jsonString);
+
 
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
-EditAchivementModel EditAchivementModelFromJson(String str) => EditAchivementModel.fromJson(json.decode(str));
+EditParticipationModel EditParticipationModelFromJson(String str) => EditParticipationModel.fromJson(json.decode(str));
 
-String EditAchivementModelToJson(EditAchivementModel data) => json.encode(data.toJson());
+String EditParticipationModelToJson(EditParticipationModel data) => json.encode(data.toJson());
 
-class EditAchivementModel {
+class EditParticipationModel {
   String? apiKey;
   String? detail;
   String? accessToken;
@@ -20,11 +18,11 @@ class EditAchivementModel {
   String? year;
   String? device;
   String? csrfToken;
-  String? achievementId;
+  String? participationId;
   dynamic coverPic;
   dynamic otherImages;
 
-  EditAchivementModel({
+  EditParticipationModel({
     this.apiKey,
     this.detail,
     this.accessToken,
@@ -34,12 +32,12 @@ class EditAchivementModel {
     this.year,
     this.device,
     this.csrfToken,
-    this.achievementId,
+    this.participationId,
     this.coverPic,
     this.otherImages,
   });
 
-  EditAchivementModel copyWith({
+  EditParticipationModel copyWith({
     String? apiKey,
     String? detail,
     String? accessToken,
@@ -49,11 +47,11 @@ class EditAchivementModel {
     String? year,
     String? device,
     String? csrfToken,
-    String? achievementId,
+    String? participationId,
     dynamic coverPic,
     dynamic otherImages,
   }) =>
-      EditAchivementModel(
+      EditParticipationModel(
         apiKey: apiKey ?? this.apiKey,
         detail: detail ?? this.detail,
         accessToken: accessToken ?? this.accessToken,
@@ -63,12 +61,12 @@ class EditAchivementModel {
         year: year ?? this.year,
         device: device ?? this.device,
         csrfToken: csrfToken ?? this.csrfToken,
-        achievementId: achievementId ?? this.achievementId,
+        participationId: participationId ?? this.participationId,
         coverPic: coverPic ?? this.coverPic,
         otherImages: otherImages ?? this.otherImages,
       );
 
-  factory EditAchivementModel.fromJson(Map<String, dynamic> json) => EditAchivementModel(
+  factory EditParticipationModel.fromJson(Map<String, dynamic> json) => EditParticipationModel(
     apiKey: json["apiKey"],
     detail: json["detail"],
     accessToken: json["accessToken"],
@@ -78,7 +76,7 @@ class EditAchivementModel {
     year: json["year"],
     device: json["device"],
     csrfToken: json["csrf_token"],
-    achievementId: json["achievement_id"],
+    participationId: json["participation_id"],
     coverPic: json["cover_pic"],
     otherImages: json["other_images"],
   );
@@ -93,7 +91,7 @@ class EditAchivementModel {
     "year": year,
     "device": device,
     "csrf_token": csrfToken,
-    "achievement_id": achievementId,
+    "participation_id": participationId,
     "cover_pic": coverPic,
     "other_images": otherImages,
   };

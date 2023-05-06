@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:vakalat_flutter/color/customcolor.dart';
 import 'package:vakalat_flutter/model/clsCategory.dart';
@@ -11,6 +14,9 @@ import 'package:vakalat_flutter/utils/keyboardHiderMixin.dart';
 import '../New UI/Drawer/Drawer_screen.dart';
 import '../New UI/Drawer/without_login_drawer.dart';
 import '../Sharedpref/shared_pref.dart';
+import '../api/postapi.dart';
+import '../model/clsLoginResponseModel.dart';
+import '../utils/constant.dart';
 import 'barassociationpage.dart';
 import 'homepage.dart';
 import 'lawyerpage.dart';
@@ -24,6 +30,12 @@ class DashboardPage extends StatefulWidget {
 }
 
 class DashboardPageState extends State<DashboardPage> with KeyboardHiderMixin {
+  // ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
+  //     SharedPref.get(prefKey: PrefKey.loginDetails)!);
+  ClsLoginResponseModel? loginDetails = SharedPref.get(prefKey: PrefKey.loginDetails) != null
+      ? clsLoginResponseModelFromJson(SharedPref.get(prefKey: PrefKey.loginDetails)!)
+      : null;
+
   DateTime pre_backpress = DateTime.now();
 
   String titlePage = "";
@@ -36,12 +48,37 @@ class DashboardPageState extends State<DashboardPage> with KeyboardHiderMixin {
   void onSelectItem(String param) {
     print(param);
   }
+  get_profile_forsave() async {
+    if(loginDetails!.userData.userId.isNotEmpty){
+      Map<String, dynamic> parameters = {
+        "apiKey": apikey,
+        'device': '2',
+        "user_id":loginDetails!.userData.userId
+      };
+      EasyLoading.show(status: 'loading...');
+      await get_profile(body: parameters).then((value) async {
+        await SharedPref.save(
+            value: jsonEncode(value.toJson()),
+            prefKey: PrefKey.get_profile);
+        setState(() {
+
+          log(jsonEncode(value));
+          // gotoHomePage();
+        });
+        EasyLoading.dismiss();
+      }).onError((error, stackTrace) {
+        print(error);
+        EasyLoading.dismiss();
+      });
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _onItemTapped(0);
+    get_profile_forsave();
     // print(SharedPref.get(prefKey: PrefKey.loginDetails));
   }
 
@@ -118,7 +155,9 @@ class DashboardPageState extends State<DashboardPage> with KeyboardHiderMixin {
       child: SafeArea(
         child: Scaffold(
           drawer: Drawer(
-            child: SharedPref.get(prefKey: PrefKey.loginDetails) != null ?const Drawer_Screen():const Without_login_Drawer(),
+            child: SharedPref.get(prefKey: PrefKey.loginDetails) != null
+                ? const Drawer_Screen()
+                : const Without_login_Drawer(),
           ),
 
           appBar: AppBar(

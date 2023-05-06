@@ -59,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage> with KeyboardHiderMixin {
                   width: 15,
                 ),
                 const Text(
-                  'Geust',
+                  'Guest',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ],

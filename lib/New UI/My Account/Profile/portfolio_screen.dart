@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vakalat_flutter/New%20UI/My%20Account/Profile/custom_drop_down.dart';
 import 'package:vakalat_flutter/model/Get_Profile.dart';
 
 import '../../../Sharedpref/shared_pref.dart';
@@ -24,7 +26,7 @@ import '../../../utils/design.dart';
 
 class Portfolio_screen extends StatefulWidget {
   final GetProfileModel detail;
-  const Portfolio_screen({Key? key, required  this.detail}) : super(key: key);
+  const Portfolio_screen({Key? key, required this.detail}) : super(key: key);
 
   @override
   State<Portfolio_screen> createState() => _Portfolio_screenState();
@@ -64,7 +66,6 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
         _selectedFile = file;
       });
       Fluttertoast.showToast(msg: 'Pick File Suceessfully');
-
     } else {
       Fluttertoast.showToast(msg: 'File not Pick');
     }
@@ -73,8 +74,8 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
   @override
   void initState() {
     // TODO: implement initState
-
     selectedcategori = widget.detail.profile.categoryId;
+    // valueNotifier.value = widget.detail.profile.categoryId;
     aboutyou.text = widget.detail.profile.aboutUser;
     categorypostapi();
     super.initState();
@@ -82,12 +83,16 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
 
   @override
   Widget build(BuildContext context) {
+    final ValueNotifier<List<String>> valueNotifier =
+        ValueNotifier(selectedcategori);
+
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
         child: Column(
           children: [
             CustomTextfield(
+              maxline: 3,
               labelname: 'About You',
               Controller: aboutyou,
               validator: (p0) {
@@ -98,15 +103,32 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
               },
             ),
             show
-                ? Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Select_Category(
-                      categori: allcategori,
-                      initialValue: widget.detail.profile.categoryId.first,
-                      onSelection: (var value) {
+                ? ValueListenableBuilder(
+                    valueListenable: valueNotifier,
+                    builder: (context, value, child) => CustomSelection(
+                      controller: TextEditingController(text: value.join(",")),
+                      // key: Key(Random().nextInt(10).toString()),
+                      items: allcategori
+                          .getAllCategory()
+                          .map((e) => e.name)
+                          .toList(),
+                      selected: value,
+                      onChanged: (onChanged) {
+                        valueNotifier.value = onChanged;
+                        List<String> ids = [];
+                        for (String single in onChanged) {
+                          ids.add(allcategori
+                              .getAllCategory()
+                              .firstWhere((element) => element.name == single)
+                              .id);
+                        }
                         setState(() {
-                          selectedcategori.add(value.toString());
+                          selectedcategori = ids;
                         });
+                      },
+                      onDone: () {
+                        Navigator.pop(context);
+                        setState(() {});
                       },
                     ),
                   )
@@ -129,10 +151,15 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
-                          width: screenwidth(context,dividedby: 2),
+                          width: screenwidth(context, dividedby: 2),
                           child: Text(
-                            _selectedFile != null ? _selectedFile!.path : 'Click to Upload BioData',
-                            style:  const TextStyle(fontSize: 16, color: Colors.black54,overflow: TextOverflow.ellipsis),
+                            _selectedFile != null
+                                ? _selectedFile!.path
+                                : 'Click to Upload BioData',
+                            style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                                overflow: TextOverflow.ellipsis),
                           ),
                         ),
                         ElevatedButton(
@@ -156,6 +183,7 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
             Button_For_Update_Save(
               text: 'Update',
               onpressed: () {
+                print(selectedcategori);
                 if (_formKey.currentState!.validate()) {
                   update_portfolio_details.call();
                 }
@@ -166,6 +194,7 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
       ),
     );
   }
+
   final WebService _webService = WebService();
   Future<void> update_portfolio_details() async {
     ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
@@ -178,9 +207,8 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
         accessToken: logindetails.accessToken,
         userId: logindetails.userData.userId,
         aboutUser: aboutyou.text,
-      biodata: _selectedFile!.path,
-      category: selectedcategori.first
-    );
+        biodata: _selectedFile?.path,
+        category: selectedcategori);
 
     String uri = ('https://www.vakalat.com/user_api/update_portfolio_detail');
 
@@ -189,7 +217,7 @@ class _Portfolio_screenState extends State<Portfolio_screen> {
       formData: await updateportfolio.toFormData(),
     );
     ClsUpdatePersonalResponseModel servi =
-    clsUpdatePersonalResponseModelFromJson(response.data);
+        clsUpdatePersonalResponseModelFromJson(response.data);
 
     debugPrint(JsonEncoder.withIndent(" " * 4).convert(response.data),
         wrapWidth: 100000);

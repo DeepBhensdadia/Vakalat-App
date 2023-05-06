@@ -32,7 +32,9 @@ class Edit_Achivement extends StatefulWidget {
       required this.title,
       required this.month,
       required this.year,
-      required this.image, required this.detail, required this.achievementId})
+      required this.image,
+      required this.detail,
+      required this.achievementId})
       : super(key: key);
 
   @override
@@ -82,22 +84,24 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-@override
+  @override
   void initState() {
     // TODO: implement initState
-  coverpic = File(widget.image);
-  titlecontroller.text = widget.title;
-  monthcontroller.text =widget.month;
-  yearcontroller.text =widget.year;
-  detailscontoller.text = widget.detail;
+    // coverpic = File(widget.image);
+    titlecontroller.text = widget.title;
+   selectedMonth = widget.month;
+    yearcontroller.text = widget.year;
+    detailscontoller.text = widget.detail;
     super.initState();
   }
+String? selectedMonth;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Add Achivement',
+          'Edit Achivement',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -110,6 +114,7 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomTextfield(
                 labelname: 'Title',
@@ -121,28 +126,55 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
                   return null;
                 },
               ),
-              CustomTextfield(
-                labelname: 'Enter Month',
-                type: TextInputType.number,
-                Controller: monthcontroller,
-                validator: (p0) {
-                  if (p0!.isEmpty) {
-                    return "Please Enter Month";
-                  }
-                  return null;
-                },
-              ),
-              CustomTextfield(
-                labelname: 'Enter Year',
-                type: TextInputType.number,
-                maxlength: 4,
-                Controller: yearcontroller,
-                validator: (p0) {
-                  if (p0!.isEmpty) {
-                    return "Please Enter Year";
-                  }
-                  return null;
-                },
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10),
+                      child: Container(
+                        height: 50,
+                        width: screenwidth(context, dividedby: 1),
+                        decoration: Const().decorationfield,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButton<String>(
+                            underline: Container(color: Colors.transparent),
+                            isExpanded: true,
+                            value:  selectedMonth,
+                            onChanged: (newValue) {
+                              setState(() {
+                                selectedMonth = newValue;
+                              });
+                            },
+                            hint: const Text('Select Month'),
+                            items:Const().month.map((option) {
+                              return DropdownMenuItem<String>(
+                                value: option,
+                                child: Text(option),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomTextfield(
+                      labelname: 'Enter Year',
+                      type: TextInputType.number,
+                      maxlength: 4,
+                      Controller: yearcontroller,
+                      validator: (p0) {
+                        if (p0!.isEmpty) {
+                          return "Please Enter Year";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
               ),
               Padding(
                 padding:
@@ -161,8 +193,10 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'Cover Picture',
+                          Text(
+                            coverpic == null
+                                ? 'Cover Picture'
+                                : 'Image Selected Sucessfully',
                             style:
                                 TextStyle(fontSize: 16, color: Colors.black54),
                           ),
@@ -177,6 +211,33 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
                   ),
                 ),
               ),
+              coverpic == null
+                  ? SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Selected Cover image',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 80,
+                            width: 100,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: FileImage(coverpic!))),
+                          )
+                        ],
+                      ),
+                    ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
@@ -194,8 +255,10 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'Other Images',
+                          Text(
+                            otherpic == null
+                                ? 'Other Images'
+                                : ' Image Selected sucessfully',
                             style:
                                 TextStyle(fontSize: 16, color: Colors.black54),
                           ),
@@ -210,7 +273,35 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
                   ),
                 ),
               ),
+              otherpic == null
+                  ? SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Selected other image',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 80,
+                            width: 100,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: FileImage(otherpic!))),
+                          )
+                        ],
+                      ),
+                    ),
               CustomTextfield(
+                maxline: 4,
                 labelname: 'Details',
                 Controller: detailscontoller,
                 validator: (p0) {
@@ -223,10 +314,9 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
               Button_For_Update_Save(
                 text: 'Save',
                 onpressed: () {
-                  if (_formKey.currentState!.validate()){
+                  if (_formKey.currentState!.validate()) {
                     add_Achivement.call();
                   }
-
                 },
               ),
             ],
@@ -238,55 +328,52 @@ class _Edit_AchivementState extends State<Edit_Achivement> {
 
   final WebService _webService = WebService();
   Future<void> add_Achivement() async {
-    if (coverpic != null) {
-      ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
-          SharedPref.get(prefKey: PrefKey.loginDetails)!);
-      EasyLoading.show(status: 'Loading...');
+    ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
+        SharedPref.get(prefKey: PrefKey.loginDetails)!);
+    EasyLoading.show(status: 'Loading...');
 
-      EditAchivementModel addAchivementDataModel = EditAchivementModel(
-          userId: logindetails.userData.userId,
-          apiKey: apikey,
-          device: device,
-          accessToken: logindetails.accessToken,
-          achievementId: widget.achievementId,
-          title: titlecontroller.text,
-          coverPic: coverpic!.path,
-          csrfToken: "",
-          month: monthcontroller.text,
-          year: yearcontroller.text,
-          otherImages: otherpic!.path,
-          detail: detailscontoller.text);
+    EditAchivementModel addAchivementDataModel = EditAchivementModel(
+        userId: logindetails.userData.userId,
+        apiKey: apikey,
+        device: device,
+        accessToken: logindetails.accessToken,
+        achievementId: widget.achievementId,
+        title: titlecontroller.text,
+        coverPic: coverpic?.path,
+        csrfToken: "",
+        month:selectedMonth,
+        year: yearcontroller.text,
+        otherImages: otherpic?.path,
+        detail: detailscontoller.text);
 
-      String uri = ('https://www.vakalat.com/user_api//achivements_master_update');
+    String uri =
+    ('https://www.vakalat.com/user_api//achivements_master_update');
 
-      final Response response = await _webService.postFormRequest(
-        url: uri,
-        formData: await addAchivementDataModel.toFormData(),
-      );
-      AddServicesResponceModel servi =
-          addServicesResponceModelFromJson(response.data);
-      // AddServicesResponceModel jasondata = response.data;
-      debugPrint(JsonEncoder.withIndent(" " * 4).convert(response.data),
-          wrapWidth: 100000);
-      // AddServicesResponceModel? addservices;
-      if (response.statusCode == 200) {
-        // late clsAddServicesResponseModel addservices;
-        EasyLoading.dismiss();
-        Fluttertoast.showToast(msg: servi.message);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Achivement_Screen(),
-            ));
-        print('image uploaded');
-      } else {
-        EasyLoading.dismiss();
-        Fluttertoast.showToast(msg: servi.message);
-
-        print('failed');
-      }
+    final Response response = await _webService.postFormRequest(
+      url: uri,
+      formData: await addAchivementDataModel.toFormData(),
+    );
+    AddServicesResponceModel servi =
+    addServicesResponceModelFromJson(response.data);
+    // AddServicesResponceModel jasondata = response.data;
+    debugPrint(JsonEncoder.withIndent(" " * 4).convert(response.data),
+        wrapWidth: 100000);
+    // AddServicesResponceModel? addservices;
+    if (servi.status == 1) {
+      // late clsAddServicesResponseModel addservices;
+      EasyLoading.dismiss();
+      Fluttertoast.showToast(msg: servi.message);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Achivement_Screen(),
+          ));
+      print('image uploaded');
     } else {
-      Fluttertoast.showToast(msg: 'plz Select Image');
+      EasyLoading.dismiss();
+      Fluttertoast.showToast(msg: servi.message);
+
+      print('failed');
     }
   }
 }

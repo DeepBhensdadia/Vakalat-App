@@ -85,7 +85,7 @@ class _your_VideosState extends State<your_Videos> {
                         child: FadeInImage.assetNetwork(
                           placeholder: 'assets/images/loading.gif',
                           image: strThumbnailURL,
-                          height: 300,
+                          height: screenheight(context,dividedby: 4),
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),

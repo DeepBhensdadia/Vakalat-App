@@ -117,6 +117,7 @@ class _Add_ServicesState extends State<Add_Services> {
             ),
           ),
           CustomTextfield(
+            maxline: 5,
               labelname: 'Enter Details', Controller: Detailscontroller,validator: (p0) {
             if (p0!.isEmpty) {
               return "please enter details";
@@ -150,7 +151,7 @@ class _Add_ServicesState extends State<Add_Services> {
           apiKey: apikey,
           detail: Detailscontroller.text,
           device: device,
-          smImage: profilepic!.path,
+          smImage: profilepic?.path,
           userId: logindetails.userData.userId);
 
       String uri = ('https://www.vakalat.com/user_api/Add_service');

@@ -117,6 +117,7 @@ class _Edit_ServicesState extends State<Edit_Services> {
           ),
         ),
         CustomTextfield(
+          maxline: 5,
             labelname: 'Enter Details', Controller: Detailscontroller),
         Button_For_Update_Save(
           text: 'Update',
@@ -136,53 +137,49 @@ class _Edit_ServicesState extends State<Edit_Services> {
 
   final WebService _webService = WebService();
   Future<void> edit_services() async {
-    if (Image != null) {
-      ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
-          SharedPref.get(prefKey: PrefKey.loginDetails)!);
-      EasyLoading.show(status: 'Loading...');
+    ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
+        SharedPref.get(prefKey: PrefKey.loginDetails)!);
+    EasyLoading.show(status: 'Loading...');
 
-      EditServicesDataModel editServicesDataModel = EditServicesDataModel(
-          title: titlecontroller.text,
-          accessToken: logindetails.accessToken,
-          amount: Amountcontroller.text,
-          apiKey: apikey,
-          detail: Detailscontroller.text,
-          device: device,
-          smImage: Image!.path,
-          userId: logindetails.userData.userId,
-          service_id: widget.service_id);
+    EditServicesDataModel editServicesDataModel = EditServicesDataModel(
+        title: titlecontroller.text,
+        accessToken: logindetails.accessToken,
+        amount: Amountcontroller.text,
+        apiKey: apikey,
+        detail: Detailscontroller.text,
+        device: device,
+        smImage: Image?.path,
+        userId: logindetails.userData.userId,
+        service_id: widget.service_id);
 
-      String uri = ('https://www.vakalat.com/user_api/Update_service');
+    String uri = ('https://www.vakalat.com/user_api/Update_service');
 
-      final Response response = await _webService.postFormRequest(
-        url: uri,
-        formData: await editServicesDataModel.toFormData(),
-      );
-      AddServicesResponceModel servi =
-          addServicesResponceModelFromJson(response.data);
+    final Response response = await _webService.postFormRequest(
+      url: uri,
+      formData: await editServicesDataModel.toFormData(),
+    );
+    AddServicesResponceModel servi =
+    addServicesResponceModelFromJson(response.data);
 
-      debugPrint(JsonEncoder.withIndent(" " * 4).convert(response.data),
-          wrapWidth: 100000);
+    debugPrint(JsonEncoder.withIndent(" " * 4).convert(response.data),
+        wrapWidth: 100000);
 
-      if (response.statusCode == 200) {
-        // late clsAddServicesResponseModel addservices;
-        EasyLoading.dismiss();
-        Fluttertoast.showToast(msg: servi.message);
+    if (response.statusCode == 200) {
+      // late clsAddServicesResponseModel addservices;
+      EasyLoading.dismiss();
+      Fluttertoast.showToast(msg: servi.message);
 
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const Services_screen(),
-            ));
-        print('image uploaded');
-      } else {
-        EasyLoading.dismiss();
-        Fluttertoast.showToast(msg: servi.message);
-
-        print('failed');
-      }
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Services_screen(),
+          ));
+      print('image uploaded');
     } else {
-      Fluttertoast.showToast(msg: 'plz Select Image');
+      EasyLoading.dismiss();
+      Fluttertoast.showToast(msg: servi.message);
+
+      print('failed');
     }
   }
 }

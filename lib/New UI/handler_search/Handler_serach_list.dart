@@ -63,11 +63,11 @@ class _Handler_Serach_listState extends State<Handler_Serach_list> {
                       return Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: InkWell(
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const Cart_Screen(),
-                                )),
+                            // onTap: () => Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => const Cart_Screen(),
+                            //     )),
                             child: Card(
                               margin: EdgeInsets.zero,
                               child: SizedBox(

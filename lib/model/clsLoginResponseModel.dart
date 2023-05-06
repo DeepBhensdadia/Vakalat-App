@@ -21,8 +21,8 @@ class ClsLoginResponseModel {
   factory ClsLoginResponseModel.fromJson(Map<String, dynamic> json) => ClsLoginResponseModel(
     status: json["status"],
     message: json["message"],
-    accessToken: json["access_token"],
-    userData: UserData.fromJson(json["user_data"]),
+    accessToken: json["access_token"] ?? "",
+    userData: UserData.fromJson(json["user_data"]) ,
   );
 
   Map<String, dynamic> toJson() => {

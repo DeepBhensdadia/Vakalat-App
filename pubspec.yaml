@@ -83,6 +83,7 @@ dependencies:
   percent_indicator: ^4.2.3
   search_choices: ^2.2.5
   cc_avenue: ^1.0.3
+  photo_view: ^0.14.0
 
 dev_dependencies:
   flutter_test:

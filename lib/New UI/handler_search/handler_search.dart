@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:easy_rich_text/easy_rich_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:vakalat_flutter/helper.dart';
 
 import '../../Sharedpref/shared_pref.dart';
 import '../../api/postapi.dart';
 import '../../color/customcolor.dart';
 import '../../model/GetAllCategory.dart';
+import '../../model/GetHandlerList.dart';
 import '../../model/Get_Profile.dart';
 import '../../model/clsCitiesResponseModel.dart';
 import '../../model/clsLoginResponseModel.dart';
@@ -16,64 +18,37 @@ import '../../utils/design.dart';
 import 'Handler_serach_list.dart';
 
 class Handler_Search extends StatefulWidget {
-  const Handler_Search({Key? key}) : super(key: key);
+  final GetHandlerList value;
+  final String name;
+  const Handler_Search({Key? key, required  this.value, required  this.name}) : super(key: key);
 
   @override
   State<Handler_Search> createState() => _Handler_SearchState();
 }
 
 class _Handler_SearchState extends State<Handler_Search> {
-  TextEditingController firstname = TextEditingController();
-  TextEditingController lastname = TextEditingController();
+  TextEditingController customName = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  ValueNotifier<List<City>> citiesBuilder = ValueNotifier([]);
-  String citicode_home = '';
   ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
       SharedPref.get(prefKey: PrefKey.loginDetails)!);
   GetProfileModel getprofile =
       getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.get_profile)!);
-  late GetAllCategory allcategori;
-  late List<String> selectedcategori = [];
-  bool show = false;
+
+
+
+  String slected_handler = '';
   @override
   void initState() {
     // TODO: implement initState
-    getcities();
-    categorypostapi();
+    customName = TextEditingController(text:   widget.value.customhandler.first.name);
+    slected_handler =
+       widget.value.customhandler.first.name;
+    // getcities();
+    // categorypostapi();
     super.initState();
   }
 
-  Future<void> getcities() async {
-    EasyLoading.show(status: "Loading...");
-    Map<String, dynamic> parameters = {
-      "apiKey": apikey,
-      'device': '2',
-      "state_id": getprofile.profile.stateId,
-    };
-    await userCities(body: parameters).then((value) {
-      EasyLoading.dismiss();
-      citiesBuilder.value = value.cities;
-    }).onError((error, stackTrace) {
-      EasyLoading.dismiss();
-    });
-  }
-
-  void categorypostapi() async {
-    Map<String, dynamic> parameters = {
-      "apiKey": apikey,
-      'device': '2',
-    };
-    EasyLoading.show(status: 'loading...');
-    await All_Categories(body: parameters).then((value) {
-      setState(() {
-        allcategori = value;
-        show = true;
-      });
-      EasyLoading.dismiss();
-    }).onError((error, stackTrace) {
-      EasyLoading.dismiss();
-    });
-  }
+  late GetHandlerList list;
 
   @override
   Widget build(BuildContext context) {
@@ -91,203 +66,180 @@ class _Handler_SearchState extends State<Handler_Search> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // SizedBox(height: 100,),
-              Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      CustomTextfield(
-                        labelname: 'Enter First Name',
-                        Controller: firstname,
-                        validator: (p0) {
-                          if (p0!.isEmpty) {
-                            return 'Enter First Name';
-                          }
-                          return null;
-                        },
-                      ),
-                      CustomTextfield(
-                        labelname: 'Enter last Name',
-                        Controller: lastname,
-                        validator: (p0) {
-                          if (p0!.isEmpty) {
-                            return 'Enter last Name';
-                          }
-                          return null;
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: ValueListenableBuilder(
-                          valueListenable: citiesBuilder,
-                          builder: (context, value, child) => value.isNotEmpty
-                              ? CustomDropCities(
-                                  citi: value,
-                                  onSelection: (p0) {
-                                    citicode_home = p0.toString();
-                                  },
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                      ),
-                      show
-                          ? Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Select_Category(
-                                categori: allcategori,
-                                onSelection: (var value) {
-                                  setState(() {
-                                    selectedcategori.add(value.toString());
-                                  });
-                                },
-                              ),
-                            )
-                          : SizedBox(),
-                      Button_For_Update_Save(
-                        text: 'SEARCH',
-                        onpressed: () async {
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextfield(
+                    labelname: 'Custom Name',
+                    Controller: customName,
+                    validator: (p0) {
+                      if (p0!.isEmpty)
+                        return 'Please Enter Your Handler Name';
+                      return null;
+                    },
+                  ),
+                ),
+                ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => CustomColor().colorPrimary)),
+                    onPressed: () async {
+                      Map<String, dynamic> parameters = {
+                        "apiKey": apikey,
+                        'device': '2',
+                        "city_id": getprofile.profile.cityId,
+                        "first_name": getprofile.profile.firstName,
+                        "last_name": getprofile.profile.lastName,
+                        "customname": customName.text
+                      };
+                      EasyLoading.show(status: 'loading...');
+                      await get_handler_list(body: parameters)
+                          .then((value) {
+                        print(jsonEncode(value));
+                        list = value;
 
-                          if (_formKey.currentState!.validate()) {
-                            if (citicode_home.isNotEmpty) {
-                              if (selectedcategori.isNotEmpty) {
-                                Map<String, dynamic> parameters = {
-                                  "apiKey": apikey,
-                                  'device': '2',
-                                  "city_id" : citicode_home,
-                                  "first_name" : firstname.text,
-                                  "last_name" : lastname.text,
-                                  "category_ids" : "24"
-                                };
-                                EasyLoading.show(status: 'loading...');
-                                await get_handler_list(body: parameters).then((value) {
-                                  print(value.toString());
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                             Handler_Serach_list(value:value),
-                                      ));
-                                  EasyLoading.dismiss();
-                                }).onError((error, stackTrace) {
-                                  EasyLoading.dismiss();
-                                });
-                              } else {
-                                EasyLoading.showToast(
-                                    'Please Select Categories');
-                              }
-                            } else {
-                              EasyLoading.showToast('Please Select City');
-                            }
-                          }
-                        },
-                      )
-                    ],
-                  )),
-              const SizedBox(
-                height: 20,
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                child: Text(
-                  'Handler Search',
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Handler_Search(value: list, name: customName.text,),
+                            ));
+                        EasyLoading.dismiss();
+                      }).onError((error, stackTrace) {
+                        EasyLoading.dismiss();
+                      });
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: screenheight(context, dividedby: 70)),
+                      child: Icon(Icons.search),
+                    ))
+              ],
+            ),
+            // Button_For_Update_Save(
+            //   text: 'SEARCH',
+            //   onpressed: () async {
+            //     if (_formKey.currentState!.validate()) {
+            //       Map<String, dynamic> parameters = {
+            //         "apiKey": apikey,
+            //         'device': '2',
+            //         "city_id": getprofile.profile.cityId,
+            //         "first_name": getprofile.profile.firstName,
+            //         "last_name": getprofile.profile.lastName,
+            //         "customname": customName.text
+            //       };
+            //       EasyLoading.show(status: 'loading...');
+            //       await get_handler_list(body: parameters)
+            //           .then((value) {
+            //         print(value.toString());
+            //         list = value;
+            //         setState(() {
+            //           show = true;
+            //         });
+            //         EasyLoading.dismiss();
+            //       }).onError((error, stackTrace) {
+            //         EasyLoading.dismiss();
+            //       });
+            //     }
+            //   },
+            // )
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'Hey ${getprofile.profile.firstName} ${getprofile.profile.lastName} following usernames are available, ',
                   style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue),
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount:widget.value.customhandler.length,
+                itemBuilder: (context, index) => RadioListTile(
+                  visualDensity: VisualDensity.compact,
+                  dense: true,
+                  title: Text(widget.value.customhandler[index].name,
+                      style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600)),
+                  value: widget.value.customhandler[index].name,
+                  groupValue: slected_handler,
+                  onChanged: (value) {
+                    setState(() {
+                      slected_handler = value!;
+                    });
+                  },
                 ),
               ),
-              const SizedBox(
-                height: 15,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                 'Your Handler Is available',
+                    style: TextStyle(
+                        fontSize: 17,
+                        color:  Colors.black,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(height: 5,)
+,                  Row(
+                    children: [
+                      Text(
+                        'www.vakalat.com/',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        slected_handler,
+                        style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.green.shade700,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Click "Book Now"to continue with this username. ',
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                  children: [
-                    EasyRichText(
-                      "In this world of growing online presence on various platforms where name and brand matters, we at VAKALAT.com are imperatively telling you to book your online presence NOW.",
-                      defaultStyle:
-                          const TextStyle(color: Colors.black, fontSize: 12),
-                      patternList: [
-                        EasyRichTextPattern(
-                          targetString: 'VAKALAT.com',
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
-                        ),
-                        EasyRichTextPattern(
-                          targetString: 'NOW',
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    EasyRichText(
-                      "Yes, you can have your desired name with VAKALAT.com for people to find your online presence on professional front other than Social Media which we call it your HANDLER.",
-                      defaultStyle:
-                          const TextStyle(color: Colors.black, fontSize: 12),
-                      patternList: [
-                        EasyRichTextPattern(
-                          targetString: 'VAKALAT.com',
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
-                        ),
-                        EasyRichTextPattern(
-                          targetString: 'HANDLER',
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      'The sooner you book the better chances of availability for your desired Name.',
-                      style: TextStyle(color: Colors.black, fontSize: 14),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    EasyRichText(
-                      "Let your professional-self grow by booking your HANDLER and presenting yourself to people at large in the world of Law.",
-                      defaultStyle:
-                          const TextStyle(color: Colors.black, fontSize: 12),
-                      patternList: [
-                        EasyRichTextPattern(
-                          targetString: 'HANDLER',
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      'Being a Lawyer or a Law firm gives you this access to have your own professional online presence for the citizens to know you and the law better.',
-                      style: TextStyle(color: Colors.black, fontSize: 14),
-                    ),
-                  ],
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => Colors.green.shade700)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                  child: Text('Book Now'),
                 ),
+                onPressed: () {},
               ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

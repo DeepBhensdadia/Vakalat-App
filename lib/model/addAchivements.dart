@@ -6,9 +6,11 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
-AddAchivementModel addAchivementModelFromJson(String str) => AddAchivementModel.fromJson(json.decode(str));
+AddAchivementModel addAchivementModelFromJson(String str) =>
+    AddAchivementModel.fromJson(json.decode(str));
 
-String addAchivementModelToJson(AddAchivementModel data) => json.encode(data.toJson());
+String addAchivementModelToJson(AddAchivementModel data) =>
+    json.encode(data.toJson());
 
 class AddAchivementModel {
   String? apiKey;
@@ -64,36 +66,44 @@ class AddAchivementModel {
         otherImages: otherImages ?? this.otherImages,
       );
 
-  factory AddAchivementModel.fromJson(Map<String, dynamic> json) => AddAchivementModel(
-    apiKey: json["apiKey"],
-    detail: json["detail"],
-    accessToken: json["accessToken"],
-    userId: json["user_id"],
-    title: json["title"],
-    month: json["month"],
-    year: json["year"],
-    device: json["device"],
-    csrfToken: json["csrf_token"],
-    coverPic: json["cover_pic"],
-    otherImages: json["other_images"],
-  );
+  factory AddAchivementModel.fromJson(Map<String, dynamic> json) =>
+      AddAchivementModel(
+        apiKey: json["apiKey"],
+        detail: json["detail"],
+        accessToken: json["accessToken"],
+        userId: json["user_id"],
+        title: json["title"],
+        month: json["month"],
+        year: json["year"],
+        device: json["device"],
+        csrfToken: json["csrf_token"],
+        coverPic: json["cover_pic"],
+        otherImages: json["other_images"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "apiKey": apiKey,
-    "detail": detail,
-    "accessToken": accessToken,
-    "user_id": userId,
-    "title": title,
-    "month": month,
-    "year": year,
-    "device": device,
-    "csrf_token": csrfToken,
-    "cover_pic": coverPic,
-    "other_images": otherImages,
-  };
+        "apiKey": apiKey,
+        "detail": detail,
+        "accessToken": accessToken,
+        "user_id": userId,
+        "title": title,
+        "month": month,
+        "year": year,
+        "device": device,
+        "csrf_token": csrfToken,
+        "cover_pic": coverPic,
+        "other_images": otherImages,
+      };
   Future<FormData> toFormData() async {
-    MultipartFile coverimage = await MultipartFile.fromFile(coverPic.toString());
-    MultipartFile otherimage = await MultipartFile.fromFile(otherImages.toString());
-    return FormData.fromMap(copyWith(coverPic: coverimage,otherImages: otherimage).toJson());
+    MultipartFile? coverimage;
+    MultipartFile? otherimage;
+    if (coverPic != null) {
+      coverimage = await MultipartFile.fromFile(coverPic.toString());
+    }
+    if (otherImages != null) {
+      otherimage = await MultipartFile.fromFile(otherImages.toString());
+    }
+    return FormData.fromMap(
+        copyWith(coverPic: coverimage, otherImages: otherimage).toJson());
   }
 }

@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,13 +16,18 @@ import 'package:vakalat_flutter/color/customcolor.dart';
 import 'package:vakalat_flutter/model/Get_Profile.dart';
 import 'package:vakalat_flutter/model/clsLoginResponseModel.dart';
 import 'package:vakalat_flutter/utils/design.dart';
+import '../../../api/postapi.dart';
 import '../../../api/web_service.dart';
 import '../../../helper.dart';
+import '../../../model/GetHandlerList.dart';
 import '../../../model/UpdatePersonalDetails.dart';
 import '../../../model/personal_DetailsModel.dart';
 import '../../../utils/ToastMessage.dart';
 import '../../../utils/constant.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+
+import '../../handler_search/Cart.dart';
+import '../../handler_search/handler_search.dart';
 
 enum Gender { Male, Female }
 
@@ -38,7 +45,14 @@ class Personal_Detail extends StatefulWidget {
 }
 
 class _Personal_DetailState extends State<Personal_Detail> {
+  ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
+      SharedPref.get(prefKey: PrefKey.loginDetails)!);
   File? video;
+  File? imagepic;
+  String? formattedDate = "";
+  DateTime? _selectedDate;
+  GetProfileModel getprofile =
+      getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.get_profile)!);
 
   Future<void> pickvideo() async {
     XFile? Selectedvideo = await ImagePicker().pickVideo(
@@ -57,8 +71,6 @@ class _Personal_DetailState extends State<Personal_Detail> {
     }
   }
 
-  File? imagepic;
-
   Future<void> pickImage() async {
     XFile? SelectedImage = await ImagePicker().pickImage(
       source: ImageSource.gallery,
@@ -76,8 +88,6 @@ class _Personal_DetailState extends State<Personal_Detail> {
     }
   }
 
-  String? formattedDate = "";
-  DateTime? _selectedDate;
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -91,21 +101,48 @@ class _Personal_DetailState extends State<Personal_Detail> {
     }
   }
 
+  bool show = false;
+  late GetHandlerList list;
+  hand_list() async {
+    Map<String, dynamic> parameters = {
+      "apiKey": apikey,
+      'device': '2',
+      "city_id": getprofile.profile.cityId,
+      "first_name": getprofile.profile.firstName,
+      "last_name": getprofile.profile.lastName,
+      "customname": getprofile.profile.firstName + getprofile.profile.lastName
+    };
+
+    await get_handler_list(body: parameters).then((value) {
+      print(jsonEncode(value));
+      list = value;
+      setState(() {
+        show = true;
+      });
+
+      EasyLoading.dismiss();
+    }).onError((error, stackTrace) {
+      EasyLoading.dismiss();
+    });
+  }
+
   @override
   void initState() {
+    log(widget.detail.profile.bloodGroup);
+    hand_list();
     firstnamecontoller.text = widget.detail.profile.firstName;
     middlenamecontoller.text = widget.detail.profile.middleName;
     lastnamecontoller.text = widget.detail.profile.lastName;
     shortnamecontoller.text = widget.detail.profile.shortName;
-    if (widget.detail.profile.bloodGroup == null) {
-      selectedBlood == null;
-    } else {
-      selectedBlood == widget.detail.profile.bloodGroup;
+    // video = File(widget.detail.profile.videoProfile);
+    if (widget.detail.profile.bloodGroup.isNotEmpty) {
+      selectedBlood = widget.detail.profile.bloodGroup.toString();
     }
 
     _selectedGender =
         widget.detail.profile.gender == 'Male' ? Gender.Male : Gender.Female;
     formattedDate = widget.detail.profile.dateOfBirth;
+    // imagepic = File(widget.detail.profile.profilePic);
     super.initState();
   }
 
@@ -145,6 +182,140 @@ class _Personal_DetailState extends State<Personal_Detail> {
         key: _formKey,
         child: Column(
           children: [
+            show == true
+                ? Card(
+                    child: Container(
+                        alignment: Alignment.center,
+                        // height: 100,
+                        width: screenwidth(context, dividedby: 1),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Reverse your Username Now! ',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'Hey ${getprofile.profile.firstName} ${getprofile.profile.lastName} following username is available, ',
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  const Text(
+                                    'www.vakalat.com/',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    list.handlers.first.name,
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        color: Colors.green.shade700,
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                'Click "Book Now"to continue with this username. Or click on "Search" to find other availabilities. ',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateColor.resolveWith(
+                                                (states) => CustomColor()
+                                                    .colorPrimary)),
+                                    child: const Text('Search'),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) =>
+                                                Handler_Search(
+                                                    value: list,
+                                                    name: getprofile
+                                                            .profile.firstName +
+                                                        getprofile
+                                                            .profile.lastName),
+                                          ));
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateColor.resolveWith(
+                                                (states) =>
+                                                    Colors.green.shade700)),
+                                    child: const Text('Book Now'),
+                                    onPressed: () async {
+                                      EasyLoading.show(status: "Loading...");
+                                      Map<String, dynamic> parameters = {
+                                        "apiKey": apikey,
+                                        'device': '2',
+                                        "user_type_id":
+                                            logindetails.userData.userType,
+                                      };
+                                      await GetUserpackages(body: parameters)
+                                          .then((value) {
+                                        Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                              builder: (context) => Cart_Screen(
+                                                  name:
+                                                      list.handlers.first.name,
+                                                  packages: value),
+                                            ));
+
+                                        // packages = value;
+                                        // setState(() {
+                                        //   show = true;
+                                        // });
+                                        EasyLoading.dismiss();
+                                        log(jsonEncode(value));
+                                      }).onError((error, stackTrace) {
+                                        EasyLoading.dismiss();
+                                      });
+                                    },
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        )),
+                  )
+                : SizedBox(),
             Padding(
               padding: const EdgeInsets.only(left: 10, bottom: 10),
               child: Row(
@@ -348,33 +519,28 @@ class _Personal_DetailState extends State<Personal_Detail> {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-              child: InkWell(
-                onTap: () {
-                  pickvideo();
-                },
-                child: Container(
-                  height: 50,
-                  width: screenwidth(context, dividedby: 1),
-                  decoration: Const().decorationfield,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
-                      underline: Container(color: Colors.transparent),
-                      isExpanded: true,
-                      value: selectedBlood,
-                      onChanged: (newValue) {
-                        setState(() {
-                          selectedBlood = newValue;
-                        });
-                      },
-                      hint: const Text('Select an option'),
-                      items: bloodgroup.map((option) {
-                        return DropdownMenuItem<String>(
-                          value: option,
-                          child: Text(option),
-                        );
-                      }).toList(),
-                    ),
+              child: Container(
+                height: 50,
+                width: screenwidth(context, dividedby: 1),
+                decoration: Const().decorationfield,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    underline: Container(color: Colors.transparent),
+                    isExpanded: true,
+                    value: selectedBlood,
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedBlood = newValue;
+                      });
+                    },
+                    hint: const Text('Select an option'),
+                    items: bloodgroup.map((option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
@@ -423,6 +589,7 @@ class _Personal_DetailState extends State<Personal_Detail> {
                                 minWidth: 15,
                                 onPressed: () {
                                   showDialog(
+                                    barrierDismissible: false,
                                     context: context,
                                     builder: (context) => Playing_Video(
                                         video:
@@ -541,8 +708,19 @@ class _Personal_DetailState extends State<Personal_Detail> {
                 if (_formKey.currentState!.validate()) {
                   if (formattedDate.toString().isNotEmpty) {
                     personal_details.call();
+                    // if(video != null){
+                    //   if(imagepic != null){
+                    //
+                    //   }else{
+                    //     ToastMessage().showmessage('Please Select Image');
+                    //
+                    //   }
+                    // }else{
+                    //   ToastMessage().showmessage('Please Select video File');
+                    //
+                    // }
                   } else {
-                    ToastMessage().showmessage('Plz Select Date of Birth');
+                    ToastMessage().showmessage('Please Select Date of Birth');
                   }
                 }
               },
@@ -572,11 +750,11 @@ class _Personal_DetailState extends State<Personal_Detail> {
       gender: _selectedGender.name,
       bloodGroup: selectedBlood,
       isPhysicalChal: _selectedphycally.name,
-      videoProfile: video!.path ,
+      videoProfile: video?.path,
       organization: '',
       since: '',
       logo: '',
-      profile: imagepic!.path
+      profile: imagepic?.path,
     );
 
     String uri = ('https://www.vakalat.com/user_api/update_personal_detail');

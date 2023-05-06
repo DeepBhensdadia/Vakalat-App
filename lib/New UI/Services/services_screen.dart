@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -12,6 +13,7 @@ import '../../model/DeleteServicesModel.dart';
 import '../../model/GetServicesModel.dart';
 import '../../model/clsLoginResponseModel.dart';
 import '../../utils/constant.dart';
+import '../My Account/image_viewer.dart';
 import 'Add_services.dart';
 import 'Edit_Services.dart';
 
@@ -108,16 +110,25 @@ class _Services_screenState extends State<Services_screen> {
                                   imageUrl: Const().URL_Services_Image +
                                       services.services[index].smImage,
                                   imageBuilder: (context, imageProvider) =>
-                                      Container(
+                                      InkWell(
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                              builder: (context) => Image_viewer(
+                                                  image:  Const().URL_Services_Image +
+                                                      services.services[index].smImage,),
+                                            )),
+                                        child: Container(
                                     decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
-                                        // colorFilter:
-                                        //     ColorFilter.mode(Colors.red, BlendMode.colorBurn),
-                                      ),
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                          // colorFilter:
+                                          //     ColorFilter.mode(Colors.red, BlendMode.colorBurn),
+                                        ),
                                     ),
                                   ),
+                                      ),
                                   placeholder: (context, url) =>
                                       Image.asset('assets/images/loading.gif'),
                                   errorWidget: (context, url, error) =>
@@ -206,38 +217,27 @@ class _Services_screenState extends State<Services_screen> {
                                                 minWidth: 30,
                                                 padding: EdgeInsets.zero,
                                                 onPressed: () async {
-                                                  EasyLoading.show(
-                                                      status: 'Loading...');
-                                                  Map<String, dynamic>
-                                                      parameters = {
-                                                    "apiKey": apikey,
-                                                    'device': '2',
-                                                    "accessToken": logindetails
-                                                        .accessToken,
-                                                    "user_id": logindetails
-                                                        .userData.userId,
-                                                    "service_id": services
-                                                        .services[index].smId,
-                                                  };
-                                                  DeleteServicesModel delete =
-                                                      await Delete_services(
-                                                          body: parameters);
-                                                  if (delete.status == 1) {
-                                                    Fluttertoast.showToast(
-                                                        msg: delete.message);
-                                                    EasyLoading.dismiss();
-                                                    Navigator.pushReplacement(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const Services_screen(),
-                                                        ));
-                                                  } else {
-                                                    EasyLoading.dismiss();
-
-                                                    Fluttertoast.showToast(
-                                                        msg: delete.message);
-                                                  }
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialog(
+                                                          title: Text(
+                                                              'Are you Sure Delete Services ?'),
+                                                          actions: [
+                                                            TextButton(
+                                                                onPressed: () {
+                                                              delete_service(index);
+                                                                },
+                                                                child: Text('Yes')),
+                                                            TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: Text('No')),
+                                                          ],
+                                                        ),
+                                                  );
                                                 },
                                                 child: const Icon(
                                                   Icons.delete,
@@ -269,5 +269,39 @@ class _Services_screenState extends State<Services_screen> {
             )
           : const Center(child: SizedBox()),
     );
+  }
+  delete_service(index) async {
+    EasyLoading.show(
+        status: 'Loading...');
+    Map<String, dynamic>
+    parameters = {
+      "apiKey": apikey,
+      'device': '2',
+      "accessToken": logindetails
+          .accessToken,
+      "user_id": logindetails
+          .userData.userId,
+      "service_id": services
+          .services[index].smId,
+    };
+    DeleteServicesModel delete =
+        await Delete_services(
+        body: parameters);
+    if (delete.status == 1) {
+      Fluttertoast.showToast(
+          msg: delete.message);
+      EasyLoading.dismiss();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+            const Services_screen(),
+          ));
+    } else {
+      EasyLoading.dismiss();
+
+      Fluttertoast.showToast(
+          msg: delete.message);
+    }
   }
 }

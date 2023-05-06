@@ -16,19 +16,37 @@ import '../../../helper.dart';
 import '../../../model/AddServicesResponceModel.dart';
 import '../../../model/addAchivements.dart';
 import '../../../model/clsLoginResponseModel.dart';
+import '../../../model/editAchivement.dart';
+import '../../../model/editparticipation.dart';
 import '../../../utils/constant.dart';
-import 'Achivement.dart';
+import '../Achivement/Achivement.dart';
+import 'Participation.dart';
 
-class Add_Achivements extends StatefulWidget {
-  const Add_Achivements({Key? key}) : super(key: key);
+
+class Edit_Participation extends StatefulWidget {
+  final String title;
+  final String month;
+  final String year;
+  final String image;
+  final String detail;
+  final String achievementId;
+  const Edit_Participation(
+      {Key? key,
+        required this.title,
+        required this.month,
+        required this.year,
+        required this.image,
+        required this.detail,
+        required this.achievementId})
+      : super(key: key);
 
   @override
-  State<Add_Achivements> createState() => _Add_AchivementsState();
+  State<Edit_Participation> createState() => _Edit_ParticipationState();
 }
 
-class _Add_AchivementsState extends State<Add_Achivements> {
+class _Edit_ParticipationState extends State<Edit_Participation> {
   TextEditingController titlecontroller = TextEditingController();
-  // TextEditingController monthcontroller = TextEditingController();
+  TextEditingController monthcontroller = TextEditingController();
   TextEditingController yearcontroller = TextEditingController();
   TextEditingController detailscontoller = TextEditingController();
   File? coverpic;
@@ -69,13 +87,24 @@ class _Add_AchivementsState extends State<Add_Achivements> {
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    // coverpic = File(widget.image);
+    titlecontroller.text = widget.title;
+    selectedMonth = widget.month;
+    yearcontroller.text = widget.year;
+    detailscontoller.text = widget.detail;
+    super.initState();
+  }
+
 String? selectedMonth;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Add Achivement',
+          'Edit Achivement',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -116,7 +145,7 @@ String? selectedMonth;
                           child: DropdownButton<String>(
                             underline: Container(color: Colors.transparent),
                             isExpanded: true,
-                            value: selectedMonth,
+                            value:  selectedMonth,
                             onChanged: (newValue) {
                               setState(() {
                                 selectedMonth = newValue;
@@ -152,7 +181,7 @@ String? selectedMonth;
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
                 child: InkWell(
                   onTap: () {
                     pickcoverimage();
@@ -167,10 +196,12 @@ String? selectedMonth;
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                           Text(
-                            coverpic == null ?'Cover Picture' : 'Image Selected Sucessfully',
+                          Text(
+                            coverpic == null
+                                ? 'Cover Picture'
+                                : 'Image Selected Sucessfully',
                             style:
-                                TextStyle(fontSize: 16, color: Colors.black54,overflow: TextOverflow.ellipsis),
+                            TextStyle(fontSize: 16, color: Colors.black54),
                           ),
                           ElevatedButton(
                               onPressed: () {
@@ -183,24 +214,36 @@ String? selectedMonth;
                   ),
                 ),
               ),
-             coverpic == null ?SizedBox(): Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-               child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
+              coverpic == null
+                  ? SizedBox()
+                  : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Selected Cover image',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-                    SizedBox(height: 10,),
+                    Text(
+                      'Selected Cover image',
+                      style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Container(
                       height: 80,
                       width: 100,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),image: DecorationImage(fit: BoxFit.cover,image: FileImage(coverpic!))),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: FileImage(coverpic!))),
                     )
                   ],
                 ),
-             ),
+              ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
                 child: InkWell(
                   onTap: () {
                     pickotherimage();
@@ -215,10 +258,12 @@ String? selectedMonth;
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                            Text(
-                            otherpic == null ?'Other Images' : ' Image Selected sucessfully',
+                          Text(
+                            otherpic == null
+                                ? 'Other Images'
+                                : ' Image Selected sucessfully',
                             style:
-                                TextStyle(fontSize: 16, color: Colors.black54),
+                            TextStyle(fontSize: 16, color: Colors.black54),
                           ),
                           ElevatedButton(
                               onPressed: () {
@@ -231,17 +276,29 @@ String? selectedMonth;
                   ),
                 ),
               ),
-              otherpic == null ?SizedBox(): Padding(
+              otherpic == null
+                  ? SizedBox()
+                  : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Selected other image',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-                    SizedBox(height: 10,),
+                    Text(
+                      'Selected other image',
+                      style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Container(
                       height: 80,
                       width: 100,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),image: DecorationImage(fit: BoxFit.cover,image: FileImage(otherpic!))),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: FileImage(otherpic!))),
                     )
                   ],
                 ),
@@ -260,8 +317,9 @@ String? selectedMonth;
               Button_For_Update_Save(
                 text: 'Save',
                 onpressed: () {
-                  if (_formKey.currentState!.validate())
-                    return add_Achivement.call();
+                  if (_formKey.currentState!.validate()) {
+                    add_Achivement.call();
+                  }
                 },
               ),
             ],
@@ -273,48 +331,56 @@ String? selectedMonth;
 
   final WebService _webService = WebService();
   Future<void> add_Achivement() async {
-    ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
-        SharedPref.get(prefKey: PrefKey.loginDetails)!);
-    EasyLoading.show(status: 'Loading...');
+    if (coverpic != null) {
+      ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
+          SharedPref.get(prefKey: PrefKey.loginDetails)!);
+      EasyLoading.show(status: 'Loading...');
 
-    AddAchivementModel addAchivementDataModel = AddAchivementModel(
-        userId: logindetails.userData.userId,
-        apiKey: apikey,
-        device: device,
-        accessToken: logindetails.accessToken,
-        title: titlecontroller.text,
-        coverPic: coverpic?.path,
-        csrfToken: "",
-        month: selectedMonth,
-        year: yearcontroller.text,
-        otherImages: otherpic?.path,
-        detail: detailscontoller.text);
+      EditParticipationModel addAchivementDataModel = EditParticipationModel(
+          userId: logindetails.userData.userId,
+          apiKey: apikey,
+          device: device,
+          accessToken: logindetails.accessToken,
+          participationId: widget.achievementId,
+          title: titlecontroller.text,
+          coverPic: coverpic?.path,
+          csrfToken: "",
+          month: selectedMonth,
+          year: yearcontroller.text,
+          otherImages: otherpic?.path,
+          detail: detailscontoller.text);
 
-    String uri = ('https://www.vakalat.com/user_api//achivements_master_add');
+      String uri =
+      ('https://www.vakalat.com/user_api//participations_master_update');
 
-    final Response response = await _webService.postFormRequest(
-      url: uri,
-      formData: await addAchivementDataModel.toFormData(),
-    );
-    AddServicesResponceModel servi =
-    addServicesResponceModelFromJson(response.data);
-    // AddServicesResponceModel jasondata = response.data;
-    debugPrint(JsonEncoder.withIndent(" " * 4).convert(response.data),
-        wrapWidth: 100000);
-    // AddServicesResponceModel? addservices;
-    if (response.statusCode == 200) {
-      // late clsAddServicesResponseModel addservices;
-      EasyLoading.dismiss();
-      Fluttertoast.showToast(msg: servi.message);
-      Navigator.pushReplacement(
-          context,MaterialPageRoute(builder: (context) => Achivement_Screen(),)
+      final Response response = await _webService.postFormRequest(
+        url: uri,
+        formData: await addAchivementDataModel.toFormData(),
       );
-      print('image uploaded');
-    } else {
-      EasyLoading.dismiss();
-      Fluttertoast.showToast(msg: servi.message);
+      AddServicesResponceModel servi =
+      addServicesResponceModelFromJson(response.data);
+      // AddServicesResponceModel jasondata = response.data;
+      debugPrint(JsonEncoder.withIndent(" " * 4).convert(response.data),
+          wrapWidth: 100000);
+      // AddServicesResponceModel? addservices;
+      if (response.statusCode == 200) {
+        // late clsAddServicesResponseModel addservices;
+        EasyLoading.dismiss();
+        Fluttertoast.showToast(msg: servi.message);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Partocipation_myacc(),
+            ));
+        // print('image uploaded');
+      } else {
+        EasyLoading.dismiss();
+        Fluttertoast.showToast(msg: servi.message);
 
-      print('failed');
+        print('failed');
+      }
+    } else {
+      Fluttertoast.showToast(msg: 'plz Select Image');
     }
   }
 }

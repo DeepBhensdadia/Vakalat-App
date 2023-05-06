@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vakalat_flutter/Sharedpref/shared_pref.dart';
 import 'package:vakalat_flutter/model/GetDashboard.dart';
 import 'package:vakalat_flutter/model/Get_Profile.dart';
@@ -135,12 +136,19 @@ class _Jobs_MainState extends State<Jobs_Main>
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
                           children: [
-                            Const().textrow('Title :', appliedjob.jpJobTitle,context),
+                            Const().textrow('Title :', appliedjob.jpJobTitle,context,() {
+
+                            }),
                             Const().textrow('Firm/Collage Name :',
-                                appliedjob.lawFirmCollege,context),
-                           Const().textrow('Contact :', appliedjob.mobile,context),
+                                appliedjob.lawFirmCollege,context,() {} ),
+                           Const().textrow('Contact :', appliedjob.mobile,context,() {
+                             launch('tel:${appliedjob.mobile}');
+
+                           }),
                             Const().textrow('Applied Date :',
-                                appliedjob.applyJobCreatedDatetime,context),
+                                appliedjob.applyJobCreatedDatetime,context,() {
+
+                                }),
                           ],
                         ),
                       )),

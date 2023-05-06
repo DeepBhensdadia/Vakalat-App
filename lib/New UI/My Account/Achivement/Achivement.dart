@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:vakalat_flutter/New%20UI/My%20Account/image_viewer.dart';
 import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/model/getAchivements.dart';
 
@@ -47,7 +48,7 @@ class _Achivement_ScreenState extends State<Achivement_Screen> {
         values = value;
         show = true;
       });
-      EasyLoading.dismiss();
+
     }).onError((error, stackTrace) {
       print(error);
       EasyLoading.dismiss();
@@ -104,14 +105,24 @@ class _Achivement_ScreenState extends State<Achivement_Screen> {
                                 imageUrl: Const().URL_achivement_image +
                                     achive.achievementCoverImage,
                                 imageBuilder: (context, imageProvider) =>
-                                    Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                      // colorFilter:
-                                      //     ColorFilter.mode(Colors.red, BlendMode.colorBurn),
+                                    InkWell(
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) => Image_viewer(
+                                            image: Const()
+                                                    .URL_achivement_image +
+                                                achive.achievementCoverImage),
+                                      )),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                        // colorFilter:
+                                        //     ColorFilter.mode(Colors.red, BlendMode.colorBurn),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -119,8 +130,8 @@ class _Achivement_ScreenState extends State<Achivement_Screen> {
                                     Image.asset('assets/images/loading.gif'),
                                 errorWidget: (context, url, error) =>
                                     Image.asset('assets/images/default.png'),
-                                height: 100,
                                 width: 100,
+                                height: 100,
                               ),
                               // Image.network(
                               //   Const().URL_achivement_image+achive.achievementCoverImage,
@@ -163,7 +174,7 @@ class _Achivement_ScreenState extends State<Achivement_Screen> {
                                           MaterialButton(
                                             color: const Color(0xff448BE8),
                                             height: 25,
-                                            minWidth: 25,
+                                            minWidth: 40,
                                             padding: EdgeInsets.zero,
                                             onPressed: () {
                                               Navigator.pushReplacement(
@@ -177,9 +188,12 @@ class _Achivement_ScreenState extends State<Achivement_Screen> {
                                                           .achievementMonth,
                                                       year: achive
                                                           .achievementYear,
-                                                          image :achive.achievementCoverImage,
-                                                          detail : achive.achievementDetail,
-                                                          achievementId :achive.achievementId,
+                                                      image: achive
+                                                          .achievementCoverImage,
+                                                      detail: achive
+                                                          .achievementDetail,
+                                                      achievementId:
+                                                          achive.achievementId,
                                                     ),
                                                   ));
                                             },
@@ -192,42 +206,31 @@ class _Achivement_ScreenState extends State<Achivement_Screen> {
                                           MaterialButton(
                                             color: const Color(0xffAF3F3F),
                                             height: 25,
-                                            minWidth: 25,
+                                            minWidth: 40,
                                             padding: EdgeInsets.zero,
-                                            onPressed: () async {
-                                              EasyLoading.show(
-                                                  status: 'Loading...');
-                                              Map<String, dynamic> parameters =
-                                                  {
-                                                "apiKey": apikey,
-                                                'device': '2',
-                                                "accessToken":
-                                                    logindetails.accessToken,
-                                                "user_id": logindetails
-                                                    .userData.userId,
-                                                "achievement_id":
-                                                    achive.achievementId,
-                                                "csrf_token": ""
-                                              };
-                                              DeleteServicesModel delete =
-                                                  await Delete_Achivement(
-                                                      body: parameters);
-                                              if (delete.status == 1) {
-                                                Fluttertoast.showToast(
-                                                    msg: delete.message);
-                                                EasyLoading.dismiss();
-                                                Navigator.pushReplacement(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Achivement_Screen(),
-                                                    ));
-                                              } else {
-                                                EasyLoading.dismiss();
+                                            onPressed: ()  {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                      title: Text(
+                                                          'Are you Sure Delete Achivement ?'),
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              Delete(achive);
 
-                                                Fluttertoast.showToast(
-                                                    msg: delete.message);
-                                              }
+                                                            },
+                                                            child: Text('Yes')),
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Text('No')),
+                                                      ],
+                                                    ),
+                                              );
                                             },
                                             child: const Icon(
                                               Icons.delete,
@@ -252,5 +255,40 @@ class _Achivement_ScreenState extends State<Achivement_Screen> {
               child: SizedBox(),
             ),
     );
+  }
+  Delete(achive) async {
+    EasyLoading.show(
+        status: 'Loading...');
+    Map<String, dynamic> parameters =
+    {
+      "apiKey": apikey,
+      'device': '2',
+      "accessToken":
+      logindetails.accessToken,
+      "user_id": logindetails
+          .userData.userId,
+      "achievement_id":
+      achive.achievementId,
+      "csrf_token": ""
+    };
+    DeleteServicesModel delete =
+        await Delete_Achivement(
+        body: parameters);
+    if (delete.status == 1) {
+      Fluttertoast.showToast(
+          msg: delete.message);
+      EasyLoading.dismiss();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                Achivement_Screen(),
+          ));
+    } else {
+      EasyLoading.dismiss();
+
+      Fluttertoast.showToast(
+          msg: delete.message);
+    }
   }
 }

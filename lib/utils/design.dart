@@ -5,11 +5,14 @@ import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/utils/constant.dart';
 
 import '../color/customcolor.dart';
+import '../model/Bar Associate List.dart';
 import '../model/GetAllCategory.dart';
+import '../model/Get_doc_type.dart';
 import '../model/clsCitiesResponseModel.dart';
 import '../model/clsCountriesResponseModel.dart';
 import '../model/clsStateResponseModel.dart';
 import '../model/clsUserTypeResponseModel.dart';
+import '../model/getbar_councilModel.dart';
 
 class next_page_ui extends StatelessWidget {
   const next_page_ui({Key? key}) : super(key: key);
@@ -121,13 +124,13 @@ class Register_now_ui extends StatelessWidget {
 }
 
 class CustomTextfield extends StatelessWidget {
-  final Controller;
+  TextEditingController? Controller;
 
   final String labelname;
   String? Function(String?)? validator;
-  final suffixicon;
-
-  final int? maxlength;
+  IconData? suffixicon;
+int? maxline  ;
+  final int? maxlength ;
   final TextInputType? type;
   CustomTextfield(
       {Key? key,
@@ -136,6 +139,7 @@ class CustomTextfield extends StatelessWidget {
       required this.labelname,
       this.suffixicon,
       this.maxlength,
+      this.maxline = 1,
       this.type})
       : super(key: key);
 
@@ -147,6 +151,7 @@ class CustomTextfield extends StatelessWidget {
         controller: Controller,
         maxLength: maxlength,
         keyboardType: type,
+        maxLines: maxline,
         // focusNode: edtEmail,
         decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
@@ -154,11 +159,13 @@ class CustomTextfield extends StatelessWidget {
             labelText: labelname,
             // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
             suffixIcon: Icon(suffixicon)),
+
         validator: validator,
       ),
     );
   }
 }
+
 
 class CustomDropDownCountry extends StatefulWidget {
   const CustomDropDownCountry({
@@ -590,6 +597,194 @@ class _CustomDropDownUser_TypeState extends State<CustomDropDownUser_Type> {
     );
   }
 }
+
+class drodownbar_council extends StatefulWidget {
+  final List<BarCouncil> bar_council;
+ final String? initialvalue;
+  final void Function(String?) onSelection;
+
+  const drodownbar_council({super.key, required this.bar_council, this.initialvalue, required this.onSelection});
+
+
+
+
+  @override
+  State<drodownbar_council> createState() => _drodownbar_councilState();
+}
+
+class _drodownbar_councilState extends State<drodownbar_council> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    valueNotifier = ValueNotifier(widget.initialvalue);
+    super.initState();
+  }
+  late ValueNotifier<String?> valueNotifier;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      width: screenwidth(context, dividedby: 1),
+      decoration: Const().decorationfield,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10,),
+        child: ValueListenableBuilder(
+          valueListenable: valueNotifier,
+          builder: (context, value, child) => DropdownButton<String>(
+            underline: Container(color: Colors.transparent),
+            hint: const Text('Select Bar Council'),
+            // iconSize: ,
+            // icon: Icon(Icons.arrow_drop_down),
+            isExpanded: true,
+            // itemHeight: 10,
+            value: value,
+            items: widget.bar_council
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                value: element.userId,
+                child: Text(element.lawFirmCollege),
+              ),
+            )
+                .toList(),
+            onChanged: (value) {
+              widget.onSelection(value);
+              valueNotifier.value = widget.bar_council
+                  .where((element) => element.userId.contains(value!))
+                  .toList()[0]
+                  .userId;
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class dropdownbar_assoc extends StatefulWidget {
+  final List<BarAssoc> bar_assoc;
+ final String? initialvalue;
+  final void Function(String?) onSelection;
+
+  const dropdownbar_assoc({super.key, required this.bar_assoc, this.initialvalue, required this.onSelection});
+
+
+
+
+  @override
+  State<dropdownbar_assoc> createState() => _dropdownbar_assocState();
+}
+
+class _dropdownbar_assocState extends State<dropdownbar_assoc> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    valueNotifier = ValueNotifier(widget.initialvalue);
+    super.initState();
+  }
+  late ValueNotifier<String?> valueNotifier;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      width: screenwidth(context, dividedby: 1),
+      decoration: Const().decorationfield,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10,),
+        child: ValueListenableBuilder(
+          valueListenable: valueNotifier,
+          builder: (context, value, child) => DropdownButton<String>(
+            underline: Container(color: Colors.transparent),
+            hint: const Text('Select Bar Association'),
+            // iconSize: ,
+            // icon: Icon(Icons.arrow_drop_down),
+            isExpanded: true,
+            // itemHeight: 10,
+            value: value,
+            items: widget.bar_assoc
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                value: element.userId,
+                child: Text(element.lawFirmCollege),
+              ),
+            )
+                .toList(),
+            onChanged: (value) {
+              widget.onSelection(value);
+              valueNotifier.value = widget.bar_assoc
+                  .where((element) => element.userId.contains(value!))
+                  .toList()[0]
+                  .userId;
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class dropdowngetdoctype extends StatefulWidget {
+  final List<DocType> doctype;
+ final String? initialvalue;
+  final void Function(String?) onSelection;
+
+  const dropdowngetdoctype({super.key, required this.doctype, this.initialvalue, required this.onSelection});
+
+
+
+
+  @override
+  State<dropdowngetdoctype> createState() => _dropdowngetdoctypeState();
+}
+
+class _dropdowngetdoctypeState extends State<dropdowngetdoctype> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    valueNotifier = ValueNotifier(widget.initialvalue);
+    super.initState();
+  }
+  late ValueNotifier<String?> valueNotifier;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      width: screenwidth(context, dividedby: 1),
+      decoration: Const().decorationfield,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10,),
+        child: ValueListenableBuilder(
+          valueListenable: valueNotifier,
+          builder: (context, value, child) => DropdownButton<String>(
+            underline: Container(color: Colors.transparent),
+            hint: const Text('Select Document Type'),
+            // iconSize: ,
+            // icon: Icon(Icons.arrow_drop_down),
+            isExpanded: true,
+            // itemHeight: 10,
+            value: value,
+            items: widget.doctype
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                value: element.id,
+                child: Text(element.name),
+              ),
+            )
+                .toList(),
+            onChanged: (value) {
+              widget.onSelection(value);
+              valueNotifier.value = widget.doctype
+                  .where((element) => element.id.contains(value!))
+                  .toList()[0]
+                  .id;
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class Button_For_Update_Save extends StatelessWidget {
   final String text;

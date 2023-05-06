@@ -141,7 +141,7 @@ class Profile {
   final String companyMobile;
   final String aboutUser;
   final String websiteUrl;
-  final dynamic bloodGroup;
+  final String bloodGroup;
   final String bloodGroupId;
   final String distCourtRegiNo;
   final String distCourtRegiDate;

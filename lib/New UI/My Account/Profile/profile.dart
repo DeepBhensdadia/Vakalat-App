@@ -35,8 +35,13 @@ class _MyTabbedPageState extends State<Profile_Tabs>
       "user_id": logindetails.userData.userId
     };
     EasyLoading.show(status: 'loading...');
-    await get_profile(body: parameters).then((value) {
+    await get_profile(body: parameters).then((value) async {
+      await SharedPref.deleteSpecific(prefKey: PrefKey.get_profile);
+      await SharedPref.save(
+          value: jsonEncode(value.toJson()),
+          prefKey: PrefKey.get_profile);
       setState(() {
+
         detail = value;
         show = true;
         print(jsonEncode(value));
@@ -118,7 +123,7 @@ class _MyTabbedPageState extends State<Profile_Tabs>
                           Personal_Detail(detail: detail),
                           Contact_Details(detail: detail),
                           Social_Media(detail: detail),
-                          const Professional_Detail(),
+                           Professional_Detail(detail : detail),
                            Portfolio_screen(detail: detail),
                           const Change_Password(),
                         ],

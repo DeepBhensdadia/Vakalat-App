@@ -15,9 +15,9 @@ import '../utils/constant.dart';
 import '../utils/design.dart';
 
 class Register extends StatefulWidget {
-  final ClsUserTypeResponseModel user_type;
+  // final ClsUserTypeResponseModel user_type;
 
-  const Register({super.key, required this.user_type});
+  // const Register({super.key, required this.user_type});
   @override
   State<Register> createState() => _RegisterState();
 }
@@ -97,12 +97,22 @@ class _RegisterState extends State<Register> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: CustomDropDownUser_Type(
-                      onSelection: (p0) {
-                        dropdownValue = p0.toString();
-                      },
-                      user_type: widget.user_type.userType),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 10),
+                  child:Container(
+                    alignment: Alignment.centerLeft,
+                    height: 50,
+                    width: screenwidth(context, dividedby: 1),
+                    decoration: Const().decorationfield,
+                    child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text('Lawyer',style: TextStyle(fontSize: 16),)
+                    ),
+                  ),
+                  // CustomDropDownUser_Type(
+                  //     onSelection: (p0) {
+                  //       dropdownValue = p0.toString();
+                  //     },
+                  //     user_type: widget.user_type.userType),
                 ),
                 // CustomTextfield(
                 //     Controller: usertypecontroller,
@@ -112,8 +122,8 @@ class _RegisterState extends State<Register> {
                     Controller: fnamecontroller,
                     labelname: 'First Name',
                     validator: (p0) {
-                      if(p0!.isEmpty){
-                        return 'Plz Enter First Name';
+                      if (p0!.isEmpty) {
+                        return 'Please Enter First Name';
                       }
                       return null;
                     },
@@ -122,8 +132,8 @@ class _RegisterState extends State<Register> {
                     Controller: lnamecontroller,
                     labelname: 'Last Name',
                     validator: (p0) {
-                      if(p0!.isEmpty){
-                        return 'Plz Enter Last Name';
+                      if (p0!.isEmpty) {
+                        return 'Please Enter Last Name';
                       }
                       return null;
                     },
@@ -132,30 +142,29 @@ class _RegisterState extends State<Register> {
                 //     Controller: mobilecontroller,
                 //     labelname: ,
                 //     suffixicon:),
-              Container(
-                height: 85,
-                padding: const EdgeInsets.all(10),
-                child: TextFormField(
-                  maxLength: 10,
-                  // buildCounter: ,
-                  controller: mobilecontroller,
-                  validator: (p0) {
-                    if(p0!.isEmpty&& p0.length == 10){
-                      return 'Plz Enter Contact No';
-                    }
-                    return null;
-                  },
-                  // focusNode: edtEmail,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Mobail',
+                Container(
+                  height: 85,
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField(
+                    maxLength: 10,
+                    // buildCounter: ,
+                    controller: mobilecontroller,
+                    validator: (p0) {
+                      if (p0!.isEmpty || p0.length != 10) {
+                        return 'Please Enter Contact No';
+                      }
+                      return null;
+                    },
+                    // focusNode: edtEmail,
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Mobile',
 
-
-                      // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-                      suffixIcon: Icon( Icons.call)),
+                        // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
+                        suffixIcon: Icon(Icons.call)),
+                  ),
                 ),
-              ),
                 CustomTextfield(
                     Controller: emailcontroller,
                     labelname: 'Email',
@@ -181,37 +190,32 @@ class _RegisterState extends State<Register> {
                             textStyle: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
                         onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            Map<String, dynamic> parameters = {
+                              "apiKey": apikey,
+                              'device': '2',
+                            };
+                            EasyLoading.show(status: 'loading...');
 
-    if (_formKey.currentState!.validate()){
-                          Map<String, dynamic> parameters = {
-                            "apiKey": apikey,
-                            'device': '2',
-                          };
-                          EasyLoading.show(status: 'loading...');
+                            await userCountries(body: parameters).then((value) {
+                              EasyLoading.dismiss();
 
-                          await userCountries(body: parameters).then((value) {
-                            EasyLoading.dismiss();
-
-                            if(dropdownValue.isNotEmpty){
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => Register_Now(
                                       country: value,
-                                      usertype: dropdownValue.toString(),
+                                      usertype: '8',
                                       fname: fnamecontroller.text,
                                       lname: lnamecontroller.text,
                                       mobile: mobilecontroller.text,
                                       email: emailcontroller.text,
                                     ),
                                   ));
-
-                           }     else {
-                              ToastMessage().showmessage('Plz Select UserType');
-                            }
-                          }).onError((error, stackTrace) {
-                            EasyLoading.dismiss();
-                          });}
+                            }).onError((error, stackTrace) {
+                              EasyLoading.dismiss();
+                            });
+                          }
                         },
                         child: const Text('Next'))),
                 Row(
@@ -282,6 +286,7 @@ class _Register_NowState extends State<Register_Now> {
   late String citicode = '';
   @override
   void initState() {
+    usernamecontroller = TextEditingController(text: widget.mobile);
     getcountries = widget.country;
     super.initState();
   }
@@ -294,7 +299,6 @@ class _Register_NowState extends State<Register_Now> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
@@ -346,9 +350,10 @@ class _Register_NowState extends State<Register_Now> {
                   ),
                   CustomTextfield(
                       labelname: 'User Name',
+                      type: TextInputType.none,
                       validator: (p0) {
-                        if(p0!.isEmpty){
-                          return 'Plz Enter User name';
+                        if (p0!.isEmpty) {
+                          return 'Please Enter User name';
                         }
                         return null;
                       },
@@ -368,8 +373,8 @@ class _Register_NowState extends State<Register_Now> {
                       //   );
                       // },
                       validator: (p0) {
-                        if(p0!.isEmpty){
-                          return 'Plz Enter Password';
+                        if (p0!.isEmpty) {
+                          return 'Please Enter Password';
                         }
                         return null;
                       },
@@ -407,7 +412,9 @@ class _Register_NowState extends State<Register_Now> {
                       obscureText: !_cpasswordVisible,
                       controller: confirmpasswordController,
                       validator: (p0) {
-                        if(p0 == passwordController.text ){
+                        if (p0!.isEmpty) {
+                          return 'Please Enter Password';
+                        } else if (p0 != passwordController.text) {
                           return 'Password Does Not Match';
                         }
                         return null;
@@ -463,9 +470,9 @@ class _Register_NowState extends State<Register_Now> {
                           height: 20,
                         ),
                         ValueListenableBuilder(
-                          valueListenable: rajyaBuilder,
-                          builder: (context, value, child) => value.isNotEmpty
-                              ? CustomDropDownState(
+                            valueListenable: rajyaBuilder,
+                            builder: (context, value, child) =>
+                                CustomDropDownState(
                                   raja: value,
                                   onSelection: (p0) async {
                                     rajyacode = p0.toString();
@@ -485,27 +492,22 @@ class _Register_NowState extends State<Register_Now> {
                                       EasyLoading.dismiss();
                                     });
                                   },
-                                )
-                              : const SizedBox.shrink(),
-                        ),
+                                )),
                         const SizedBox(
                           height: 20,
                         ),
                         ValueListenableBuilder(
-                          valueListenable: citiesBuilder,
-                          builder: (context, value, child) => value.isNotEmpty
-                              ? CustomDropCities(
+                            valueListenable: citiesBuilder,
+                            builder: (context, value, child) =>
+                                CustomDropCities(
                                   citi: value,
                                   onSelection: (p0) {
                                     citicode = p0.toString();
                                   },
-                                )
-                              : const SizedBox.shrink(),
-                        ),
+                                )),
                       ],
                     ),
                   ),
-
                   Container(
                       height: 65,
                       width: screenwidth(context, dividedby: 1),
@@ -528,7 +530,8 @@ class _Register_NowState extends State<Register_Now> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LoginPage(title: ''),
+                                builder: (context) =>
+                                    const LoginPage(title: ''),
                               ));
                         },
                         child: const Text("Login"),
@@ -545,78 +548,74 @@ class _Register_NowState extends State<Register_Now> {
   }
 
   Future APICALL_userRegister() async {
+    if (_formKey.currentState!.validate()) {
+      if (countriecode.isNotEmpty) {
+        if (rajyacode.isNotEmpty) {
+          if (citicode.isNotEmpty) {
+            EasyLoading.show(status: 'loading...');
 
+            try {
+              /*Retriving Parent Object*/
+              Map<String, dynamic> parameters = {
+                "apiKey": '5Xf!-VQ*Zjad>@Q-}Bwb@w2/YrY#n',
+                'device': '2',
+                "user_type": widget.usertype,
+                "first_name": widget.fname,
+                "last_name": widget.lname,
+                "mobile": widget.mobile,
+                "email": widget.email,
+                "user_name": usernamecontroller.text,
+                "password": confirmpasswordController.text,
+                "country": countriecode.toString(),
+                "state": rajyacode.toString(),
+                "city": citicode.toString(),
+              };
 
-    if(usernamecontroller.text.isNotEmpty){
-      if(passwordController.text.isNotEmpty){
-        if(passwordController.text == confirmpasswordController.text){
-          if(countriecode.isNotEmpty){
-            if(rajyacode.isNotEmpty){
-              if(citicode.isNotEmpty){
-                EasyLoading.show(status: 'loading...');
-
-                try {
-                  /*Retriving Parent Object*/
-                  Map<String, dynamic> parameters = {
-                    "apiKey": '5Xf!-VQ*Zjad>@Q-}Bwb@w2/YrY#n',
-                    'device': '2',
-                    "user_type": widget.usertype,
-                    "first_name": widget.fname,
-                    "last_name": widget.lname,
-                    "mobile": widget.mobile,
-                    "email": widget.email,
-                    "user_name": usernamecontroller.text,
-                    "password": confirmpasswordController.text,
-                    "country": countriecode.toString(),
-                    "state": rajyacode.toString(),
-                    "city": citicode.toString(),
-                  };
-
-                  ClsRegisterResponseModel userResponseModel =
+              ClsRegisterResponseModel userResponseModel =
                   await userRegister(body: parameters);
 
-                  // Mounted is for disposing the calling of Api if User click back button
-                  if (!mounted) {
-                    return;
-                  }
+              // Mounted is for disposing the calling of Api if User click back button
+              if (!mounted) {
+                return;
+              }
 
-                  if (userResponseModel.status == 1) {
-                    ToastMessage().showmessage("Welcome ${userResponseModel.message}");
+              if (userResponseModel.status == 1) {
+                ToastMessage()
+                    .showmessage("Welcome ${userResponseModel.message}");
 
-                    // Const.currentUser = userResponseModel.Data!;
+                // Const.currentUser = userResponseModel.Data!;
 
-                    // APICALL_RegisterDevice(userResponseModel);
-                    gotologinPage();
-                    // await SharedPref.save(
-                    //     value: userResponseModel.userData.userFname.toString(),
-                    //     prefKey: PrefKey.loginDetails);
-                  } else {
-                    setState(() {
-                      _isLoading = false;
-                    });
+                // APICALL_RegisterDevice(userResponseModel);
+                gotologinPage();
+                // await SharedPref.save(
+                //     value: userResponseModel.userData.userFname.toString(),
+                //     prefKey: PrefKey.loginDetails);
+              } else {
+                setState(() {
+                  _isLoading = false;
+                });
 
-                    ToastMessage().showmessage(userResponseModel.message);
-                  }
-                } catch (exception) {
-                  setState(
-                        () {
-                      _isLoading = false;
-                    },
-                  );
+                ToastMessage().showmessage(userResponseModel.message);
+              }
+            } catch (exception) {
+              setState(
+                () {
+                  _isLoading = false;
+                },
+              );
 
-                  ToastMessage().showmessage(exception.toString());
-                }
-              }else{
-                EasyLoading.dismiss();
-                ToastMessage().showmessage('Plz Select City');}
-            }else{ ToastMessage().showmessage('Plz Select State');}
-          }else{ ToastMessage().showmessage('Plz Select Country');}
-        }else{ ToastMessage().showmessage('Password Does Not Match');}
-      }else{  ToastMessage().showmessage('Plz Enter password');}
+              ToastMessage().showmessage(exception.toString());
+            }
+          } else {
+            EasyLoading.dismiss();
+            ToastMessage().showmessage('Please Select City');
+          }
+        } else {
+          ToastMessage().showmessage('Please Select State');
+        }
+      } else {
+        ToastMessage().showmessage('Please Select Country');
+      }
+    }
   }
-   else{  ToastMessage().showmessage('Plz Enter User Name');}
-
-
-  }
-
 }

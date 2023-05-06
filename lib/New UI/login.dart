@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
-           'Sign In',
+            'Sign In',
             style: TextStyle(
               color: Colors.white,
             ),
@@ -122,167 +122,177 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
           backgroundColor: CustomColor().colorPrimary,
         ),
         body: SingleChildScrollView(
-          child: Column(
-
-            children: [
-
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    Container(
-                        margin: const EdgeInsets.only(top: 20.0),
-                        height: 100.0,
-                        width: 100.0,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/logo.png'),
-                            fit: BoxFit.fitHeight,
-                          ),
-                          shape: BoxShape.rectangle,
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text('Sign In',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 22),
-                            textAlign: TextAlign.left),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: TextFormField(
-                        controller: emailController,
-                        focusNode: edtEmail,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'username',
-                          // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-
-                        ),
-                        onSaved: (newValue) {
-                          setState(
-                            () {
-                              strEmail = newValue!.trim();
-                            },
-                          );
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter username / email';
-                          }
-                          return null;
-                        },
+          child: Form(
+            key: _loginFormKey,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Container(
+                          margin: const EdgeInsets.only(top: 20.0),
+                          height: 100.0,
+                          width: 100.0,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/logo.png'),
+                              fit: BoxFit.fitHeight,
+                            ),
+                            shape: BoxShape.rectangle,
+                          )),
+                      const SizedBox(
+                        height: 20,
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: TextFormField(
-                        obscureText: !_passwordVisible,
-                        controller: passwordController,
-                        focusNode: edtPassword,
-                        onSaved: (newValue) {
-                          setState(
-                            () {
-                              strPassword = newValue!.trim();
-                            },
-                          );
-                        },
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          labelText: 'password',
-                          // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              // Based on passwordVisible state choose the icon
-                              _passwordVisible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Theme.of(context).primaryColorDark,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text('Sign In',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 22),
+                              textAlign: TextAlign.left),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: TextFormField(
+                          controller: emailController,
+                          focusNode: edtEmail,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'username',
+                            // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
+                          ),
+                          onSaved: (newValue) {
+                            setState(
+                              () {
+                                strEmail = newValue!.trim();
+                              },
+                            );
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter username / email';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: TextFormField(
+                          obscureText: !_passwordVisible,
+                          controller: passwordController,
+                          focusNode: edtPassword,
+                          onSaved: (newValue) {
+                            setState(
+                              () {
+                                strPassword = newValue!.trim();
+                              },
+                            );
+                          },
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'password',
+                            // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                // Based on passwordVisible state choose the icon
+                                _passwordVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Theme.of(context).primaryColorDark,
+                              ),
+                              onPressed: () {
+                                // Update the state i.e. toogle the state of passwordVisible variable
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter password';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                            style: TextButton.styleFrom(
+                              foregroundColor: CustomColor().colorPrimary,
                             ),
                             onPressed: () {
-                              // Update the state i.e. toogle the state of passwordVisible variable
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
+                              gotoForgotPasswordPage();
                             },
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter password';
-                          }
-                          return null;
-                        },
+                            child: const Text('Forgot Password?')),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: CustomColor().colorPrimary,
-                          ),
-                          onPressed: () {
-                            gotoForgotPasswordPage();
-                          },
-                          child: const Text('Forgot Password?')),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                  height: 65,
-                  width: 150,
-                  padding: const EdgeInsets.all(10),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: CustomColor().colorPrimary,
-                          textStyle: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      onPressed: () {
-                        // ignore: avoid_print
-                        APICALL_userLogin.call();
+                Container(
+                    height: 65,
+                    width: 150,
+                    padding: const EdgeInsets.all(10),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: CustomColor().colorPrimary,
+                            textStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        onPressed: () {
+                          // ignore: avoid_print
+                          if (_loginFormKey.currentState!.validate()) {
+                            APICALL_userLogin.call();
+                          }
+                        },
+                        child: const Text('Sign in'))),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't Have An Account? "),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Register(),
+                            ));
+                        // Map<String, dynamic> parameters = {
+                        //   "apiKey": apikey,
+                        //   'device': '2',
+                        // };
+                        // EasyLoading.show(status: 'loading...');
+                        // await get_user_type(body: parameters).then((value) {
+                        //   EasyLoading.dismiss();
+                        //   Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => Register(
+                        //           user_type: value,
+                        //         ),
+                        //       ));
+                        // }).onError((error, stackTrace) {
+                        //   EasyLoading.dismiss();
+                        // });
                       },
-                      child: const Text('Sign in'))),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't Have An Account? "),
-                  TextButton(
-                    onPressed: () async {
-                      Map<String, dynamic> parameters = {
-                        "apiKey":apikey,
-                        'device': '2',
-                      };
-                      EasyLoading.show(status: 'loading...');
-                      await get_user_type(body: parameters).then((value) {
-                        EasyLoading.dismiss();
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>  Register(
-                          user_type:value,
-                        ),));
-                      }).onError((error, stackTrace) {
-                        EasyLoading.dismiss();
-                      });
-
-                    },
-                    child: const Text("Register"),
-                  )
-                ],
-              )
-            ],
+                      child: const Text("Register"),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -349,33 +359,33 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
         await SharedPref.save(
             value: jsonEncode(userResponseModel.toJson()),
             prefKey: PrefKey.loginDetails);
+        gotoHomePage();
 
-        // ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(SharedPref.get(prefKey: PrefKey.loginDetails)!);
-        Map<String, dynamic> parameters = {
-          "apiKey": apikey,
-          'device': '2',
-          "user_id":userResponseModel.userData.userId
-        };
-        EasyLoading.show(status: 'loading...');
-        await get_profile(body: parameters).then((value) async {
-          await SharedPref.save(
-              value: jsonEncode(value.toJson()),
-              prefKey: PrefKey.get_profile);
-          setState(() {
-
-            print(jsonEncode(value));
-            gotoHomePage();
-          });
-          EasyLoading.dismiss();
-        }).onError((error, stackTrace) {
-          print(error);
-          EasyLoading.dismiss();
-        });
+        // Map<String, dynamic> parameters = {
+        //   "apiKey": apikey,
+        //   'device': '2',
+        //   "user_id":userResponseModel.userData.userId
+        // };
+        // EasyLoading.show(status: 'loading...');
+        // await get_profile(body: parameters).then((value) async {
+        //   await SharedPref.save(
+        //       value: jsonEncode(value.toJson()),
+        //       prefKey: PrefKey.get_profile);
+        //   setState(() {
+        //
+        //     print(jsonEncode(value));
+        //     gotoHomePage();
+        //   });
+        //   EasyLoading.dismiss();
+        // }).onError((error, stackTrace) {
+        //   print(error);
+        //   EasyLoading.dismiss();
+        // });
       } else {
         setState(() {
           _isLoading = false;
         });
-EasyLoading.dismiss();
+        EasyLoading.dismiss();
         ToastMessage().showmessage(userResponseModel.message);
       }
     } catch (exception) {

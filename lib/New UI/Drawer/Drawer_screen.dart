@@ -19,6 +19,7 @@ import '../Dashboard_screens/Dashboard_Screen.dart';
 import '../My Account/Achivement/Achivement.dart';
 import '../My Account/Participation/Participation.dart';
 import '../My Account/Profile/profile.dart';
+import '../My Account/subscription.dart';
 import '../Topic Video/Topic Video.dart';
 import '../User_Inquries/Get_User_Inquries.dart';
 import '../handler_search/handler_search.dart';
@@ -85,7 +86,9 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DashboardPage(title: '',),
+                          builder: (context) => DashboardPage(
+                            title: '',
+                          ),
                         ));
                     log(logindetails.accessToken);
                   }),
@@ -98,21 +101,19 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                       "csrf_token": ""
                     };
                     EasyLoading.show(status: 'loading...');
-                    await get_Deshboard(body: parameters)
-                        .then((value) {
+                    await get_Deshboard(body: parameters).then((value) {
                       EasyLoading.dismiss();
 
                       log(value.toString());
                       Navigator.pushReplacement(
                           context,
                           CupertinoPageRoute(
-                            builder: (context) => DashBoard_Screen(data :value),
+                            builder: (context) => DashBoard_Screen(data: value),
                           ));
                     }).onError((error, stackTrace) {
                       print(error);
                       EasyLoading.dismiss();
                     });
-
                   }),
                   ExpansionTile(
                     // style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) => Color(0xFF112d4e))),
@@ -153,27 +154,18 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                                     builder: (context) => Profile_Tabs(),
                                   ));
                             }),
-                            button('Subscription', Icons.arrow_forward, () {}),
-                            button('Achivement', Icons.arrow_forward, ()  {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Achivement_Screen(),
-                                  ));
-
-
-                            }),
-                            button('Participation', Icons.arrow_forward, () async {
+                            button('Subscription', Icons.arrow_forward,
+                                () async {
                               Map<String, dynamic> parameters = {
                                 "apiKey": apikey,
                                 'device': '2',
                                 "accessToken": logindetails.accessToken,
-                                "user_id": logindetails.userData.userId,
-                                "csrf_token": "",
-                                "page_no": "1",
+                                "user_id": logindetails.userData.userId
+                                // "csrf_token": "",
+                                // "page_no": "1",
                               };
                               EasyLoading.show(status: 'loading...');
-                              await get_Participation(body: parameters)
+                              await Get_subscription(body: parameters)
                                   .then((value) {
                                 EasyLoading.dismiss();
 
@@ -181,14 +173,27 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => Partocipation_myacc(value : value),
+                                      builder: (context) =>
+                                          subscrption_screen(data: value),
                                     ));
                               }).onError((error, stackTrace) {
                                 print(error);
                                 EasyLoading.dismiss();
                               });
-
-
+                            }),
+                            button('Achivement', Icons.arrow_forward, () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Achivement_Screen(),
+                                  ));
+                            }),
+                            button('Participation', Icons.arrow_forward, () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Partocipation_myacc(),
+                                  ));
                             }),
                           ],
                         ),
@@ -226,17 +231,22 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: Column(
                           children: [
-                            button('Document Type', Icons.arrow_forward, () {      Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Document_Type(title:'Document Type'),
-                                ));}),
-                            button(
-                                'Upload Document', Icons.arrow_forward, () {      Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Upload_Document(title:'Upload Document'),
-                                ));}),
+                            button('Document Type', Icons.arrow_forward, () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        Document_Type(title: 'Document Type'),
+                                  ));
+                            }),
+                            button('Upload Document', Icons.arrow_forward, () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Upload_Document(
+                                        title: 'Upload Document'),
+                                  ));
+                            }),
                           ],
                         ),
                       )
@@ -246,7 +256,8 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Client_Management(title:'Client Management'),
+                          builder: (context) =>
+                              Client_Management(title: 'Client Management'),
                         ));
                   }),
                   button('Services', FontAwesomeIcons.balanceScale, () {
@@ -257,11 +268,13 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                         ));
                   }),
                   button('Client Ledger', FontAwesomeIcons.handHoldingHeart,
-                      () {     Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Message_page(title:'Client Ledger'),
-                          ));}),
+                      () {
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const Handler_Search(value: [], name: '',),
+                    //     ));
+                  }),
                   button('User Inquiry', FontAwesomeIcons.headset, () {
                     Navigator.push(
                         context,
@@ -273,14 +286,16 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Topic_Video(title:'Topic Video'),
+                          builder: (context) =>
+                              Topic_Video(title: 'Topic Video'),
                         ));
                   }),
                   button('Legel Notice', FontAwesomeIcons.noteSticky, () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Legal_Notice(title:'Legel Notice'),
+                          builder: (context) =>
+                              Legal_Notice(title: 'Legel Notice'),
                         ));
                   }),
                 ],
