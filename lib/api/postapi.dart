@@ -24,6 +24,7 @@ import 'package:vakalat_flutter/model/clsTopicResponseModel.dart';
 import 'package:vakalat_flutter/model/clsVideoResponseModel.dart';
 
 import 'package:vakalat_flutter/model/clsLoginResponseModel.dart';
+import 'package:vakalat_flutter/model/getallLanguage.dart';
 
 import '../model/Bar Associate List.dart';
 import '../model/DeleteServicesModel.dart';
@@ -31,9 +32,11 @@ import '../model/GetAllCategory.dart';
 import '../model/GetDashboard.dart';
 import '../model/GetHandlerList.dart';
 import '../model/GetPackageModel.dart';
+import '../model/GetPaymentCcavenue.dart';
 import '../model/GetServicesModel.dart';
 import '../model/GetSubscription.dart';
 import '../model/GetUserInquriesResponseModel.dart';
+import '../model/GetUserRating.dart';
 import '../model/Get_Profile.dart';
 import '../model/Get_doc_type.dart';
 import '../model/UpdateContactDetails.dart';
@@ -49,8 +52,17 @@ import '../model/clsStateResponseModel.dart';
 import '../model/clsUserTypeResponseModel.dart';
 import '../model/getAchivements.dart';
 import '../model/getParticipation.dart';
+import '../model/getallLanguage.dart';
+import '../model/getallLanguage.dart';
+import '../model/getallLanguage.dart';
+import '../model/getallLanguage.dart';
+import '../model/getallLanguage.dart';
 import '../model/getbar_councilModel.dart';
 import '../model/getdiscountModel.dart';
+import '../model/getdocumentdetails.dart';
+import '../model/getdrawermenu.dart';
+import '../model/updatelanguages.dart';
+import '../model/viewcartmodel.dart';
 import 'apiclient.dart';
 
 Map<String, String> headers = {
@@ -202,6 +214,56 @@ Future<Getdiscountmodel>  discountapi({required Map body}) {
     return getdiscountmodelFromJson(response.body);
   });
 }
+Future<ClsUpdateContactResponseModel>  paymentwithcashcode({required Map body}) {
+  // https://www.vakalat.com/user_api//chk_discount_code
+  String url = '$baseUrl/check_cash_code';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return clsUpdateContactResponseModelFromJson(response.body);
+  });
+}
+Future<ClsUpdateContactResponseModel>  achivement_iamgedelete({required Map body}) {
+  // https://www.vakalat.com/user_api//chk_discount_code
+  String url = '$baseUrl/achivements_master_image_delete';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return clsUpdateContactResponseModelFromJson(response.body);
+  });
+}
+Future<ClsUpdateContactResponseModel>  Participation_iamgedelete({required Map body}) {
+  // https://www.vakalat.com/user_api//chk_discount_code
+  String url = '$baseUrl/participations_master_image_delete';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return clsUpdateContactResponseModelFromJson(response.body);
+  });
+}
+Future<Getalllanguage> Getalllanguages({required Map body}) {
+  // https://www.vakalat.com/user_api//chk_discount_code
+  String url = '$baseUrl/get_languages';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getalllanguageFromJson(response.body);
+  });
+}
+Future<Getpaymentonline>  paymentonlineccavenue({required Map body}) {
+  // https://www.vakalat.com/user_api//chk_discount_code
+  String url = '$baseUrl/checkout';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getpaymentonlineFromJson(response.body);
+  });
+}
 Future<ClsUpdateSocialResponseModel>  Update_Social_Details({required Map body}) {
   String url = '$baseUrl/update_social_detail';
   return http.post(Uri.parse(url), body: body ).then((http.Response response) {
@@ -338,16 +400,16 @@ Future<GetbarAssociatList> get_bar_Association({required Map body}) {
     return getbarAssociatListFromJson(response.body);
   });
 }
-Future<DocTypeGet> getDoctype({required Map body}) {
-  // https://www.vakalat.com/user_api//get_bar_councils_list
-  String url = '$baseUrl/get_doc_types';
-  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
-    if (kDebugMode) {
-      // print(json.decode(response.body));
-    }
-    return docTypeGetFromJson(response.body);
-  });
-}
+// Future<DocTypeGet> getDoctype({required Map body}) {
+//   // https://www.vakalat.com/user_api//get_bar_councils_list
+//   String url = '$baseUrl/get_doc_types';
+//   return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+//     if (kDebugMode) {
+//       // print(json.decode(response.body));
+//     }
+//     return docTypeGetFromJson(response.body);
+//   });
+// }
 
 Future<GetSubscripation> Get_subscription({required Map body}) {
   // https://www.vakalat.com/user_api//get_bar_councils_list
@@ -359,8 +421,77 @@ Future<GetSubscripation> Get_subscription({required Map body}) {
     return getSubscripationFromJson(response.body);
   });
 }
+Future<Viewcartmodel> View_cart({required Map body}) {
+  // https://www.vakalat.com/user_api//get_bar_councils_list
+  String url = '$baseUrl/app_view_cart';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return viewcartmodelFromJson(response.body);
+  });
+}
+Future<Getdrawermenu> getdrawermenu({required Map body}) {
+  // https://www.vakalat.com/user_api//get_bar_councils_list
+  String url = '$baseUrl/get_app_menu';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getdrawermenuFromJson(response.body);
+  });
+}
+Future<GetUserRating> getratingreview({required Map body}) {
+  // https://www.vakalat.com/user_api//get_bar_councils_list
+  String url = '$baseUrl/get_user_rating';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getUserRatingFromJson(response.body);
+  });
+}
+Future<DeleteServicesModel> get_review_status({required Map body}) {
+  // https://www.vakalat.com/user_api//get_bar_councils_list
+  String url = '$baseUrl/update_rating_status';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return deleteServicesModelFromJson(response.body);
+  });
+}
 
-
+Future<DeleteServicesModel>  Delete_languages({required Map body}) {
+  // https://www.vakalat.com/user_api//participations_master_delete
+  String url = '$baseUrl/remove_profile_language';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return deleteServicesModelFromJson(response.body);
+  });
+}
+Future<Getupdatelanguage>  update_languages({required Map body}) {
+  // https://www.vakalat.com/user_api//participations_master_delete
+  String url = '$baseUrl/Update_profile_language_app';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getupdatelanguageFromJson(response.body);
+  });
+}
+Future<Getdocumentdetails>  getdoctype({required Map body}) {
+  // https://www.vakalat.com/user_api//participations_master_delete
+  String url = '$baseUrl//get_verification_document_types';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getdocumentdetailsFromJson(response.body);
+  });
+}
 
 
 

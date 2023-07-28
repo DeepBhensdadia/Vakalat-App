@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,8 +43,6 @@ class _Jobs_MainState extends State<Jobs_Main>
     const Tab(child: Text("My Applied")),
   ];
 
-
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -80,9 +79,134 @@ class _Jobs_MainState extends State<Jobs_Main>
           children: [
             widget.value.data.jobs.isNotEmpty
                 ? ListView.builder(
-                    itemCount: 10,
+                    itemCount: widget.value.data.jobs.length,
                     itemBuilder: (context, index) {
-                      Case latestcase = widget.value.data.cases[index];
+                      Job job = widget.value.data.jobs[index];
+                      return Padding(
+                        padding:
+                            const EdgeInsets.only(left: 10, right: 10, top: 10),
+                        child: Card(
+                            margin: EdgeInsets.zero,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                children: [
+                                  Const().textrow('Title :', job.jpJobTitle,
+                                      context, () {}),
+                                  Const().textrow('Firm/Collage Name :',
+                                      job.lawFirmCollege, context, () {}),
+                                  Const().textrow(
+                                      'Contact :', job.mobile, context, () {
+                                    launch('tel:${job.mobile}');
+                                  }),
+                                  Const().textrow('Applied Date :',
+                                      job.jpCreatedDatetime, context, () {}),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 10.0,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                            width: screenwidth(context,
+                                                dividedby: 2.7),
+                                            child: Text(
+                                              'Discripation :',
+                                              style: TextStyle(
+                                                  fontSize: screenwidth(context,
+                                                      dividedby: 30),
+                                                  fontWeight: FontWeight.w600,
+                                                  color: CustomColor()
+                                                      .colorPrimary),
+                                            )),
+                                        Container(
+                                          // color: Colors.red,
+                                          width: screenwidth(context,
+                                              dividedby: 2),
+                                          child: Html(
+                                            data: job.jpDescription,
+                                            //             style: TextStyle(
+                                            //               fontSize: screenwidth(context, dividedby: 30),
+                                            // fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )),
+                      );
+                    },
+                  )
+                : Container(
+                    alignment: Alignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      verticalDirection: VerticalDirection.down,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Card(
+                            clipBehavior: Clip.antiAlias,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            elevation: 4,
+                            child:
+                                Image.asset('assets/images/nodata_search.png')),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Text(
+                            "No data found.",
+                            style: TextStyle(
+                                color: CustomColor().colorPrimary,
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+            widget.value.data.appliedjobs.isEmpty
+                ? Container(
+                    alignment: Alignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      verticalDirection: VerticalDirection.down,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Card(
+                            clipBehavior: Clip.antiAlias,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            elevation: 4,
+                            child:
+                                Image.asset('assets/images/nodata_search.png')),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Text(
+                            "No data found.",
+                            style: TextStyle(
+                                color: CustomColor().colorPrimary,
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: widget.value.data.appliedjobs.length,
+                    itemBuilder: (context, index) {
+                      Appliedjob appliedjob =
+                          widget.value.data.appliedjobs[index];
                       final formattedDate = DateFormat('yyyy-MM-dd').format(
                           widget.value.data.cases[index].caseHearingDate);
 
@@ -95,66 +219,29 @@ class _Jobs_MainState extends State<Jobs_Main>
                               padding: const EdgeInsets.all(10.0),
                               child: Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Title :',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Text(
-                                        '',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  )
+                                  Const().textrow('Title :',
+                                      appliedjob.jpJobTitle, context, () {}),
+                                  Const().textrow(
+                                      'Firm/Collage Name :',
+                                      appliedjob.lawFirmCollege,
+                                      context,
+                                      () {}),
+                                  Const().textrow(
+                                      'Contact :', appliedjob.mobile, context,
+                                      () {
+                                    launch('tel:${appliedjob.mobile}');
+                                  }),
+                                  Const().textrow(
+                                      'Applied Date :',
+                                      appliedjob.applyJobCreatedDatetime,
+                                      context,
+                                      () {}),
                                 ],
                               ),
                             )),
                       );
                     },
-                  )
-                : Center(
-                    child: Text('No Data'),
                   ),
-            Container(
-                child: ListView.builder(
-              itemCount: widget.value.data.appliedjobs.length,
-              itemBuilder: (context, index) {
-                Appliedjob appliedjob = widget.value.data.appliedjobs[index];
-                final formattedDate = DateFormat('yyyy-MM-dd')
-                    .format(widget.value.data.cases[index].caseHearingDate);
-
-                return Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-                  child: Card(
-                      margin: EdgeInsets.zero,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          children: [
-                            Const().textrow('Title :', appliedjob.jpJobTitle,context,() {
-
-                            }),
-                            Const().textrow('Firm/Collage Name :',
-                                appliedjob.lawFirmCollege,context,() {} ),
-                           Const().textrow('Contact :', appliedjob.mobile,context,() {
-                             launch('tel:${appliedjob.mobile}');
-
-                           }),
-                            Const().textrow('Applied Date :',
-                                appliedjob.applyJobCreatedDatetime,context,() {
-
-                                }),
-                          ],
-                        ),
-                      )),
-                );
-              },
-            )),
           ],
         ))
       ],

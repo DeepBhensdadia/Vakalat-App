@@ -23,40 +23,11 @@ class _User_inqury_DetailsState extends State<User_inqury_Details> {
     DateTime myDate =
         DateTime.parse(widget.details.userInquiry.createdDatetime);
     String ondate = DateFormat('yyyy-MM-dd').format(myDate);
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'User Inquries Details',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          centerTitle: true,
-          backgroundColor: CustomColor().colorPrimary,
-        ),
-        body: ListView(
-          children: [
-            text('Inquiry Id :', widget.details.userInquiry.queryId,
-                FontAwesomeIcons.question, () {}),
-            text(
-                'Inquiry By :',
-                '${widget.details.userInquiry.firstName} ${widget.details.userInquiry.lastName}',
-                FontAwesomeIcons.user,
-                () {}),
-            text2('Email :', widget.details.userInquiry.email,
-                FontAwesomeIcons.envelope, () {launch('mailto:${widget.details.userInquiry.email}');}),
-            text2('Mobile :', widget.details.userInquiry.contactNo,
-                FontAwesomeIcons.mobile, () { launch('tel:${widget.details.userInquiry.contactNo}');}),
-            text('Inquiry On :', ondate.toString(), FontAwesomeIcons.calendar,
-                () {}),
-            text('Subject :', widget.details.userInquiry.subject,
-                FontAwesomeIcons.penFancy, () {}),
-          ],
-        ));
+    // return showDialog(context: context, builder: (context) => AlertDialog(),)
+    return Scaffold();
   }
 
-  text(String title, String name, IconData icon, Function() ontap) {
+  text123(String title, String name, IconData icon, Function() ontap) {
     return ListTile(
       onTap: ontap,
       title: Text(title),

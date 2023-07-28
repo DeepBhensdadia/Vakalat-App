@@ -43,11 +43,7 @@ class HomePageState extends State<HomePage> with KeyboardHiderMixin  , SingleTic
 
   }
 
-  @override
-  void dispose() {
-    tabController.dispose();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -132,4 +128,5 @@ class HomePageState extends State<HomePage> with KeyboardHiderMixin  , SingleTic
     tabController.index = 4;
 
   }
+
 }

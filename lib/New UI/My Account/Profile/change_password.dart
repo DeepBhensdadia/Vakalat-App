@@ -85,7 +85,7 @@ class _Change_PasswordState extends State<Change_Password> {
       "new_password": newpassword.text,
       "confirm_password": confirmpassword.text
     };
-    EasyLoading.show(status: 'loading...');
+    EasyLoading.show(status: 'Loading...');
     await change_password(body: parameters).then((value) {
       EasyLoading.dismiss();
       oldpassword.clear();

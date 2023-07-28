@@ -121,7 +121,7 @@ class _Add_Upload_DocumentsState extends State<Add_Upload_Documents> {
               ),
             ),
             CustomTextfield(labelname: 'Enter Details'),
-            Button_For_Update_Save(text:'Save', onpressed: () {
+            Button_For_Update_Save(text:'Update', onpressed: () {
               
             },)
 

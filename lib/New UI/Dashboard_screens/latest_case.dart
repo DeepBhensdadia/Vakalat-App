@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/model/GetDashboard.dart';
 
+import '../../color/customcolor.dart';
+
 class Latest_Case extends StatefulWidget {
   final Getdashboard value;
   const Latest_Case({Key? key, required this.value}) : super(key: key);
@@ -16,7 +18,36 @@ class _Latest_CaseState extends State<Latest_Case> {
   @override
   Widget build(BuildContext context) {
 
-    return ListView.builder(
+    return widget.value.data.cases.isEmpty ? Container(
+      alignment: Alignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        verticalDirection: VerticalDirection.down,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Card(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              elevation: 4,
+              child:
+              Image.asset('assets/images/nodata_search.png')),
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text(
+              "No data found.",
+              style: TextStyle(
+                  color: CustomColor().colorPrimary,
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    ): ListView.builder(
       itemCount: widget.value.data.cases.length,
       itemBuilder: (context, index) {
         Case latestcase = widget.value.data.cases[index];

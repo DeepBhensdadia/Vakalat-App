@@ -63,6 +63,7 @@ class Subscription {
   final DateTime rpCreatedDatetime;
   final String packageName;
   final String packagePrice;
+  final String paymentStatus;
 
   Subscription({
     required this.rpId,
@@ -86,6 +87,7 @@ class Subscription {
     required this.rpCreatedDatetime,
     required this.packageName,
     required this.packagePrice,
+    required this.paymentStatus,
   });
 
   factory Subscription.fromJson(Map<String, dynamic> json) => Subscription(
@@ -110,6 +112,7 @@ class Subscription {
     rpCreatedDatetime: DateTime.parse(json["rp_created_datetime"]),
     packageName: json["package_name"].toString(),
     packagePrice: json["package_price"].toString(),
+    paymentStatus: json["payment_status"].toString(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -134,5 +137,6 @@ class Subscription {
     "rp_created_datetime": "${rpCreatedDatetime.year.toString().padLeft(4, '0')}-${rpCreatedDatetime.month.toString().padLeft(2, '0')}-${rpCreatedDatetime.day.toString().padLeft(2, '0')}",
     "package_name": packageName,
     "package_price": packagePrice,
+    "payment_status": paymentStatus,
   };
 }

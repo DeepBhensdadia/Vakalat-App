@@ -22,6 +22,7 @@ class PersonalDetailsModel {
     required this.gender,
     required this.bloodGroup,
     required this.isPhysicalChal,
+    required this.isPhysicaldet,
     this.videoProfile,
     required this.organization,
     required this.since,
@@ -41,6 +42,7 @@ class PersonalDetailsModel {
   String? gender;
   String? bloodGroup;
   String? isPhysicalChal;
+  String? isPhysicaldet;
   dynamic videoProfile;
   String? organization;
   String? since;
@@ -60,6 +62,7 @@ class PersonalDetailsModel {
     String? gender,
     String? bloodGroup,
     String? isPhysicalChal,
+    String? isPhysicaldet,
     dynamic videoProfile,
     String? organization,
     String? since,
@@ -79,6 +82,7 @@ class PersonalDetailsModel {
         gender: gender ?? this.gender,
         bloodGroup: bloodGroup ?? this.bloodGroup,
         isPhysicalChal: isPhysicalChal ?? this.isPhysicalChal,
+        isPhysicaldet: isPhysicaldet ?? this.isPhysicaldet,
         videoProfile: videoProfile ?? this.videoProfile,
         organization: organization ?? this.organization,
         since: since ?? this.since,
@@ -100,6 +104,7 @@ class PersonalDetailsModel {
         gender: json["gender"],
         bloodGroup: json["blood_group"],
         isPhysicalChal: json["is_physical_chal"],
+        isPhysicaldet: json["physical_detail"],
         videoProfile: json["video_profile"],
         organization: json["organization"],
         since: json["since"],
@@ -120,6 +125,7 @@ class PersonalDetailsModel {
     "gender": gender,
     "blood_group": bloodGroup,
     "is_physical_chal": isPhysicalChal,
+    "physical_detail": isPhysicaldet,
     "video_profile": videoProfile,
     "organization": organization,
     "since": since,

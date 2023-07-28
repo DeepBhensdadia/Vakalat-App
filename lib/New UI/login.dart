@@ -1,7 +1,14 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vakalat_flutter/color/customcolor.dart';
+import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/model/clsLoginResponseModel.dart';
 import 'package:vakalat_flutter/pages/dashboard.dart';
 import 'package:vakalat_flutter/pages/forgotpassword.dart';
@@ -15,6 +22,8 @@ import 'package:vakalat_flutter/api/postapi.dart';
 
 import '../Sharedpref/shared_pref.dart';
 import '../utils/constant.dart';
+import '../utils/design.dart';
+import 'Dashboard_screens/Dashboard_Screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.title}) : super(key: key);
@@ -39,7 +48,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
 
   bool _isLoading = false;
 
-  bool isUserSignedIn = false;
+  bool isUserSignedIn = true;
   final bool _isbuttonClicked = false;
 
   TextEditingController emailController = TextEditingController();
@@ -49,7 +58,8 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
   String strPassword = '';
 
   bool _passwordVisible = false;
-
+  String? username = SharedPref.get(prefKey: PrefKey.username) ?? "";
+  String? password = SharedPref.get(prefKey: PrefKey.password) ?? "";
   @override
   void initState() {
     _passwordVisible = false;
@@ -57,12 +67,14 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
     edtPassword = FocusNode();
     edtEmail!.unfocus();
     edtPassword!.unfocus();
-
+   remember = SharedPref.get(prefKey: PrefKey.passbool) == "true" ?  true : false;
     // Local
-    emailController.text = "meghalshukla";
-    passwordController.text = "test@1234";
+    emailController.text = username ?? "";
+    passwordController.text = password ?? "";
+    // emailController.text = "9265376681";
+    // passwordController.text = "123456";
     // emailController.text = "Deep_patel";
-    // passwordController.text = "9328143230";
+    // passwordController.text ="123456";
 
     // Production
     // emailController.text = "";
@@ -104,6 +116,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
     );
   }
 
+  bool remember = true;
   @override
   Widget build(BuildContext context) {
     PageOrientation().setOrientationPortrait();
@@ -165,7 +178,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
                           focusNode: edtEmail,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'username',
+                            labelText: 'Username',
                             // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
                           ),
                           onSaved: (newValue) {
@@ -177,7 +190,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter username / email';
+                              return 'Please Enter username';
                             }
                             return null;
                           },
@@ -198,7 +211,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
                           },
                           decoration: InputDecoration(
                             border: const OutlineInputBorder(),
-                            labelText: 'password',
+                            labelText: 'Password',
                             // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -209,7 +222,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
                                 color: Theme.of(context).primaryColorDark,
                               ),
                               onPressed: () {
-                                // Update the state i.e. toogle the state of passwordVisible variable
+
                                 setState(() {
                                   _passwordVisible = !_passwordVisible;
                                 });
@@ -224,17 +237,47 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
                           },
                         ),
                       ),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: remember,
+                            onChanged: (value) {
+                              setState(() {
+                                remember = !remember;
+                                SharedPref.save(value: remember.toString(), prefKey: PrefKey.passbool);
+                              });
+                            },
+                          ),
+                          Text(
+                            'Remember Me ?',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
                       Container(
                         padding: const EdgeInsets.all(5),
                         alignment: Alignment.centerRight,
-                        child: TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: CustomColor().colorPrimary,
-                            ),
-                            onPressed: () {
-                              gotoForgotPasswordPage();
-                            },
-                            child: const Text('Forgot Password?')),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: CustomColor().colorPrimary,
+                                ),
+                                onPressed: () {
+                                  Get.off(DashboardPage(title: ""));
+                                },
+                                child: const Text('Go to Home')),
+                            TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: CustomColor().colorPrimary,
+                                ),
+                                onPressed: () {
+                                  gotoForgotPasswordPage();
+                                },
+                                child: const Text('Forgot Password?')),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -290,6 +333,15 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
                       child: const Text("Register"),
                     )
                   ],
+                ),
+                SizedBox(
+                  height: screenheight(context, dividedby: 25),
+                ),
+                Button_For_Update_Save(
+                  text: "Please visit vakalatHouse.com also!!",
+                  onpressed: () {
+                    launch("https://vakalathouse.com");
+                  },
                 )
               ],
             ),
@@ -329,7 +381,8 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
   /*Calling Login API goes here*/
   Future APICALL_userLogin() async {
     EasyLoading.show(status: 'loading...');
-
+    await SharedPref.deleteSpecific(prefKey: PrefKey.username);
+    await SharedPref.deleteSpecific(prefKey: PrefKey.password);
     try {
       /*Retriving Parent Object*/
 
@@ -359,28 +412,37 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
         await SharedPref.save(
             value: jsonEncode(userResponseModel.toJson()),
             prefKey: PrefKey.loginDetails);
-        gotoHomePage();
+        if (remember == true) {
+          await SharedPref.save(
+              value: emailController.text, prefKey: PrefKey.username);
+          await SharedPref.save(
+              value: passwordController.text, prefKey: PrefKey.password);
+        }
 
-        // Map<String, dynamic> parameters = {
-        //   "apiKey": apikey,
-        //   'device': '2',
-        //   "user_id":userResponseModel.userData.userId
-        // };
-        // EasyLoading.show(status: 'loading...');
-        // await get_profile(body: parameters).then((value) async {
-        //   await SharedPref.save(
-        //       value: jsonEncode(value.toJson()),
-        //       prefKey: PrefKey.get_profile);
-        //   setState(() {
-        //
-        //     print(jsonEncode(value));
-        //     gotoHomePage();
-        //   });
-        //   EasyLoading.dismiss();
-        // }).onError((error, stackTrace) {
-        //   print(error);
-        //   EasyLoading.dismiss();
-        // });
+        Map<String, dynamic> parameters = {
+          "apiKey": apikey,
+          'device': '2',
+          'accessToken': userResponseModel.accessToken,
+          'csrf_token': '',
+          'user_id': userResponseModel.userData.userId,
+          'user_type': userResponseModel.userData.userType,
+          'current_pkg_id': userResponseModel.userData.currentPkgId,
+        };
+        EasyLoading.show(status: 'loading...');
+        await getdrawermenu(body: parameters).then((value) async {
+          await SharedPref.save(
+              value: jsonEncode(value.toJson()), prefKey: PrefKey.getMenu);
+
+          EasyLoading.dismiss();
+        }).onError((error, stackTrace) {
+          ToastMessage().showmessage(error.toString());
+          print(error);
+          print(stackTrace);
+          EasyLoading.dismiss();
+        });
+        userResponseModel.userData.currentPkgId == "0"
+            ? Get.off(() => DashboardPage(title: ""))
+            : getdashboard(userResponseModel);
       } else {
         setState(() {
           _isLoading = false;
@@ -398,5 +460,37 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
 
       ToastMessage().showmessage('Enter valid Username and Password!');
     }
+  }
+
+  getdashboard(logindetails) async {
+    Map<String, dynamic> parameters = {
+      "apiKey": apikey,
+      'device': '2',
+      "accessToken": logindetails.accessToken,
+      "user_id": logindetails.userData.userId,
+      "csrf_token": ""
+    };
+    EasyLoading.show(status: 'loading...');
+    await get_Deshboard(body: parameters).then((value) {
+      EasyLoading.dismiss();
+
+      log(value.toString());
+      Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => DashBoard_Screen(data: value),
+          ));
+    }).onError((error, stackTrace) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashboardPage(title: ''),
+          ));
+      msgexpire;
+      Const().deleteprofilelofinandmenu();
+      print(error);
+      // ToastMessage().showmessage(error.toString());
+      EasyLoading.dismiss();
+    });
   }
 }

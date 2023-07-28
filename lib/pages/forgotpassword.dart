@@ -103,6 +103,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                     validator: (value) {
                       if(value!.isEmpty){
                         return 'Please Enter Mobile Number';
+                      }else if(value.length < 10){
+                        return 'Please Enter Valid Mobile Number';
                       }
                       return null;
                     },
@@ -168,10 +170,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
         setState(() {
           _isLoading = false;
         });
-
+EasyLoading.dismiss();
         ToastMessage().showmessage(userResponseModel.message);
       }
     } catch (exception) {
+      EasyLoading.dismiss();
+
       setState(
             () {
           _isLoading = false;

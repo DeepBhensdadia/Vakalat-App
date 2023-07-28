@@ -5,7 +5,7 @@ import 'package:vakalat_flutter/color/customcolor.dart';
 import 'package:vakalat_flutter/utils/ToastMessage.dart';
 
 class InternetPanel {
-  Widget show({VoidCallback? callback, bool? isServerError}) {
+  Widget show({void Function()? callback, bool? isServerError}) {
     return Align(
       alignment: Alignment.center,
       child: Column(

@@ -85,7 +85,7 @@ class _LawyerDetailPageState extends State<LawyerDetailPage>
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
-            "",
+            "Lawyer Detail",
             style: TextStyle(
               color: Colors.white,
             ),

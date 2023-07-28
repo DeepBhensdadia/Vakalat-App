@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:vakalat_flutter/New%20UI/handler_search/payment.dart';
 import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/utils/design.dart';
@@ -14,10 +16,13 @@ import '../../Sharedpref/shared_pref.dart';
 import '../../api/postapi.dart';
 import '../../color/customcolor.dart';
 import '../../model/GetPackageModel.dart';
+import '../../model/Get_Profile.dart';
 import '../../model/clsLoginResponseModel.dart';
 import '../../model/getdiscountModel.dart';
 import '../../utils/ToastMessage.dart';
 import '../../utils/constant.dart';
+import '../My Account/Profile/getxcontroller.dart';
+import 'handler_search.dart';
 
 class Cart_Screen extends StatefulWidget {
   final String name;
@@ -34,11 +39,17 @@ class _Cart_ScreenState extends State<Cart_Screen> {
   int indexs = 0;
   ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
       SharedPref.get(prefKey: PrefKey.loginDetails)!);
+  GetProfileModel getprofile =
+      getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.getProfile)!);
+
+  final ProfileControl getxController = Get.put(ProfileControl());
+
   @override
   void initState() {
     // TODO: implement initState
-
-    _selectedpackage = widget.packages.packages.first.packageId;
+    if (widget.packages.packages.first.packageId.isNotEmpty) {
+      _selectedpackage = widget.packages.packages.first.packageId;
+    }
 
     super.initState();
   }
@@ -50,7 +61,7 @@ class _Cart_ScreenState extends State<Cart_Screen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Handler Search',
+          'Subscribe',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -68,22 +79,62 @@ class _Cart_ScreenState extends State<Cart_Screen> {
               const SizedBox(
                 height: 30,
               ),
-              const Text(
-                'Your web page can be',
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                'www.vakalat.com/${widget.name}',
-                style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Select a name for your web page',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'www.vakalat.com/${widget.name}',
+                        style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  MaterialButton(
+                    color: CustomColor().colorPrimary,
+                      onPressed: () async {
+                        Map<String, dynamic> parameters = {
+                          "apiKey": apikey,
+                          'device': '2',
+                          "city_id": getprofile.profile.cityId,
+                          "first_name": getprofile.profile.firstName,
+                          "last_name": getprofile.profile.lastName,
+                          "customname": getprofile.profile.firstName +
+                              getprofile.profile.lastName
+                        };
+EasyLoading.show(status: 'Loading...' );
+                        await get_handler_list(body: parameters).then((value) {
+                          print(jsonEncode(value));
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Handler_Search(
+                                    value: value,
+                                    name: getprofile.profile.firstName +
+                                        getprofile.profile.lastName),
+                              ));
+                          EasyLoading.dismiss();
+                        }).onError((error, stackTrace) {
+                          EasyLoading.dismiss();
+                        });
+                      },
+                      child: Text('Change',style: TextStyle(fontSize: 16,color: Colors.white),))
+                ],
               ),
               Padding(
                 padding:
@@ -195,8 +246,6 @@ class _Cart_ScreenState extends State<Cart_Screen> {
                   ),
                 ),
               ),
-
-
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0),
                 child: Text(
@@ -224,7 +273,6 @@ class _Cart_ScreenState extends State<Cart_Screen> {
                   ),
                 ],
               ),
-
               const Divider(
                 thickness: 1,
               ),
@@ -236,7 +284,7 @@ class _Cart_ScreenState extends State<Cart_Screen> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   Text(
-                   '₹ ${widget.packages.packages[indexs].packagePrice}',
+                    '₹ ${widget.packages.packages[indexs].packagePrice}',
                     style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -248,7 +296,7 @@ class _Cart_ScreenState extends State<Cart_Screen> {
                 height: 20,
               ),
               Button_For_Update_Save(
-                  text: 'Add to cart',
+                  text: 'Continue',
                   onpressed: () async {
                     EasyLoading.show(status: "Loading...");
                     Map<String, dynamic> parameters = {
@@ -260,21 +308,11 @@ class _Cart_ScreenState extends State<Cart_Screen> {
                       "handler_name": widget.name,
                       "package_id": _selectedpackage
                     };
-                    await addtocart(body: parameters).then((value) {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => Payment_Screen(
-                              name: widget.name,
-                              packages:widget.packages.packages[indexs],
+                    await addtocart(body: parameters).then((value) async {
+                      if (value.status == 1) {
+                        getxController.viewcartfor1(context);
+                      }
 
-                            ),
-                          ));
-
-                      // packages = value;
-                      // setState(() {
-                      //   show = true;
-                      // });
                       ToastMessage().showmessage(value.message);
                       EasyLoading.dismiss();
                       log(jsonEncode(value));

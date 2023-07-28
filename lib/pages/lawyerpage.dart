@@ -80,7 +80,7 @@ class _LawyerPageState extends State<LawyerPage> {
 
     _controller = ScrollController()..addListener(_loadMore);
 
-    txtSearchController.addListener(onSearchTextChanged);
+    // txtSearchController.addListener(onSearchTextChanged);
     txtSearchController_City.addListener(onSearchTextChanged_City);
 
     arrLawyers.clear();
@@ -134,7 +134,18 @@ class _LawyerPageState extends State<LawyerPage> {
                 controller: txtSearchController,
                 decoration: const InputDecoration(
                     hintText: 'Search', border: InputBorder.none),
-                // onChanged: onSearchTextChanged,
+                onChanged: (value) {
+                  arrFilterList.clear();
+                  setState(() {
+                    strSearchText = value;
+                    // ++ 10 jun 2023 - deep - multiple replicate issue resolved
+                    _hasNextPage = false;
+                    _isFirstLoadRunning = true;
+                    _isLoadMoreRunning = false;
+                    offset = 0;
+                    loadData(false);
+                  });
+                },
               ),
               trailing: strSearchText.isEmpty
                   ? null
@@ -1183,6 +1194,8 @@ class _LawyerPageState extends State<LawyerPage> {
   }
 
   Future APICALL_getLawyer(bool showLoader) async {
+    arrFilterList.clear();
+
     String strCategory_ids = "";
     for (clsCategory obj in arrCategory_selected) {
       String strID = "${obj.cat_id!},";
@@ -1252,15 +1265,17 @@ class _LawyerPageState extends State<LawyerPage> {
 
   void onSearchTextChanged() {
     print(txtSearchController.text);
+    arrFilterList.clear();
     setState(() {
-      arrLawyers.clear();
       strSearchText = txtSearchController.text;
+      // ++ 10 jun 2023 - deep - multiple replicate issue resolved
+      _hasNextPage = false;
+      _isFirstLoadRunning = true;
+      _isLoadMoreRunning = false;
+      offset = 0;
+      loadData(false);
     });
-    _hasNextPage = false;
-    _isFirstLoadRunning = true;
-    _isLoadMoreRunning = false;
-    offset = 0;
-    loadData(false);
+
   }
 
   void onSearchTextChanged_City() {

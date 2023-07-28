@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:vakalat_flutter/pages/dashboard.dart';
 import 'package:vakalat_flutter/New%20UI/login.dart';
 import 'package:vakalat_flutter/utils/fcm.dart';
@@ -130,7 +131,7 @@ class MyAppState extends State<MyApp> {
       ]);
 
       return ScreenUtilInit(
-        builder: (contex,child) => MaterialApp(
+        builder: (contex,child) => GetMaterialApp(
           builder: EasyLoading.init(),
           title: Const().appName.toString(),
           debugShowCheckedModeBanner: false,

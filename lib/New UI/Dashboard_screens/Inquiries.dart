@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/model/GetDashboard.dart';
+
+import '../../color/customcolor.dart';
 
 class Latest_Inquiries extends StatefulWidget {
   final Getdashboard value;
@@ -17,89 +20,94 @@ class _Latest_InquiriesState extends State<Latest_Inquiries> {
   Widget build(BuildContext context) {
 
     return widget.value.data.inquiries.isNotEmpty ? ListView.builder(
-      itemCount: 10,
+      itemCount: widget.value.data.inquiries.length,
       itemBuilder: (context, index) {
-        Case latestcase = widget.value.data.cases[index];
-        final formattedDate = DateFormat('yyyy-MM-dd').format(widget.value.data.cases[index].caseHearingDate);
+        Inquiry inq = widget.value.data.inquiries[index];
 
+        DateTime myDate =
+        DateTime.parse(widget.value.data.inquiries[index].createdDatetime);
+        String formatedate = DateFormat('dd/MM/yyyy').format(myDate);
         return Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          padding: const EdgeInsets.only(left: 12,right: 12,top: 12),
           child: Card(
             margin: EdgeInsets.zero,
-            child: SizedBox(
-              // height: 80,
+            elevation: 3,
+            child: Container(
+              // height: 200,
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    text('Subject : ',
+                      inq.subject),
+                    SizedBox(height: 5,),
+                    text('message : ',
+                      inq.message),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: screenwidth(context,dividedby: 1.8),
-
+                        const SizedBox(
+                          width: 100,
                           child: Text(
-                            '${latestcase.caseDetailsId}  ${latestcase.caseTitle}',
-                            style: const TextStyle(
-                                overflow: TextOverflow.ellipsis,
-                                color: Colors.blue,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
+                            'User Details : ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
-                        SizedBox(height: 10,),
-                        Row(
-                          children:  [
-                            Icon(
-                              Icons.call,
-                              size: 13,
+                        Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${inq.firstName} ${inq.lastName}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: Colors.black54),
                             ),
-                            SizedBox(
-                              width: 5,
+                            const SizedBox(
+                              height: 3,
                             ),
-                            Text('${latestcase.firstName} ${latestcase.lastName} - ${latestcase.mobile}',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black54)),
+                            Text(
+                              inq.email,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: Colors.black54),
+                            ), const SizedBox(
+                              height: 3,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                launch('tel:${inq.contactNo}');
+                              },
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 3.0),
+                                    child: Text(
+                                      inq.contactNo,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: Colors.black54),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
-                        )
+                        ),
                       ],
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          color: Colors.yellow,
-                          child: const Padding(
-                            padding: EdgeInsets.all(2.0),
-                            child: Text(
-                              'in process',
-                              style:
-                              TextStyle(fontSize: 12, color: Colors.green),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10,),
-                        Row(
-                          children:  [
-                            Icon(
-                              FontAwesomeIcons.calendar,
-                              size: 14,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(formattedDate.toString(),
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500)),
-                          ],
-                        )
-                      ],
-                    )
+                    const SizedBox(height: 5,),
+                    text('Date of Inquiry : ',
+                        formatedate),
                   ],
                 ),
               ),
@@ -107,6 +115,57 @@ class _Latest_InquiriesState extends State<Latest_Inquiries> {
           ),
         );
       },
-    ) : Center(child: Text('No Data'),);
+    ) : Container(
+      alignment: Alignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        verticalDirection: VerticalDirection.down,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Card(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              elevation: 4,
+              child:
+              Image.asset('assets/images/nodata_search.png')),
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text(
+              "No data found.",
+              style: TextStyle(
+                  color: CustomColor().colorPrimary,
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
   }
+
+        text(String text, String answer) {
+      return Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          Text(
+            answer,
+            style: const TextStyle(
+                fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black54),
+          ),
+        ],
+      );
+    }
 }

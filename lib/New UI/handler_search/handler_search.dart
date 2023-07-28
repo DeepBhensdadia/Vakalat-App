@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:easy_rich_text/easy_rich_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:vakalat_flutter/helper.dart';
+import 'package:vakalat_flutter/utils/ToastMessage.dart';
 
 import '../../Sharedpref/shared_pref.dart';
 import '../../api/postapi.dart';
@@ -15,6 +18,7 @@ import '../../model/clsCitiesResponseModel.dart';
 import '../../model/clsLoginResponseModel.dart';
 import '../../utils/constant.dart';
 import '../../utils/design.dart';
+import 'Cart.dart';
 import 'Handler_serach_list.dart';
 
 class Handler_Search extends StatefulWidget {
@@ -32,7 +36,7 @@ class _Handler_SearchState extends State<Handler_Search> {
   ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
       SharedPref.get(prefKey: PrefKey.loginDetails)!);
   GetProfileModel getprofile =
-      getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.get_profile)!);
+      getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.getProfile)!);
 
 
 
@@ -94,7 +98,7 @@ class _Handler_SearchState extends State<Handler_Search> {
                         "last_name": getprofile.profile.lastName,
                         "customname": customName.text
                       };
-                      EasyLoading.show(status: 'loading...');
+                      EasyLoading.show(status: 'Loading...');
                       await get_handler_list(body: parameters)
                           .then((value) {
                         print(jsonEncode(value));
@@ -236,7 +240,38 @@ class _Handler_SearchState extends State<Handler_Search> {
                   padding: const EdgeInsets.symmetric(horizontal: 70.0),
                   child: Text('Book Now'),
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  EasyLoading.show(status: "Loading...");
+                  Map<String, dynamic> parameters = {
+                    "apiKey": apikey,
+                    'device': '2',
+                    "user_type_id":
+                    logindetails.userData.userType,
+                  };
+                  await GetUserpackages(body: parameters)
+                      .then((value) {
+                   if(value.packages.isNotEmpty){
+                     Navigator.push(
+                         context,
+                         CupertinoPageRoute(
+                           builder: (context) => Cart_Screen(
+                               name: slected_handler,
+                               packages: value),
+                         ));
+                   }else{
+                     ToastMessage().showmessage('Do Not Have Any Packages');
+                   }
+
+                    // packages = value;
+                    // setState(() {
+                    //   show = true;
+                    // });
+                    EasyLoading.dismiss();
+                    log(jsonEncode(value));
+                  }).onError((error, stackTrace) {
+                    EasyLoading.dismiss();
+                  });
+                },
               ),
             )
           ],

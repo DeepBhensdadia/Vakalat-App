@@ -37,6 +37,20 @@ class GetAllCategory {
 
     return temp;
   }
+  
+  List<String> getCategoryFromID(List<String> value) {
+    List<String> temp = <String>[];
+
+    for (String single in value) {
+      getAllCategory().forEach((element) {
+        if (element.id == single) {
+          temp.add(element.name);
+        }
+      });
+    }
+
+    return temp;
+  }
 
   Map<String, dynamic> toJson() => {
         "status": status,

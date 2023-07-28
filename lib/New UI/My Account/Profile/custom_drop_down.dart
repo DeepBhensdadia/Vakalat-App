@@ -23,25 +23,36 @@ class CustomSelection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: TextInputType.none,
-        onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Dialog(
-                items: items,
-                selected: selected,
-                onChanged: onChanged,
-                onDone: onDone,
-              ),
-            )),
-        decoration: const InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-          border: OutlineInputBorder(),
-          labelText: "Please Select category",
-          // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Select Category",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+          SizedBox(height: 8,),
+          TextFormField(
+            textAlign: TextAlign.start,
+            maxLines: 6,
+            controller: controller,
+            keyboardType: TextInputType.none,
+
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Dialog(
+                    items: items,
+                    selected: selected,
+                    onChanged: onChanged,
+                    onDone: onDone,
+                  ),
+                )),
+            decoration: const InputDecoration(
+              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              border: OutlineInputBorder(),
+              alignLabelWithHint: true,
+          hintText: "Please Select category",
+              // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
+            ),
+          ),
+        ],
       ),
     );
     // return ListTile(

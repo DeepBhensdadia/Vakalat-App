@@ -2,18 +2,25 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../../Sharedpref/shared_pref.dart';
 import '../../../api/postapi.dart';
 import '../../../color/customcolor.dart';
+import '../../../helper.dart';
 import '../../../model/Get_Profile.dart';
 import '../../../model/clsLoginResponseModel.dart';
 import '../../../utils/constant.dart';
+import '../../../utils/design.dart';
 import 'Contact_Details.dart';
 import 'Personal_Detail.dart';
 import 'Professional_Detail.dart';
 import 'Social_Media.dart';
 import 'change_password.dart';
+import 'getxcontroller.dart';
+import 'knownlanguage.dart';
 import 'portfolio_screen.dart';
 
 class Profile_Tabs extends StatefulWidget {
@@ -25,44 +32,34 @@ class Profile_Tabs extends StatefulWidget {
 
 class _MyTabbedPageState extends State<Profile_Tabs>
     with SingleTickerProviderStateMixin {
-  bool show = false;
+  bool show = true;
   ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(
       SharedPref.get(prefKey: PrefKey.loginDetails)!);
-  void countrypostapi() async {
-    Map<String, dynamic> parameters = {
-      "apiKey": apikey,
-      'device': '2',
-      "user_id": logindetails.userData.userId
-    };
-    EasyLoading.show(status: 'loading...');
-    await get_profile(body: parameters).then((value) async {
-      await SharedPref.deleteSpecific(prefKey: PrefKey.get_profile);
-      await SharedPref.save(
-          value: jsonEncode(value.toJson()),
-          prefKey: PrefKey.get_profile);
-      setState(() {
+  final ProfileControl getxController = Get.put(ProfileControl());
 
-        detail = value;
-        show = true;
-        print(jsonEncode(value));
-      });
-      EasyLoading.dismiss();
-    }).onError((error, stackTrace) {
-      print(error);
-      EasyLoading.dismiss();
-    });
-  }
-
-  late GetProfileModel detail;
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    countrypostapi();
+    getxController.countryp();
+    getxController.stateApi(value: getxController.detail.profile.countryId);
+    getxController.stateApi_office(value: getxController.detail.profile.officeCountryId);
+    getxController.cityApi(value: getxController.detail.profile.stateId  );
+    getxController.cityApi_office(value: getxController.detail.profile.officeStateId);
+    getxController.bar_council();
+    getxController.bar_associasion();
+    getxController.categorypostapi();
+    getxController.languages();
+    getxController.get_doc_type();
+
+    // countrypostapi();
+    // countrypost();
     _tabController =
         TabController(length: tabs.length, vsync: this, initialIndex: 0);
   }
+  TextEditingController subject = TextEditingController();
+  TextEditingController details = TextEditingController();
 
   @override
   void dispose() {
@@ -76,8 +73,10 @@ class _MyTabbedPageState extends State<Profile_Tabs>
     const Tab(child: Text("Social Media Profile")),
     const Tab(child: Text("Professional Detail")),
     const Tab(child: Text("Professional Portfolio")),
+    const Tab(child: Text("Known Language")),
     const Tab(child: Text("Change Password")),
   ];
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -96,6 +95,54 @@ class _MyTabbedPageState extends State<Profile_Tabs>
           centerTitle: true,
           backgroundColor: CustomColor().colorPrimary,
           elevation: 0,
+          actions: [TextButton(onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                  title: Container(
+                    height: screenheight(context, dividedby: 2),
+                    width: double.maxFinite,
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(textAlign: TextAlign.center,"Send Your Query To\nVakalat.com",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),),
+                            SizedBox(height: 10,),
+                            CustomTextfield(
+                              maxline: 2,
+                              labelname: 'Subject',
+                              Controller: subject,
+                              validator: (p0) {
+                                if (p0!.isEmpty) {
+                                  return 'Enter Subject';
+                                }
+                                return null;
+                              },
+                            ),
+                            CustomTextfield(
+                              maxline: 8,
+                              labelname: 'Details',
+                              Controller: details,
+                              validator: (p0) {
+                                if (p0!.isEmpty) {
+                                  return ' Enter Details ';
+                                }
+                                return null;
+                              },
+                            ),
+                            Button_For_Update_Save(text: "Send Email", onpressed: ()  {
+                              if(_formKey.currentState!.validate())
+                              sendEmail(subject.text, details.text);
+                            },)
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
+            );
+          }, child: Text('Help',style: TextStyle(color: Colors.white,fontSize: 18),))],
         ),
         body: show == true
             ? Column(
@@ -120,11 +167,12 @@ class _MyTabbedPageState extends State<Profile_Tabs>
                       child: TabBarView(
                         controller: _tabController,
                         children: [
-                          Personal_Detail(detail: detail),
-                          Contact_Details(detail: detail),
-                          Social_Media(detail: detail),
-                           Professional_Detail(detail : detail),
-                           Portfolio_screen(detail: detail),
+                          Personal_Detail(detail: getxController.detail),
+                          Contact_Details(detail: getxController.detail),
+                          Social_Media(detail: getxController.detail),
+                           Professional_Detail(detail : getxController.detail),
+                          Portfolio_screen(detail: getxController.detail),
+                          KnownLanguage(detail: getxController.detail),
                           const Change_Password(),
                         ],
                       ),
@@ -135,5 +183,20 @@ class _MyTabbedPageState extends State<Profile_Tabs>
             : const SizedBox(),
       ),
     );
+  }
+  void sendEmail(String subject, String details) async {
+    final Email email = Email(
+      body:'Name: ${getxController.detail.profile.firstName} ${getxController.detail.profile.lastName}\n\n$details ',
+      subject: subject,
+      recipients: ['info@vakalat.com'],
+    );
+
+    try {
+      await FlutterEmailSender.send(email);
+      // Email sent successfully
+    } catch (error) {
+      // Handle the error
+      print('Error sending email: $error');
+    }
   }
 }

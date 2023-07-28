@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/model/getAchivements.dart';
 
@@ -26,6 +27,7 @@ class subscrption_screen extends StatefulWidget {
 }
 
 class _subscrption_screenState extends State<subscrption_screen> {
+  String expirydate ='';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,12 +37,42 @@ class _subscrption_screenState extends State<subscrption_screen> {
         backgroundColor: CustomColor().colorPrimary,
         elevation: 0,
       ),
-      body: ListView.builder(
+      body: widget.data.subscriptions.length == 0 ?Container(
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          verticalDirection: VerticalDirection.down,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Card(
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                elevation: 4,
+                child:
+                Image.asset('assets/images/nodata_search.png')),
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Text(
+                "No data found.",
+                style: TextStyle(
+                    color: CustomColor().colorPrimary,
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ):ListView.builder(
         itemCount: widget.data.subscriptions.length,
         itemBuilder: (context, index) {
+
           final Subscription subscription =
           widget.data.subscriptions[index];
-
+expirydate = DateFormat('dd/MM/yyyy').format(subscription.expireDate);
           return Padding(
             padding:
             const EdgeInsets.only(left: 10.0, right: 10, top: 12),
@@ -72,15 +104,15 @@ class _subscrption_screenState extends State<subscrption_screen> {
                           context),
                       Const().Textinscreen2(
                           'GST',
-                         subscription.packagePrice,
+                         "0",
                           context),
                       Const().Textinscreen2(
                           'Payment Mode',
-                          subscription.rpPaymentType,
+                          subscription.paymentStatus,
                           context),
                       Const().Textinscreen2(
                           'Expire date',
-                          subscription.expireDate.toString(),
+                          expirydate,
                           context),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 3),

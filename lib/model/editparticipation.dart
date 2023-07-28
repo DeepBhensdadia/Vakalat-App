@@ -78,7 +78,7 @@ class EditParticipationModel {
     csrfToken: json["csrf_token"],
     participationId: json["participation_id"],
     coverPic: json["cover_pic"],
-    otherImages: json["other_images"],
+    otherImages: json["other_images[]"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -93,17 +93,24 @@ class EditParticipationModel {
     "csrf_token": csrfToken,
     "participation_id": participationId,
     "cover_pic": coverPic,
-    "other_images": otherImages,
+    "other_images[]": otherImages,
   };
   Future<FormData> toFormData() async {
     MultipartFile? coverimage;
-    MultipartFile? otherimage;
+    List<MultipartFile>? otherimage;
     if (coverPic != null) {
       coverimage = await MultipartFile.fromFile(coverPic.toString());
     }
     if (otherImages != null) {
-      otherimage = await MultipartFile.fromFile(otherImages.toString());
+      List<MultipartFile> data = <MultipartFile>[];
+
+      for (String sin in otherImages) {
+        data.add(await MultipartFile.fromFile(sin.toString()));
+      }
+
+      otherimage = data;
     }
-    return FormData.fromMap(copyWith(coverPic: coverimage,otherImages: otherimage).toJson());
+    return FormData.fromMap(
+        copyWith(coverPic: coverimage, otherImages: otherimage).toJson());
   }
 }

@@ -1,10 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vakalat_flutter/Sharedpref/shared_pref.dart';
 import 'package:vakalat_flutter/model/GetDashboard.dart';
 import 'package:vakalat_flutter/model/Get_Profile.dart';
 
+import '../../api/postapi.dart';
 import '../../color/customcolor.dart';
+import '../../model/clsLoginResponseModel.dart';
+import '../../pages/dashboard.dart';
+import '../../utils/constant.dart';
 import '../Drawer/Drawer_screen.dart';
 import 'Inquiries.dart';
 import 'Jobs/Jobs_Main.dart';
@@ -22,9 +29,55 @@ class DashBoard_Screen extends StatefulWidget {
 
 class _DashBoard_ScreenState extends State<DashBoard_Screen> with SingleTickerProviderStateMixin{
   late TabController _tabController;
-  GetProfileModel getprofile = getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.get_profile)!);
+  // GetProfileModel getprofile = getProfileModelFromJson(SharedPref.get(prefKey: PrefKey.getProfile)!);
+  ClsLoginResponseModel? loginDetails = SharedPref.get(prefKey: PrefKey.loginDetails) != null
+      ? clsLoginResponseModelFromJson(SharedPref.get(prefKey: PrefKey.loginDetails)!)
+      : null;
+  Future<void> get_services() async {
+    Map<String, dynamic> parameters = {
+      "apiKey": apikey,
+      'device': '2',
+      "accessToken": loginDetails!.accessToken,
+      "user_id": loginDetails!.userData.userId,
+      "offset": "0",
+    };
+    EasyLoading.show(status: 'Loading...');
+    await Get_Services(body: parameters).then((value) {
+
+      EasyLoading.dismiss();
+    }).onError((error, stackTrace) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardPage(title: ''),));
+      msgexpire;
+      Const().deleteprofilelofinandmenu();
+      EasyLoading.dismiss();
+    });
+  }
+  get_profile_forsave() async {
+    if(loginDetails!.userData.userId.isNotEmpty){
+      get_services();
+      Map<String, dynamic> parameters = {
+        "apiKey": apikey,
+        'device': '2',
+        "user_id":loginDetails!.userData.userId
+      };
+      EasyLoading.show(status: 'Loading...');
+      await get_profile(body: parameters).then((value) async {
+        await SharedPref.save(
+            value: jsonEncode(value.toJson()),
+            prefKey: PrefKey.getProfile);
+        EasyLoading.dismiss();
+      }).onError((error, stackTrace) {
+        // ToastMessage().showmessage(error.toString());
+        print(error);
+        EasyLoading.dismiss();
+      });
+    }
+  }
+
+
   @override
   void initState() {
+    get_profile_forsave();
     super.initState();
     _tabController = TabController(length: tabs.length, vsync: this,initialIndex: 0);
   }

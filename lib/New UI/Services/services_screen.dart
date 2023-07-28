@@ -37,7 +37,7 @@ class _Services_screenState extends State<Services_screen> {
       "user_id": logindetails.userData.userId,
       "offset": "0",
     };
-    EasyLoading.show(status: 'loading...');
+    EasyLoading.show(status: 'Loading...');
     await Get_Services(body: parameters).then((value) {
       setState(() {
         services = value;
@@ -82,7 +82,36 @@ class _Services_screenState extends State<Services_screen> {
           },
           child: const Icon(Icons.add)),
       body: show == true
-          ? ListView.builder(
+          ?services.services.isEmpty?Container(
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          verticalDirection: VerticalDirection.down,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Card(
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                elevation: 4,
+                child:
+                Image.asset('assets/images/nodata_search.png')),
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Text(
+                "No data found.",
+                style: TextStyle(
+                    color: CustomColor().colorPrimary,
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ): ListView.builder(
               itemCount: services.services.length,
               itemBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.only(

@@ -35,7 +35,7 @@ class _Add_Client_ManagementState extends State<Add_Client_Management> {
       "apiKey": apikey,
       'device': '2',
     };
-    EasyLoading.show(status: 'loading...');
+    EasyLoading.show(status: 'Loading...');
     await userCountries(body: parameters).then((value) {
       setState(() {
         getcountries = value;
@@ -48,7 +48,7 @@ class _Add_Client_ManagementState extends State<Add_Client_Management> {
   }
 
   void stateApi({String? value = ''}) async {
-    EasyLoading.show(status: 'loading...');
+    EasyLoading.show(status: 'Loading...');
 
     Map<String, dynamic> parameters = {
       "apiKey": apikey,
@@ -65,7 +65,7 @@ class _Add_Client_ManagementState extends State<Add_Client_Management> {
   }
 
   void cityApi({String? value = ''}) async {
-    EasyLoading.show(status: 'loading...');
+    EasyLoading.show(status: 'Loading...');
 
     Map<String, dynamic> parameters = {
       "apiKey": apikey,
@@ -207,9 +207,10 @@ class _Add_Client_ManagementState extends State<Add_Client_Management> {
                       ],
                     ),
                   ),
-            Button_For_Update_Save(text: 'Save', onpressed: () {
-              
-            },)
+            Button_For_Update_Save(
+              text: 'Update',
+              onpressed: () {},
+            )
           ],
         ),
       ),

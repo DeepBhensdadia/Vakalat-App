@@ -3,19 +3,26 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:vakalat_flutter/New%20UI/login.dart';
 import 'package:vakalat_flutter/color/customcolor.dart';
 import 'package:vakalat_flutter/model/clsCategory.dart';
 import 'package:vakalat_flutter/pages/collegespage.dart';
 import 'package:vakalat_flutter/pages/jobspage.dart';
 import 'package:vakalat_flutter/pages/profilepage.dart';
+import 'package:vakalat_flutter/utils/ToastMessage.dart';
 import 'package:vakalat_flutter/utils/keyboardHiderMixin.dart';
 
 import '../New UI/Drawer/Drawer_screen.dart';
 import '../New UI/Drawer/without_login_drawer.dart';
+import '../New UI/My Account/Profile/getxcontroller.dart';
 import '../Sharedpref/shared_pref.dart';
 import '../api/postapi.dart';
+import '../model/Get_Profile.dart';
 import '../model/clsLoginResponseModel.dart';
+import '../model/getdrawermenu.dart';
 import '../utils/constant.dart';
 import 'barassociationpage.dart';
 import 'homepage.dart';
@@ -36,6 +43,8 @@ class DashboardPageState extends State<DashboardPage> with KeyboardHiderMixin {
       ? clsLoginResponseModelFromJson(SharedPref.get(prefKey: PrefKey.loginDetails)!)
       : null;
 
+  // final ProfileControl getxController = Get.put(ProfileControl());
+
   DateTime pre_backpress = DateTime.now();
 
   String titlePage = "";
@@ -48,30 +57,47 @@ class DashboardPageState extends State<DashboardPage> with KeyboardHiderMixin {
   void onSelectItem(String param) {
     print(param);
   }
+  Future<void> get_services() async {
+    Map<String, dynamic> parameters = {
+      "apiKey": apikey,
+      'device': '2',
+      "accessToken": loginDetails!.accessToken,
+      "user_id": loginDetails!.userData.userId,
+      "offset": "0",
+    };
+    EasyLoading.show(status: 'Loading...');
+    await Get_Services(body: parameters).then((value) {
+
+      EasyLoading.dismiss();
+    }).onError((error, stackTrace) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardPage(title: ''),));
+      msgexpire;
+      Const().deleteprofilelofinandmenu();
+      EasyLoading.dismiss();
+    });
+  }
   get_profile_forsave() async {
     if(loginDetails!.userData.userId.isNotEmpty){
+      get_services();
       Map<String, dynamic> parameters = {
         "apiKey": apikey,
         'device': '2',
         "user_id":loginDetails!.userData.userId
       };
-      EasyLoading.show(status: 'loading...');
+      EasyLoading.show(status: 'Loading...');
       await get_profile(body: parameters).then((value) async {
         await SharedPref.save(
             value: jsonEncode(value.toJson()),
-            prefKey: PrefKey.get_profile);
-        setState(() {
-
-          log(jsonEncode(value));
-          // gotoHomePage();
-        });
+            prefKey: PrefKey.getProfile);
         EasyLoading.dismiss();
       }).onError((error, stackTrace) {
+        // ToastMessage().showmessage(error.toString());
         print(error);
         EasyLoading.dismiss();
       });
     }
   }
+
 
   @override
   void initState() {
@@ -82,10 +108,7 @@ class DashboardPageState extends State<DashboardPage> with KeyboardHiderMixin {
     // print(SharedPref.get(prefKey: PrefKey.loginDetails));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+
 
   void setLaywerCategory(clsCategory objCategory) {
     objCategoryToSearch = objCategory;
@@ -267,4 +290,5 @@ class DashboardPageState extends State<DashboardPage> with KeyboardHiderMixin {
       ),
     );
   }
+
 }
