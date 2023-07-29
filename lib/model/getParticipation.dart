@@ -10,17 +10,17 @@ GetParticipation getParticipationFromJson(String str) => GetParticipation.fromJs
 String getParticipationToJson(GetParticipation data) => json.encode(data.toJson());
 
 class GetParticipation {
+  final int status;
+  final String message;
+  final List<Participation> participations;
+  final int total;
+
   GetParticipation({
     required this.status,
     required this.message,
     required this.participations,
     required this.total,
   });
-
-  final int status;
-  final String message;
-  final List<Participation> participations;
-  final int total;
 
   factory GetParticipation.fromJson(Map<String, dynamic> json) => GetParticipation(
     status: json["status"],
@@ -38,6 +38,22 @@ class GetParticipation {
 }
 
 class Participation {
+  final String achievementId;
+  final String achievementMonth;
+  final String achievementYear;
+  final String achievementDetail;
+  final String achievementBody;
+  final String slug;
+  final String achievementCoverImage;
+  final String achievementIsdelete;
+  final String achievementCreatedBy;
+  final String userMasterId;
+  final String achievementCreatedDatetime;
+  final String achievementUpdatedBy;
+  final String achievementUpdatedDatetime;
+  final String type;
+  final List<Otherimage> otherimages;
+
   Participation({
     required this.achievementId,
     required this.achievementMonth,
@@ -53,22 +69,8 @@ class Participation {
     required this.achievementUpdatedBy,
     required this.achievementUpdatedDatetime,
     required this.type,
+    required this.otherimages,
   });
-
-  final String achievementId;
-  final String achievementMonth;
-  final String achievementYear;
-  final String achievementDetail;
-  final String achievementBody;
-  final String slug;
-  final String achievementCoverImage;
-  final String achievementIsdelete;
-  final String achievementCreatedBy;
-  final String userMasterId;
-  final String achievementCreatedDatetime;
-  final String achievementUpdatedBy;
-  final String achievementUpdatedDatetime;
-  final String type;
 
   factory Participation.fromJson(Map<String, dynamic> json) => Participation(
     achievementId: json["achievement_id"],
@@ -85,6 +87,7 @@ class Participation {
     achievementUpdatedBy: json["achievement_updated_by"],
     achievementUpdatedDatetime: json["achievement_updated_datetime"],
     type: json["type"],
+    otherimages: List<Otherimage>.from(json["otherimages"].map((x) => Otherimage.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -102,5 +105,26 @@ class Participation {
     "achievement_updated_by": achievementUpdatedBy,
     "achievement_updated_datetime": achievementUpdatedDatetime,
     "type": type,
+    "otherimages": List<dynamic>.from(otherimages.map((x) => x.toJson())),
+  };
+}
+
+class Otherimage {
+  final String aiId;
+  final String aiImages;
+
+  Otherimage({
+    required this.aiId,
+    required this.aiImages,
+  });
+
+  factory Otherimage.fromJson(Map<String, dynamic> json) => Otherimage(
+    aiId: json["ai_id"],
+    aiImages: json["ai_images"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "ai_id": aiId,
+    "ai_images": aiImages,
   };
 }

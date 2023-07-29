@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:vakalat_flutter/model/UpdateContactDetails.dart';
 import '../../../Sharedpref/shared_pref.dart';
 import '../../../api/postapi.dart';
@@ -13,6 +16,7 @@ import '../../../model/clsStateResponseModel.dart';
 import '../../../utils/ToastMessage.dart';
 import '../../../utils/constant.dart';
 import '../../../utils/design.dart';
+import 'getxcontroller.dart';
 
 class Contact_Details extends StatefulWidget {
   const Contact_Details({Key? key, required this.detail}) : super(key: key);
@@ -22,7 +26,12 @@ class Contact_Details extends StatefulWidget {
   State<Contact_Details> createState() => _Contact_DetailsState();
 }
 
-class _Contact_DetailsState extends State<Contact_Details> {
+class _Contact_DetailsState extends State<Contact_Details>{
+
+
+  final ProfileControl getxController = Get.put(ProfileControl());
+
+
   TextEditingController mobilecontroller = TextEditingController();
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController homeadresscontroller = TextEditingController();
@@ -30,13 +39,13 @@ class _Contact_DetailsState extends State<Contact_Details> {
   TextEditingController officephonenocotoller = TextEditingController();
   TextEditingController officepincodecontroller = TextEditingController();
   TextEditingController officeaddresscontroller = TextEditingController();
-  late ClsCountriesResponseModel getcountries;
+
   bool show = false;
   bool _isLoading = false;
-  String countriecode_home = '';
+  String countriecode_home = '101';
   String rajyacode_home = '';
   String citicode_home = '';
-  String countriecode_office = '';
+  String countriecode_office = '101';
   String rajyacode_office = '';
   String citicode_office = '';
   @override
@@ -54,109 +63,16 @@ class _Contact_DetailsState extends State<Contact_Details> {
     countriecode_office = widget.detail.profile.officeCountryId;
     rajyacode_office = widget.detail.profile.officeStateId;
     citicode_office = widget.detail.profile.officeCityId;
-    countrypostapi();
-    if (widget.detail.profile.cityId.isNotEmpty &&
-        widget.detail.profile.stateId.isNotEmpty) {
-      stateApi(value: widget.detail.profile.countryId);
-      stateApi_office(value: widget.detail.profile.officeCountryId);
-      cityApi(value: widget.detail.profile.stateId);
-      cityApi_office(value: widget.detail.profile.officeStateId);
-
-    }
+    // getxController.stateApi_office(value: widget.detail.profile.countryId);
     super.initState();
   }
 
 
-  void countrypostapi() async {
-    Map<String, dynamic> parameters = {
-      "apiKey": apikey,
-      'device': '2',
-    };
-    EasyLoading.show(status: 'loading...');
-    await userCountries(body: parameters).then((value) {
-      setState(() {
-        getcountries = value;
-        show = true;
-      });
-      EasyLoading.dismiss();
-    }).onError((error, stackTrace) {
-      EasyLoading.dismiss();
-    });
-  }
 
-  void stateApi({String? value = ''}) async {
-    EasyLoading.show(status: 'loading...');
 
-    Map<String, dynamic> parameters = {
-      "apiKey": apikey,
-      'device': '2',
-      "country_id": value ?? '',
-    };
-    await userStates(body: parameters).then((value) {
-      EasyLoading.dismiss();
-      rajyaBuilder.value = value.states;
-      setState(() {});
-    }).onError((error, stackTrace) {
-      EasyLoading.dismiss();
-    });
-  }
-  void stateApi_office({String? value = ''}) async {
-    EasyLoading.show(status: 'loading...');
 
-    Map<String, dynamic> parameters = {
-      "apiKey": apikey,
-      'device': '2',
-      "country_id": value ?? '',
-    };
-    await userStates(body: parameters).then((value) {
-      EasyLoading.dismiss();
-      rajyaBuilder_office.value = value.states;
-      setState(() {});
-    }).onError((error, stackTrace) {
-      EasyLoading.dismiss();
-    });
-  }
 
-  void cityApi({String? value = ''}) async {
-    EasyLoading.show(status: 'loading...');
 
-    Map<String, dynamic> parameters = {
-      "apiKey": apikey,
-      'device': '2',
-      "state_id": value ?? "",
-    };
-
-    await userCities(body: parameters).then((value) {
-
-      EasyLoading.dismiss();
-      citiesBuilder.value = value.cities;
-      setState(() {});
-    }).onError((error, stackTrace) {
-      EasyLoading.dismiss();
-    });
-  }
-  void cityApi_office({String? value = ''}) async {
-    EasyLoading.show(status: 'loading...');
-
-    Map<String, dynamic> parameters = {
-      "apiKey": apikey,
-      'device': '2',
-      "state_id": value ?? "",
-    };
-
-    await userCities(body: parameters).then((value) {
-      EasyLoading.dismiss();
-      citiesBuilder_office.value = value.cities;
-      setState(() {});
-    }).onError((error, stackTrace) {
-      EasyLoading.dismiss();
-    });
-  }
-
-  ValueNotifier<List<Rajya>> rajyaBuilder = ValueNotifier([]);
-  ValueNotifier<List<Rajya>> rajyaBuilder_office = ValueNotifier([]);
-  ValueNotifier<List<City>> citiesBuilder = ValueNotifier([]);
-  ValueNotifier<List<City>> citiesBuilder_office = ValueNotifier([]);
   final RegExp _emailRegExp = RegExp(
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
 
@@ -171,7 +87,7 @@ class _Contact_DetailsState extends State<Contact_Details> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomTextfield(
-              labelname: 'Enter Email',
+              labelname: ' Email',
               Controller: emailcontroller,
               validator: (value) {
                 if (value!.isEmpty) {
@@ -204,7 +120,7 @@ class _Contact_DetailsState extends State<Contact_Details> {
               ),
             ),
             CustomTextfield(
-              labelname: 'Enter Home Address',
+              labelname: ' Home Address',
               validator: (p0) {
                 if (p0!.isEmpty) {
                   return 'Plz Enter Home Address';
@@ -213,64 +129,61 @@ class _Contact_DetailsState extends State<Contact_Details> {
               },
               Controller: homeadresscontroller,
             ),
-            show == false
-                ? const SizedBox()
-                : Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 10),
-                    child: Column(
-                      children: [
-                        CustomDropDownCountry(
-                          onSelection: (var value) async {
-                            log(value.toString());
-                            countriecode_home = value.toString();
-                            rajyaBuilder.value = [];
-                            citiesBuilder.value = [];
-                            EasyLoading.show(status: "Loading...");
-                            stateApi(value: value);
-                          },
-                          initialValue: widget.detail.profile.countryId,
-                          country: getcountries.countries,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        ValueListenableBuilder(
-                            valueListenable: rajyaBuilder,
-                            builder: (context, value, child) => value
-                                        .isNotEmpty ||
-                                    widget.detail.profile.stateId.isNotEmpty
-                                ? CustomDropDownState(
-                                    raja: value,
-                                    initialValue: widget.detail.profile.stateId,
-                                    onSelection: (p0) async {
-                                      rajyacode_home = p0.toString();
-                                      citiesBuilder.value = [];
-                                      cityApi(value: p0);
-                                    },
-                                  )
-                                : SizedBox.shrink()),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: citiesBuilder,
-                          builder: (context, value, child) =>
-                              value.isNotEmpty ||
-                                      widget.detail.profile.cityId.isNotEmpty
-                                  ? CustomDropCities(
-                                      citi: value,
-                                      initialValue: widget.detail.profile.cityId,
-                                      onSelection: (p0) {
-                                        citicode_home = p0.toString();
-                                      },
-                                    )
-                                  : SizedBox.shrink(),
-
-                        ),
-                      ],
-                    ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 10),
+              child: Column(
+                children: [
+                  CustomDropDownCountry(
+                    onSelection: (var value) async {
+                      log(value.toString());
+                      countriecode_home = value.toString();
+                      getxController.rajyaBuilder.value = [];
+                      getxController.citiesBuilder.value = [];
+                      EasyLoading.show(status: "Loading...");
+                      getxController.stateApi(value: value);
+                    },
+                    initialValue: widget.detail.profile.countryId,
+                    country: getxController.getcountries.countries,
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ValueListenableBuilder(
+                      valueListenable: getxController.rajyaBuilder,
+                      builder: (context, value, child) => value
+                          .isNotEmpty ||
+                          widget.detail.profile.stateId.isNotEmpty
+                          ? CustomDropDownState(
+                        raja: value,
+                        initialValue: widget.detail.profile.stateId,
+                        onSelection: (p0) async {
+                          rajyacode_home = p0.toString();
+                          getxController.citiesBuilder.value = [];
+                          getxController.cityApi(value: p0);
+                        },
+                      )
+                          : SizedBox.shrink()),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: getxController.citiesBuilder,
+                    builder: (context, value, child) => value
+                        .isNotEmpty ||
+                        widget.detail.profile.cityId.isNotEmpty
+                        ? CustomDropCities(
+                      citi: value,
+                      initialValue: widget.detail.profile.cityId,
+                      onSelection: (p0) {
+                        citicode_home = p0.toString();
+                      },
+                    )
+                        : SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ),
             // SelectState(
             //   onCountryChanged: (String value) {},
             //   onStateChanged: (String value) {},
@@ -301,7 +214,7 @@ class _Contact_DetailsState extends State<Contact_Details> {
                 labelname: 'Office Contact No',
                 validator: (p0) {
                   if (p0!.isEmpty && p0.length == 10) {
-                    return 'Plz Enter Contact No';
+                    return 'Plz  Contact No';
                   }
                   return null;
                 },
@@ -318,65 +231,63 @@ class _Contact_DetailsState extends State<Contact_Details> {
               },
               Controller: officeaddresscontroller,
             ),
-            show == false
-                ? const SizedBox()
-                : Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 10),
-                    child: Column(
-                      children: [
-                        CustomDropDownCountry(
-                          initialValue: widget.detail.profile.officeCountryId,
-                          onSelection: (var value) async {
-                            log(value.toString());
-                            countriecode_office = value.toString();
-                            rajyaBuilder_office.value = [];
-                            citiesBuilder_office.value = [];
-                            stateApi_office(value: value);
-                          },
-                          country: getcountries.countries,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: rajyaBuilder_office,
-                          builder: (context, value, child) => value
-                                      .isNotEmpty ||
-                                  widget.detail.profile.officeStateId.isNotEmpty
-                              ? CustomDropDownState(
-                                  initialValue:
-                                      widget.detail.profile.officeStateId,
-                                  raja: value,
-                                  onSelection: (p0) async {
-                                    rajyacode_office = p0.toString();
-                                    citiesBuilder_office.value = [];
-                                    cityApi_office(value: p0);
-                                  },
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: citiesBuilder_office,
-                          builder: (context, value, child) => value
-                                      .isNotEmpty ||
-                                  widget.detail.profile.officeCityId.isNotEmpty
-                              ? CustomDropCities(
-                                  initialValue:
-                                      widget.detail.profile.officeCityId,
-                                  citi: value,
-                                  onSelection: (p0) {
-                                    citicode_office = p0.toString();
-                                  },
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                      ],
-                    ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 10),
+              child: Column(
+                children: [
+                  CustomDropDownCountry(
+                    initialValue: widget.detail.profile.officeCountryId == "0" ? "101" : widget.detail.profile.officeCountryId,
+                    onSelection: (var value) async {
+                      log(value.toString());
+                      countriecode_office = value.toString();
+                      getxController.rajyaBuilder_office.value = [];
+                      getxController.citiesBuilder_office.value = [];
+                      getxController.stateApi_office(value: value);
+                    },
+                    country: getxController.getcountries.countries,
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: getxController.rajyaBuilder_office,
+                    builder: (context, value, child) => value
+                        .isNotEmpty ||
+                        widget.detail.profile.officeStateId.isNotEmpty
+                        ? CustomDropDownState(
+                      initialValue:
+                      widget.detail.profile.officeStateId,
+                      raja: value,
+                      onSelection: (p0) async {
+                        rajyacode_office = p0.toString();
+                        getxController.citiesBuilder_office.value = [];
+                        getxController.cityApi_office(value: p0);
+                      },
+                    )
+                        : const SizedBox.shrink(),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: getxController.citiesBuilder_office,
+                    builder: (context, value, child) => value
+                        .isNotEmpty ||
+                        widget.detail.profile.officeCityId.isNotEmpty
+                        ? CustomDropCities(
+                      initialValue:
+                      widget.detail.profile.officeCityId,
+                      citi: value,
+                      onSelection: (p0) {
+                        citicode_office = p0.toString();
+                      },
+                    )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ),
             // SelectState(
             //   onCountryChanged: (String value) {},
             //   onStateChanged: (String value) {},
@@ -396,9 +307,8 @@ class _Contact_DetailsState extends State<Contact_Details> {
             Button_For_Update_Save(
               text: 'Update',
               onpressed: () {
-                if (_formKey.currentState!.validate()) {
-                  APICALL_Update_Contect_Details.call();
-                }
+                APICALL_Update_Contect_Details.call();
+
               },
             ),
           ],
@@ -411,7 +321,7 @@ class _Contact_DetailsState extends State<Contact_Details> {
     if (countriecode_home.isNotEmpty &&
         rajyacode_home.isNotEmpty &&
         citicode_home.isNotEmpty) {
-      EasyLoading.show(status: 'loading...');
+      EasyLoading.show(status: 'Loading...');
 
       try {
         /*Retriving Parent Object*/

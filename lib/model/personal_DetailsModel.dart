@@ -1,11 +1,12 @@
-
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
-PersonalDetailsModel personalDetailsModelFromJson(String str) => PersonalDetailsModel.fromJson(json.decode(str));
+PersonalDetailsModel personalDetailsModelFromJson(String str) =>
+    PersonalDetailsModel.fromJson(json.decode(str));
 
-String personalDetailsModelToJson(PersonalDetailsModel data) => json.encode(data.toJson());
+String personalDetailsModelToJson(PersonalDetailsModel data) =>
+    json.encode(data.toJson());
 
 class PersonalDetailsModel {
   PersonalDetailsModel({
@@ -21,11 +22,12 @@ class PersonalDetailsModel {
     required this.gender,
     required this.bloodGroup,
     required this.isPhysicalChal,
-    required this.videoProfile,
+    required this.isPhysicaldet,
+    this.videoProfile,
     required this.organization,
     required this.since,
     required this.logo,
-    required this.profile,
+    this.profile,
   });
 
   String? apiKey;
@@ -40,6 +42,7 @@ class PersonalDetailsModel {
   String? gender;
   String? bloodGroup;
   String? isPhysicalChal;
+  String? isPhysicaldet;
   dynamic videoProfile;
   String? organization;
   String? since;
@@ -59,6 +62,7 @@ class PersonalDetailsModel {
     String? gender,
     String? bloodGroup,
     String? isPhysicalChal,
+    String? isPhysicaldet,
     dynamic videoProfile,
     String? organization,
     String? since,
@@ -78,6 +82,7 @@ class PersonalDetailsModel {
         gender: gender ?? this.gender,
         bloodGroup: bloodGroup ?? this.bloodGroup,
         isPhysicalChal: isPhysicalChal ?? this.isPhysicalChal,
+        isPhysicaldet: isPhysicaldet ?? this.isPhysicaldet,
         videoProfile: videoProfile ?? this.videoProfile,
         organization: organization ?? this.organization,
         since: since ?? this.since,
@@ -85,25 +90,27 @@ class PersonalDetailsModel {
         profile: profile ?? this.profile,
       );
 
-  factory PersonalDetailsModel.fromJson(Map<String, dynamic> json) => PersonalDetailsModel(
-    apiKey: json["apiKey"],
-    device: json["device"],
-    accessToken: json["accessToken"],
-    userId: json["user_id"],
-    firstName: json["first_name"],
-    middleName: json["middle_name"],
-    shortName: json["short_name"],
-    lastName: json["last_name"],
-    dateOfBirth: json["date_of_birth"],
-    gender: json["gender"],
-    bloodGroup: json["blood_group"],
-    isPhysicalChal: json["is_physical_chal"],
-    videoProfile: json["video_profile"],
-    organization: json["organization"],
-    since: json["since"],
-    logo: json["logo"],
-    profile: json["profile"],
-  );
+  factory PersonalDetailsModel.fromJson(Map<String, dynamic> json) =>
+      PersonalDetailsModel(
+        apiKey: json["apiKey"],
+        device: json["device"],
+        accessToken: json["accessToken"],
+        userId: json["user_id"],
+        firstName: json["first_name"],
+        middleName: json["middle_name"],
+        shortName: json["short_name"],
+        lastName: json["last_name"],
+        dateOfBirth: json["date_of_birth"],
+        gender: json["gender"],
+        bloodGroup: json["blood_group"],
+        isPhysicalChal: json["is_physical_chal"],
+        isPhysicaldet: json["physical_detail"],
+        videoProfile: json["video_profile"],
+        organization: json["organization"],
+        since: json["since"],
+        logo: json["logo"],
+        profile: json["profile"],
+      );
 
   Map<String, dynamic> toJson() => {
     "apiKey": apiKey,
@@ -118,15 +125,33 @@ class PersonalDetailsModel {
     "gender": gender,
     "blood_group": bloodGroup,
     "is_physical_chal": isPhysicalChal,
+    "physical_detail": isPhysicaldet,
     "video_profile": videoProfile,
     "organization": organization,
     "since": since,
     "logo": logo,
-    "profile": profile,
+    "profile": profile
   };
+
+
   Future<FormData> toFormData() async {
-    MultipartFile video = await MultipartFile.fromFile(videoProfile.toString(),);
-    MultipartFile image = await MultipartFile.fromFile(profile.toString(),);
-    return FormData.fromMap(copyWith(videoProfile: video,profile: image).toJson());
+    MultipartFile? video;
+    MultipartFile? imageData;
+
+    if (videoProfile != null) {
+      video = await MultipartFile.fromFile(
+        videoProfile.toString(),
+      );
+    }
+
+    if (profile != null) {
+      imageData = await MultipartFile.fromFile(
+        profile.toString(),
+      );
+    }
+
+    return FormData.fromMap(
+      copyWith(videoProfile: video, profile: imageData).toJson(),
+    );
   }
 }

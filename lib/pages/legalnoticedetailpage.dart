@@ -268,7 +268,7 @@ class _LegalNoticeDetailPageState extends State<LegalNoticeDetailPage> with Keyb
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
-                child: Html(data: objLegalNotice.desc!),
+                child: Html(data: objLegalNotice.desc!,),
               ),
             ],
           ),

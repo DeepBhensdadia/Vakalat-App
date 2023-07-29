@@ -2,14 +2,19 @@
 import 'package:flutter/material.dart';
 import 'package:search_choices/search_choices.dart';
 import 'package:vakalat_flutter/helper.dart';
+import 'package:vakalat_flutter/model/getallLanguage.dart';
 import 'package:vakalat_flutter/utils/constant.dart';
 
 import '../color/customcolor.dart';
+import '../model/Bar Associate List.dart';
 import '../model/GetAllCategory.dart';
+import '../model/Get_doc_type.dart';
 import '../model/clsCitiesResponseModel.dart';
 import '../model/clsCountriesResponseModel.dart';
 import '../model/clsStateResponseModel.dart';
 import '../model/clsUserTypeResponseModel.dart';
+import '../model/getbar_councilModel.dart';
+import '../model/getdocumentdetails.dart';
 
 class next_page_ui extends StatelessWidget {
   const next_page_ui({Key? key}) : super(key: key);
@@ -121,13 +126,14 @@ class Register_now_ui extends StatelessWidget {
 }
 
 class CustomTextfield extends StatelessWidget {
-  final Controller;
+  TextEditingController? Controller;
 
   final String labelname;
   String? Function(String?)? validator;
-  final suffixicon;
-
-  final int? maxlength;
+  IconData? suffixicon;
+  Function()? ontap;
+int? maxline  ;
+  final int? maxlength ;
   final TextInputType? type;
   CustomTextfield(
       {Key? key,
@@ -136,29 +142,43 @@ class CustomTextfield extends StatelessWidget {
       required this.labelname,
       this.suffixicon,
       this.maxlength,
+        this.ontap,
+      this.maxline = 1,
       this.type})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: TextFormField(
-        controller: Controller,
-        maxLength: maxlength,
-        keyboardType: type,
-        // focusNode: edtEmail,
-        decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-            border: const OutlineInputBorder(),
-            labelText: labelname,
-            // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-            suffixIcon: Icon(suffixicon)),
-        validator: validator,
+      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(labelname,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+          SizedBox(height: 5,),
+          TextFormField(
+            onTap: ontap,
+            controller: Controller,
+            maxLength: maxlength,
+            keyboardType: type,
+            maxLines: maxline,
+            textAlign: TextAlign.start,
+            // focusNode: edtEmail,
+            decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                border: const OutlineInputBorder(),
+                alignLabelWithHint: true,
+                // labelText: labelname,
+                suffixIcon: Icon(suffixicon)),
+
+            validator: validator,
+          ),
+        ],
       ),
     );
   }
 }
+
 
 class CustomDropDownCountry extends StatefulWidget {
   const CustomDropDownCountry({
@@ -189,98 +209,106 @@ class _CustomDropDownCountryState extends State<CustomDropDownCountry> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // height: 50,
-      width: screenwidth(context, dividedby: 1),
-      decoration: Const().decorationfield,
-      child: SearchChoices<String>.single(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        underline: Container(
-          color: Colors.transparent,
-        ),
-        items: widget.country
-            .map<DropdownMenuItem<String>>(
-              (element) => DropdownMenuItem<String>(
-            value: element.countryId,
-            child: Text(element.countryName),
-          ),
-        )
-            .toList(),
-        value: _selectedCountry,
-        hint: "Select Country",
-        searchHint: "Select Country",
-        onChanged: (value) {
-          setState(() {
-            _selectedCountry = value;
-            print(value);
-          });
-          widget.onSelection(value);
-        },
-        searchFn: (String keyword, List<DropdownMenuItem> items) {
-          List<int> filterdata = [];
-          if (items.isNotEmpty && keyword.isNotEmpty) {
-            keyword.split(" ").forEach((k) {
-              int i = 0;
-              for (DropdownMenuItem item in items) {
-                if (!filterdata.contains(i) &&
-                    k.isNotEmpty &&
-                    ((item.child as Text).data
-                        .toString()
-                        .toLowerCase()
-                        .contains(k.toLowerCase()))) {
-                  filterdata.add(i);
-                }
-                i++;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Country",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+        SizedBox(height: 5,),
+        Container(
+          // height: 50,
+          width: screenwidth(context, dividedby: 1),
+          decoration: Const().decorationfield,
+          child: SearchChoices<String>.single(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            underline: Container(
+              color: Colors.transparent,
+            ),
+            items: widget.country
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                value: element.countryId,
+                child: Text(element.countryName),
+              ),
+            )
+                .toList(),
+            value: _selectedCountry,
+
+            hint: "Select Country",
+            searchHint: "Select Country",
+            onChanged: (value) {
+              setState(() {
+                _selectedCountry = value;
+                print(value);
+              });
+              widget.onSelection(value);
+            },
+            searchFn: (String keyword, List<DropdownMenuItem> items) {
+              List<int> filterdata = [];
+              if (items.isNotEmpty && keyword.isNotEmpty) {
+                keyword.split(" ").forEach((k) {
+                  int i = 0;
+                  for (DropdownMenuItem item in items) {
+                    if (!filterdata.contains(i) &&
+                        k.isNotEmpty &&
+                        ((item.child as Text).data
+                            .toString()
+                            .toLowerCase()
+                            .contains(k.toLowerCase()))) {
+                      filterdata.add(i);
+                    }
+                    i++;
+                  }
+                });
               }
-            });
-          }
-          if (keyword.isEmpty) {
-            filterdata = Iterable<int>.generate(items.length).toList();
-          }
-          return (filterdata);
-        },
-        searchResultDisplayFn: (
-            {required displayItem,
-              required emptyListWidget,
-              required itemTapped,
-              required itemsToDisplay,
-              required scrollController,
-              required thumbVisibility}) {
-          return Expanded(
-            child: Scrollbar(
-              controller: scrollController,
-              thumbVisibility: thumbVisibility,
-              child: itemsToDisplay.isEmpty
-                  ? emptyListWidget
-                  : ListView.builder(
-                controller: scrollController,
-                itemBuilder: (context, index) {
-                  int itemIndex = itemsToDisplay[index].item1;
-                  DropdownMenuItem item = itemsToDisplay[index].item2;
-                  bool isItemSelected = itemsToDisplay[index].item3;
-                  return InkWell(
-                    onTap: () {
-                      itemTapped(
-                        itemIndex,
-                        item.value,
-                        isItemSelected,
+              if (keyword.isEmpty) {
+                filterdata = Iterable<int>.generate(items.length).toList();
+              }
+              return (filterdata);
+            },
+            searchResultDisplayFn: (
+                {required displayItem,
+                  required emptyListWidget,
+                  required itemTapped,
+                  required itemsToDisplay,
+                  required scrollController,
+                  required thumbVisibility}) {
+              return Expanded(
+                child: Scrollbar(
+                  controller: scrollController,
+                  thumbVisibility: thumbVisibility,
+                  child: itemsToDisplay.isEmpty
+                      ? emptyListWidget
+                      : ListView.builder(
+                    controller: scrollController,
+                    itemBuilder: (context, index) {
+                      int itemIndex = itemsToDisplay[index].item1;
+                      DropdownMenuItem item = itemsToDisplay[index].item2;
+                      bool isItemSelected = itemsToDisplay[index].item3;
+                      return InkWell(
+                        onTap: () {
+                          itemTapped(
+                            itemIndex,
+                            item.value,
+                            isItemSelected,
+                          );
+                        },
+                        child: displayItem(
+                          item,
+                          isItemSelected,
+                        ),
                       );
                     },
-                    child: displayItem(
-                      item,
-                      isItemSelected,
-                    ),
-                  );
-                },
-                itemCount: itemsToDisplay.length,
-              ),
-            ),
-          );
-        },
-        isExpanded: true,
-        displayClearIcon: false,
-        dialogBox: true,
-      ),
+                    itemCount: itemsToDisplay.length,
+                  ),
+                ),
+              );
+            },
+            isExpanded: true,
+            displayClearIcon: false,
+            dialogBox: true,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -311,98 +339,105 @@ class _CustomDropDownStateState extends State<CustomDropDownState> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // height: 50,
-      width: screenwidth(context, dividedby: 1),
-      decoration: Const().decorationfield,
-      child: SearchChoices<String>.single(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        underline: Container(
-          color: Colors.transparent,
-        ),
-        items: widget.raja
-            .map<DropdownMenuItem<String>>(
-              (element) => DropdownMenuItem<String>(
-            value: element.stateId,
-            child: Text(element.stateName),
-          ),
-        )
-            .toList(),
-        value:  _selectedstate,
-        hint: "Select State",
-        searchHint: "Select State",
-        onChanged: (value) {
-          setState(() {
-            _selectedstate = value;
-            print(value);
-          });
-          widget.onSelection(value);
-        },
-        searchFn: (String keyword, List<DropdownMenuItem> items) {
-          List<int> filterdata = [];
-          if (items.isNotEmpty && keyword.isNotEmpty) {
-            keyword.split(" ").forEach((k) {
-              int i = 0;
-              for (DropdownMenuItem item in items) {
-                if (!filterdata.contains(i) &&
-                    k.isNotEmpty &&
-                    ((item.child as Text).data
-                        .toString()
-                        .toLowerCase()
-                        .contains(k.toLowerCase()))) {
-                  filterdata.add(i);
-                }
-                i++;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("State",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+SizedBox(height: 5,),
+        Container(
+          // height: 50,
+          width: screenwidth(context, dividedby: 1),
+          decoration: Const().decorationfield,
+          child: SearchChoices<String>.single(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            underline: Container(
+              color: Colors.transparent,
+            ),
+            items: widget.raja
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                value: element.stateId,
+                child: Text(element.stateName),
+              ),
+            )
+                .toList(),
+            value:  _selectedstate,
+            hint: "Select State",
+            searchHint: "Select State",
+            onChanged: (value) {
+              setState(() {
+                _selectedstate = value;
+                print(value);
+              });
+              widget.onSelection(value);
+            },
+            searchFn: (String keyword, List<DropdownMenuItem> items) {
+              List<int> filterdata = [];
+              if (items.isNotEmpty && keyword.isNotEmpty) {
+                keyword.split(" ").forEach((k) {
+                  int i = 0;
+                  for (DropdownMenuItem item in items) {
+                    if (!filterdata.contains(i) &&
+                        k.isNotEmpty &&
+                        ((item.child as Text).data
+                            .toString()
+                            .toLowerCase()
+                            .contains(k.toLowerCase()))) {
+                      filterdata.add(i);
+                    }
+                    i++;
+                  }
+                });
               }
-            });
-          }
-          if (keyword.isEmpty) {
-            filterdata = Iterable<int>.generate(items.length).toList();
-          }
-          return (filterdata);
-        },
-        searchResultDisplayFn: (
-            {required displayItem,
-              required emptyListWidget,
-              required itemTapped,
-              required itemsToDisplay,
-              required scrollController,
-              required thumbVisibility}) {
-          return Expanded(
-            child: Scrollbar(
-              controller: scrollController,
-              thumbVisibility: thumbVisibility,
-              child: itemsToDisplay.isEmpty
-                  ? emptyListWidget
-                  : ListView.builder(
-                controller: scrollController,
-                itemBuilder: (context, index) {
-                  int itemIndex = itemsToDisplay[index].item1;
-                  DropdownMenuItem item = itemsToDisplay[index].item2;
-                  bool isItemSelected = itemsToDisplay[index].item3;
-                  return InkWell(
-                    onTap: () {
-                      itemTapped(
-                        itemIndex,
-                        item.value,
-                        isItemSelected,
+              if (keyword.isEmpty) {
+                filterdata = Iterable<int>.generate(items.length).toList();
+              }
+              return (filterdata);
+            },
+            searchResultDisplayFn: (
+                {required displayItem,
+                  required emptyListWidget,
+                  required itemTapped,
+                  required itemsToDisplay,
+                  required scrollController,
+                  required thumbVisibility}) {
+              return Expanded(
+                child: Scrollbar(
+                  controller: scrollController,
+                  thumbVisibility: thumbVisibility,
+                  child: itemsToDisplay.isEmpty
+                      ? emptyListWidget
+                      : ListView.builder(
+                    controller: scrollController,
+                    itemBuilder: (context, index) {
+                      int itemIndex = itemsToDisplay[index].item1;
+                      DropdownMenuItem item = itemsToDisplay[index].item2;
+                      bool isItemSelected = itemsToDisplay[index].item3;
+                      return InkWell(
+                        onTap: () {
+                          itemTapped(
+                            itemIndex,
+                            item.value,
+                            isItemSelected,
+                          );
+                        },
+                        child: displayItem(
+                          item,
+                          isItemSelected,
+                        ),
                       );
                     },
-                    child: displayItem(
-                      item,
-                      isItemSelected,
-                    ),
-                  );
-                },
-                itemCount: itemsToDisplay.length,
-              ),
-            ),
-          );
-        },
-        isExpanded: true,
-        displayClearIcon: false,
-        dialogBox: true,
-      ),
+                    itemCount: itemsToDisplay.length,
+                  ),
+                ),
+              );
+            },
+            isExpanded: true,
+            displayClearIcon: false,
+            dialogBox: true,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -432,98 +467,105 @@ class _CustomDropCitiesState extends State<CustomDropCities> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // height: 50,
-      width: screenwidth(context, dividedby: 1),
-      decoration: Const().decorationfield,
-      child: SearchChoices<String>.single(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        underline: Container(
-          color: Colors.transparent,
-        ),
-        items: widget.citi
-            .map<DropdownMenuItem<String>>(
-              (element) => DropdownMenuItem<String>(
-            value: element.cityId,
-            child: Text(element.cityName),
-          ),
-        )
-            .toList(),
-        value:  _selectedcity,
-        hint: "Select City",
-        searchHint: "Select City",
-        onChanged: (value) {
-          setState(() {
-             _selectedcity = value;
-            print(value);
-          });
-          widget.onSelection(value);
-        },
-        searchFn: (String keyword, List<DropdownMenuItem> items) {
-          List<int> filterdata = [];
-          if (items.isNotEmpty && keyword.isNotEmpty) {
-            keyword.split(" ").forEach((k) {
-              int i = 0;
-              for (DropdownMenuItem item in items) {
-                if (!filterdata.contains(i) &&
-                    k.isNotEmpty &&
-                    ((item.child as Text).data
-                        .toString()
-                        .toLowerCase()
-                        .contains(k.toLowerCase()))) {
-                  filterdata.add(i);
-                }
-                i++;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("City",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+        SizedBox(height: 5,),
+        Container(
+          // height: 50,
+          width: screenwidth(context, dividedby: 1),
+          decoration: Const().decorationfield,
+          child: SearchChoices<String>.single(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            underline: Container(
+              color: Colors.transparent,
+            ),
+            items: widget.citi
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                value: element.cityId,
+                child: Text(element.cityName),
+              ),
+            )
+                .toList(),
+            value:  _selectedcity,
+            hint: "Select City",
+            searchHint: "Select City",
+            onChanged: (value) {
+              setState(() {
+                 _selectedcity = value;
+                print(value);
+              });
+              widget.onSelection(value);
+            },
+            searchFn: (String keyword, List<DropdownMenuItem> items) {
+              List<int> filterdata = [];
+              if (items.isNotEmpty && keyword.isNotEmpty) {
+                keyword.split(" ").forEach((k) {
+                  int i = 0;
+                  for (DropdownMenuItem item in items) {
+                    if (!filterdata.contains(i) &&
+                        k.isNotEmpty &&
+                        ((item.child as Text).data
+                            .toString()
+                            .toLowerCase()
+                            .contains(k.toLowerCase()))) {
+                      filterdata.add(i);
+                    }
+                    i++;
+                  }
+                });
               }
-            });
-          }
-          if (keyword.isEmpty) {
-            filterdata = Iterable<int>.generate(items.length).toList();
-          }
-          return (filterdata);
-        },
-        searchResultDisplayFn: (
-            {required displayItem,
-              required emptyListWidget,
-              required itemTapped,
-              required itemsToDisplay,
-              required scrollController,
-              required thumbVisibility}) {
-          return Expanded(
-            child: Scrollbar(
-              controller: scrollController,
-              thumbVisibility: thumbVisibility,
-              child: itemsToDisplay.isEmpty
-                  ? emptyListWidget
-                  : ListView.builder(
-                controller: scrollController,
-                itemBuilder: (context, index) {
-                  int itemIndex = itemsToDisplay[index].item1;
-                  DropdownMenuItem item = itemsToDisplay[index].item2;
-                  bool isItemSelected = itemsToDisplay[index].item3;
-                  return InkWell(
-                    onTap: () {
-                      itemTapped(
-                        itemIndex,
-                        item.value,
-                        isItemSelected,
+              if (keyword.isEmpty) {
+                filterdata = Iterable<int>.generate(items.length).toList();
+              }
+              return (filterdata);
+            },
+            searchResultDisplayFn: (
+                {required displayItem,
+                  required emptyListWidget,
+                  required itemTapped,
+                  required itemsToDisplay,
+                  required scrollController,
+                  required thumbVisibility}) {
+              return Expanded(
+                child: Scrollbar(
+                  controller: scrollController,
+                  thumbVisibility: thumbVisibility,
+                  child: itemsToDisplay.isEmpty
+                      ? emptyListWidget
+                      : ListView.builder(
+                    controller: scrollController,
+                    itemBuilder: (context, index) {
+                      int itemIndex = itemsToDisplay[index].item1;
+                      DropdownMenuItem item = itemsToDisplay[index].item2;
+                      bool isItemSelected = itemsToDisplay[index].item3;
+                      return InkWell(
+                        onTap: () {
+                          itemTapped(
+                            itemIndex,
+                            item.value,
+                            isItemSelected,
+                          );
+                        },
+                        child: displayItem(
+                          item,
+                          isItemSelected,
+                        ),
                       );
                     },
-                    child: displayItem(
-                      item,
-                      isItemSelected,
-                    ),
-                  );
-                },
-                itemCount: itemsToDisplay.length,
-              ),
-            ),
-          );
-        },
-        isExpanded: true,
-        displayClearIcon: false,
-        dialogBox: true,
-      ),
+                    itemCount: itemsToDisplay.length,
+                  ),
+                ),
+              );
+            },
+            isExpanded: true,
+            displayClearIcon: false,
+            dialogBox: true,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -591,6 +633,364 @@ class _CustomDropDownUser_TypeState extends State<CustomDropDownUser_Type> {
   }
 }
 
+class drodownbar_council extends StatefulWidget {
+  final List<BarCouncil> bar_council;
+ final String? initialvalue;
+  final void Function(String?) onSelection;
+
+  const drodownbar_council({super.key, required this.bar_council, this.initialvalue, required this.onSelection});
+
+
+
+
+  @override
+  State<drodownbar_council> createState() => _drodownbar_councilState();
+}
+
+class _drodownbar_councilState extends State<drodownbar_council> {
+  String?  _selectedvalue;
+  @override
+  void initState() {
+    // TODO: implement initState
+   _selectedvalue = widget.initialvalue;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Bar Council",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+        SizedBox(height: 5,),
+        Container(
+          // height: 50,
+          width: screenwidth(context, dividedby: 1),
+          decoration: Const().decorationfield,
+          child: SearchChoices<String>.single(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            underline: Container(
+              color: Colors.transparent,
+            ),
+            items: widget.bar_council
+                        .map<DropdownMenuItem<String>>(
+                          (element) => DropdownMenuItem<String>(
+                        value: element.userId,
+                        child: Text(element.lawFirmCollege),
+                      ),
+                    )
+                        .toList(),
+            value:  _selectedvalue,
+            hint: "Select BarCouncil",
+            searchHint: "Select BarCouncil",
+            onChanged: (value) {
+              setState(() {
+                _selectedvalue = value;
+                print(value);
+              });
+              widget.onSelection(value);
+            },
+            searchFn: (String keyword, List<DropdownMenuItem> items) {
+              List<int> filterdata = [];
+              if (items.isNotEmpty && keyword.isNotEmpty) {
+                keyword.split(" ").forEach((k) {
+                  int i = 0;
+                  for (DropdownMenuItem item in items) {
+                    if (!filterdata.contains(i) &&
+                        k.isNotEmpty &&
+                        ((item.child as Text).data
+                            .toString()
+                            .toLowerCase()
+                            .contains(k.toLowerCase()))) {
+                      filterdata.add(i);
+                    }
+                    i++;
+                  }
+                });
+              }
+              if (keyword.isEmpty) {
+                filterdata = Iterable<int>.generate(items.length).toList();
+              }
+              return (filterdata);
+            },
+            searchResultDisplayFn: (
+                {required displayItem,
+                  required emptyListWidget,
+                  required itemTapped,
+                  required itemsToDisplay,
+                  required scrollController,
+                  required thumbVisibility}) {
+              return Expanded(
+                child: Scrollbar(
+                  controller: scrollController,
+                  thumbVisibility: thumbVisibility,
+                  child: itemsToDisplay.isEmpty
+                      ? emptyListWidget
+                      : ListView.builder(
+                    controller: scrollController,
+                    itemBuilder: (context, index) {
+                      int itemIndex = itemsToDisplay[index].item1;
+                      DropdownMenuItem item = itemsToDisplay[index].item2;
+                      bool isItemSelected = itemsToDisplay[index].item3;
+                      return InkWell(
+                        onTap: () {
+                          itemTapped(
+                            itemIndex,
+                            item.value,
+                            isItemSelected,
+                          );
+                        },
+                        child: displayItem(
+                          item,
+                          isItemSelected,
+                        ),
+                      );
+                    },
+                    itemCount: itemsToDisplay.length,
+                  ),
+                ),
+              );
+            },
+            isExpanded: true,
+            displayClearIcon: false,
+            dialogBox: true,
+          ),
+        ),
+      ],
+    );
+
+  }
+}
+
+
+class dropdownbar_assoc extends StatefulWidget {
+  final List<BarAssoc> bar_assoc;
+ final String? initialvalue;
+  final void Function(String?) onSelection;
+
+  const dropdownbar_assoc({super.key, required this.bar_assoc, this.initialvalue, required this.onSelection});
+
+
+
+
+  @override
+  State<dropdownbar_assoc> createState() => _dropdownbar_assocState();
+}
+
+class _dropdownbar_assocState extends State<dropdownbar_assoc> {
+  String?  _selectedvalue;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _selectedvalue = widget.initialvalue;
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Bar Association",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+        SizedBox(height: 5,),
+        Container(
+          // height: 50,
+          width: screenwidth(context, dividedby: 1),
+          decoration: Const().decorationfield,
+          child: SearchChoices<String>.single(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            underline: Container(
+              color: Colors.transparent,
+            ),
+            items: widget.bar_assoc
+                      .map<DropdownMenuItem<String>>(
+                        (element) => DropdownMenuItem<String>(
+                      value: element.userId,
+                      child: Text(element.lawFirmCollege),
+                    ),
+                  )
+                      .toList(),
+            value:  _selectedvalue,
+            hint: "Select BarCouncil",
+            searchHint: "Select BarCouncil",
+            onChanged: (value) {
+              setState(() {
+                _selectedvalue = value;
+                print(value);
+              });
+              widget.onSelection(value);
+            },
+            searchFn: (String keyword, List<DropdownMenuItem> items) {
+              List<int> filterdata = [];
+              if (items.isNotEmpty && keyword.isNotEmpty) {
+                keyword.split(" ").forEach((k) {
+                  int i = 0;
+                  for (DropdownMenuItem item in items) {
+                    if (!filterdata.contains(i) &&
+                        k.isNotEmpty &&
+                        ((item.child as Text).data
+                            .toString()
+                            .toLowerCase()
+                            .contains(k.toLowerCase()))) {
+                      filterdata.add(i);
+                    }
+                    i++;
+                  }
+                });
+              }
+              if (keyword.isEmpty) {
+                filterdata = Iterable<int>.generate(items.length).toList();
+              }
+              return (filterdata);
+            },
+            searchResultDisplayFn: (
+                {required displayItem,
+                  required emptyListWidget,
+                  required itemTapped,
+                  required itemsToDisplay,
+                  required scrollController,
+                  required thumbVisibility}) {
+              return Expanded(
+                child: Scrollbar(
+                  controller: scrollController,
+                  thumbVisibility: thumbVisibility,
+                  child: itemsToDisplay.isEmpty
+                      ? emptyListWidget
+                      : ListView.builder(
+                    controller: scrollController,
+                    itemBuilder: (context, index) {
+                      int itemIndex = itemsToDisplay[index].item1;
+                      DropdownMenuItem item = itemsToDisplay[index].item2;
+                      bool isItemSelected = itemsToDisplay[index].item3;
+                      return InkWell(
+                        onTap: () {
+                          itemTapped(
+                            itemIndex,
+                            item.value,
+                            isItemSelected,
+                          );
+                        },
+                        child: displayItem(
+                          item,
+                          isItemSelected,
+                        ),
+                      );
+                    },
+                    itemCount: itemsToDisplay.length,
+                  ),
+                ),
+              );
+            },
+            isExpanded: true,
+            displayClearIcon: false,
+            dialogBox: true,
+          ),
+        ),
+      ],
+    );
+    //   Container(
+    //   height: 50,
+    //   width: screenwidth(context, dividedby: 1),
+    //   decoration: Const().decorationfield,
+    //   child: Padding(
+    //     padding: const EdgeInsets.symmetric(horizontal: 10,),
+    //     child: ValueListenableBuilder(
+    //       valueListenable: valueNotifier,
+    //       builder: (context, value, child) => DropdownButton<String>(
+    //         underline: Container(color: Colors.transparent),
+    //         hint: const Text('Select Bar Association'),
+    //         // iconSize: ,
+    //         // icon: Icon(Icons.arrow_drop_down),
+    //         isExpanded: true,
+    //         // itemHeight: 10,
+    //         value: value,
+    //         items: widget.bar_assoc
+    //             .map<DropdownMenuItem<String>>(
+    //               (element) => DropdownMenuItem<String>(
+    //             value: element.userId,
+    //             child: Text(element.lawFirmCollege),
+    //           ),
+    //         )
+    //             .toList(),
+    //         onChanged: (value) {
+    //           widget.onSelection(value);
+    //           valueNotifier.value = widget.bar_assoc
+    //               .where((element) => element.userId.contains(value!))
+    //               .toList()[0]
+    //               .userId;
+    //         },
+    //       ),
+    //     ),
+    //   ),
+    // );
+  }
+}
+
+class dropdowngetdoctype extends StatefulWidget {
+  final List<DocType> doctype;
+ final String? initialvalue;
+  final void Function(String?) onSelection;
+
+  const dropdowngetdoctype({super.key, required this.doctype, this.initialvalue, required this.onSelection});
+
+
+
+
+  @override
+  State<dropdowngetdoctype> createState() => _dropdowngetdoctypeState();
+}
+
+class _dropdowngetdoctypeState extends State<dropdowngetdoctype> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    valueNotifier = ValueNotifier(widget.initialvalue);
+    super.initState();
+  }
+  late ValueNotifier<String?> valueNotifier;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 50,
+      // width: screenwidth(context, dividedby: 1),
+      // decoration: Const().decorationfield,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10,),
+        child: ValueListenableBuilder(
+          valueListenable: valueNotifier,
+          builder: (context, value, child) => DropdownButton<String>(
+            underline: Container(color: Colors.transparent),
+            hint: const Text('Select Document Type'),
+            // iconSize: ,
+            icon: Icon(Icons.arrow_drop_down),
+            isExpanded: true,
+            // itemHeight: 10,
+            value: value,
+            items: widget.doctype
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                value: element.id,
+                child: Text(element.name),
+              ),
+            )
+                .toList(),
+            onChanged: (value) {
+              widget.onSelection(value);
+              valueNotifier.value = widget.doctype
+                  .where((element) => element.id.contains(value!))
+                  .toList()[0]
+                  .id;
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
 class Button_For_Update_Save extends StatelessWidget {
   final String text;
 
@@ -610,7 +1010,7 @@ class Button_For_Update_Save extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 backgroundColor: CustomColor().colorPrimary,
                 textStyle:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                     TextStyle(fontSize: screenwidth(context, dividedby: 22), fontWeight: FontWeight.bold)),
             onPressed: onpressed,
             child: Text(text)));
   }
@@ -741,5 +1141,129 @@ class _Select_CategoryState extends State<Select_Category> {
         dialogBox: true,
       ),
     );
+  }
+}
+
+
+class Get_language_drop extends StatefulWidget {
+  final List<Language> languages;
+  final String? initialvalue;
+  final void Function(String?) onSelection;
+
+  const Get_language_drop({super.key, required this.languages, this.initialvalue, required this.onSelection});
+
+
+
+
+  @override
+  State<Get_language_drop> createState() => _Get_language_dropState();
+}
+
+class _Get_language_dropState extends State<Get_language_drop> {
+  String?  _selectedvalue;
+  @override
+  void initState() {
+    // TODO: implement initState
+    _selectedvalue = widget.initialvalue;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      // width: screenwidth(context, dividedby: 1),
+      // decoration: Const().decorationfield,
+      child: SearchChoices<String>.single(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        underline: Container(
+          color: Colors.transparent,
+        ),
+        items: widget.languages
+            .map<DropdownMenuItem<String>>(
+              (element) => DropdownMenuItem<String>(
+            value: element.id,
+            child: Text(element.title),
+          ),
+        )
+            .toList(),
+
+        value:  _selectedvalue,
+        hint: "Select",style:TextStyle(fontSize: 12,color: Colors.black) ,
+        searchHint: "Select",
+        onChanged: (value) {
+          setState(() {
+            _selectedvalue = value;
+            print(value);
+          });
+          widget.onSelection(value);
+        },
+        searchFn: (String keyword, List<DropdownMenuItem> items) {
+          List<int> filterdata = [];
+          if (items.isNotEmpty && keyword.isNotEmpty) {
+            keyword.split(" ").forEach((k) {
+              int i = 0;
+              for (DropdownMenuItem item in items) {
+                if (!filterdata.contains(i) &&
+                    k.isNotEmpty &&
+                    ((item.child as Text).data
+                        .toString()
+                        .toLowerCase()
+                        .contains(k.toLowerCase()))) {
+                  filterdata.add(i);
+                }
+                i++;
+              }
+            });
+          }
+          if (keyword.isEmpty) {
+            filterdata = Iterable<int>.generate(items.length).toList();
+          }
+          return (filterdata);
+        },
+        searchResultDisplayFn: (
+            {required displayItem,
+              required emptyListWidget,
+              required itemTapped,
+              required itemsToDisplay,
+              required scrollController,
+              required thumbVisibility}) {
+          return Expanded(
+            child: Scrollbar(
+              controller: scrollController,
+              thumbVisibility: thumbVisibility,
+              child: itemsToDisplay.isEmpty
+                  ? emptyListWidget
+                  : ListView.builder(
+                controller: scrollController,
+                itemBuilder: (context, index) {
+                  int itemIndex = itemsToDisplay[index].item1;
+                  DropdownMenuItem item = itemsToDisplay[index].item2;
+                  bool isItemSelected = itemsToDisplay[index].item3;
+                  return InkWell(
+                    onTap: () {
+                      itemTapped(
+                        itemIndex,
+                        item.value,
+                        isItemSelected,
+                      );
+                    },
+                    child: displayItem(
+                      item,
+                      isItemSelected,
+                    ),
+                  );
+                },
+                itemCount: itemsToDisplay.length,
+              ),
+            ),
+          );
+        },
+        isExpanded: true,
+        displayClearIcon: false,
+        dialogBox: true,
+      ),
+    );
+
   }
 }

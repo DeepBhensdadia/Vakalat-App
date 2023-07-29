@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../New UI/Dashboard_screens/Dashboard_Screen.dart';
+import '../api/apiclient.dart';
 import '../color/customcolor.dart';
 
 class Message_page extends StatefulWidget {
@@ -39,8 +40,8 @@ class _Message_pageState extends State<Message_page> {
               style: TextStyle(
                   fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 20),
             ),
-            CupertinoButton(child: Text('https://www.vakalat.com',  style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 20)), onPressed: (){launch('https://www.vakalat.com');}),
+            CupertinoButton(child: Text('$baseUrl',  style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 20)), onPressed: (){launch('$baseUrl');}),
           ],
         ),
       ),

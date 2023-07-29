@@ -33,7 +33,7 @@ class _Add_DocumentState extends State<Add_Document> {
         child: Column(
           children: [
             CustomTextfield(labelname: 'Enter Doc Name'),
-            Button_For_Update_Save(text: 'Save', onpressed: () {  },),
+            Button_For_Update_Save(text: 'Update', onpressed: () {  },),
 
           ],
         ),

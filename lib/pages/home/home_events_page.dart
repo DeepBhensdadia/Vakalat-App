@@ -70,14 +70,7 @@ class _home_events_page_State extends State<home_events_page>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _controller.removeListener(_loadMore);
 
-    txtSearchController.dispose();
-    txtSearchController_City.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -954,5 +947,13 @@ class _home_events_page_State extends State<home_events_page>
       //EasyLoading.showToast("" + exception.toString());
       if (showLoader == true) EasyLoading.dismiss(animation: true);
     }
+  }
+  @override
+  void dispose() {
+    _controller.removeListener(_loadMore);
+
+    txtSearchController.dispose();
+    txtSearchController_City.dispose();
+    super.dispose();
   }
 }

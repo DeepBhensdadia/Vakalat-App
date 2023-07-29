@@ -65,7 +65,7 @@ class _Change_PasswordState extends State<Change_Password> {
               text: 'Update',
               onpressed: () {
                 if (_formKey.currentState!.validate()) {
-                  get_services.call();
+                  changePasswod.call();
                 }
               },
             ),
@@ -75,7 +75,7 @@ class _Change_PasswordState extends State<Change_Password> {
     );
   }
 
-  Future<void> get_services() async {
+  Future<void> changePasswod() async {
     Map<String, dynamic> parameters = {
       "apiKey": apikey,
       'device': '2',
@@ -85,9 +85,12 @@ class _Change_PasswordState extends State<Change_Password> {
       "new_password": newpassword.text,
       "confirm_password": confirmpassword.text
     };
-    EasyLoading.show(status: 'loading...');
+    EasyLoading.show(status: 'Loading...');
     await change_password(body: parameters).then((value) {
       EasyLoading.dismiss();
+      oldpassword.clear();
+      newpassword.clear();
+      confirmpassword.clear();
       EasyLoading.showToast(value.message);
     }).onError((error, stackTrace) {
       print(error.toString());

@@ -24,7 +24,7 @@ class Getdashboard {
 
   factory Getdashboard.fromJson(Map<String, dynamic> json) => Getdashboard(
     status: json["status"],
-    message: json["message"],
+    message: json["message"] ?? "",
     csrfToken: json["csrf_token"],
     data: Data.fromJson(json["data"]),
   );
@@ -39,9 +39,9 @@ class Getdashboard {
 
 class Data {
   final List<Case> cases;
-  final List<dynamic> inquiries;
+  final List<Inquiry> inquiries;
   final Videos videos;
-  final List<dynamic> jobs;
+  final List<Job> jobs;
   final List<Appliedjob> appliedjobs;
   final Events events;
 
@@ -56,18 +56,18 @@ class Data {
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     cases: List<Case>.from(json["cases"].map((x) => Case.fromJson(x))),
-    inquiries: List<dynamic>.from(json["inquiries"].map((x) => x)),
+    inquiries: List<Inquiry>.from(json["inquiries"].map((x) => Inquiry.fromJson(x))),
     videos: Videos.fromJson(json["videos"]),
-    jobs: List<dynamic>.from(json["jobs"].map((x) => x)),
+    jobs: List<Job>.from(json["jobs"].map((x) => Job.fromJson(x))),
     appliedjobs: List<Appliedjob>.from(json["appliedjobs"].map((x) => Appliedjob.fromJson(x))),
     events: Events.fromJson(json["events"]),
   );
 
   Map<String, dynamic> toJson() => {
     "cases": List<dynamic>.from(cases.map((x) => x.toJson())),
-    "inquiries": List<dynamic>.from(inquiries.map((x) => x)),
+    "inquiries": List<dynamic>.from(inquiries.map((x) => x.toJson())),
     "videos": videos.toJson(),
-    "jobs": List<dynamic>.from(jobs.map((x) => x)),
+    "jobs": List<dynamic>.from(jobs.map((x) => x.toJson())),
     "appliedjobs": List<dynamic>.from(appliedjobs.map((x) => x.toJson())),
     "events": events.toJson(),
   };
@@ -117,25 +117,25 @@ class Appliedjob {
   });
 
   factory Appliedjob.fromJson(Map<String, dynamic> json) => Appliedjob(
-    applyJobId: json["apply_job_id"],
-    applyId: json["apply_id"],
-    applyJobFname: json["apply_job_fname"],
-    applyJobLname: json["apply_job_lname"],
-    applyJobEmail: json["apply_job_email"],
-    applyJobMobile: json["apply_job_mobile"],
-    applyJobResume: json["apply_job_resume"],
-    applyJobMessage: json["apply_job_message"],
-    status: json["status"],
-    applyJobUserId: json["apply_job_user_id"],
-    applyJobCreatedDatetime: json["apply_job_created_datetime"],
-    applyJobHire: json["apply_job_hire"],
-    jpJobTitle: json["jp_job_title"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    mobile: json["mobile"],
-    email: json["email"],
-    address: json["address"],
-    lawFirmCollege: json["law_firm_college"],
+    applyJobId: json["apply_job_id"]??"",
+    applyId: json["apply_id"]??"",
+    applyJobFname: json["apply_job_fname"]??"",
+    applyJobLname: json["apply_job_lname"]??"",
+    applyJobEmail: json["apply_job_email"]??"",
+    applyJobMobile: json["apply_job_mobile"]??"",
+    applyJobResume: json["apply_job_resume"]??"",
+    applyJobMessage: json["apply_job_message"]??"",
+    status: json["status"]??"",
+    applyJobUserId: json["apply_job_user_id"]??"",
+    applyJobCreatedDatetime: json["apply_job_created_datetime"]??"",
+    applyJobHire: json["apply_job_hire"]??"",
+    jpJobTitle: json["jp_job_title"]??"",
+    firstName: json["first_name"]??"",
+    lastName: json["last_name"]??"",
+    mobile: json["mobile"]??"",
+    email: json["email"]??"",
+    address: json["address"]??"",
+    lawFirmCollege: json["law_firm_college"]??"",
   );
 
   Map<String, dynamic> toJson() => {
@@ -183,14 +183,14 @@ class Case {
   });
 
   factory Case.fromJson(Map<String, dynamic> json) => Case(
-    caseDetailsId: json["case_details_id"],
-    caseNo: json["case_no"],
-    caseTitle: json["case_title"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    mobile: json["mobile"],
+    caseDetailsId: json["case_details_id"]??"",
+    caseNo: json["case_no"]??"",
+    caseTitle: json["case_title"]??"",
+    firstName: json["first_name"]??"",
+    lastName: json["last_name"]??"",
+    mobile: json["mobile"]??"",
     caseHearingDate: DateTime.parse(json["case_hearing_date"]),
-    caseStatusId: json["case_status_id"],
+    caseStatusId: json["case_status_id"]??"",
   );
 
   Map<String, dynamic> toJson() => {
@@ -287,34 +287,34 @@ class EventsDatum {
   });
 
   factory EventsDatum.fromJson(Map<String, dynamic> json) => EventsDatum(
-    eventId: json["event_id"],
-    eventTypeId: json["event_type_id"],
-    photo: json["photo"],
-    eventTitle: json["event_title"],
-    slug: json["slug"],
-    description: json["description"],
-    location: json["location"],
+    eventId: json["event_id"]??"",
+    eventTypeId: json["event_type_id"]??"",
+    photo: json["photo"]??"",
+    eventTitle: json["event_title"]??"",
+    slug: json["slug"]??"",
+    description: json["description"]??"",
+    location: json["location"]??"",
     fromDate: DateTime.parse(json["from_date"]),
     toDate: DateTime.parse(json["to_date"]),
-    fromTime: json["from_time"],
-    toTime: json["to_time"],
-    contactNumber: json["contact_number"],
-    registrationRequired: json["registration_required"],
-    registrationFees: json["registration_fees"],
-    type: json["type"],
-    onlineFees: json["online_fees"],
+    fromTime: json["from_time"]??"",
+    toTime: json["to_time"]??"",
+    contactNumber: json["contact_number"]??"",
+    registrationRequired: json["registration_required"]??"",
+    registrationFees: json["registration_fees"]??"",
+    type: json["type"]??"",
+    onlineFees: json["online_fees"]??"",
     liveUrl: json["live_url"],
-    isHeightlight: json["is_heightlight"],
-    createdBy: json["created_by"],
-    behalfOfId: json["behalf_of_id"],
-    userMasterId: json["user_master_id"],
-    createdDatetime: json["created_datetime"],
-    updatedBy: json["updated_by"],
-    updatedDatetime: json["updated_datetime"],
-    isDelete: json["is_delete"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    lawFirmCollege: json["law_firm_college"],
+    isHeightlight: json["is_heightlight"]??"",
+    createdBy: json["created_by"]??"",
+    behalfOfId: json["behalf_of_id"]??"",
+    userMasterId: json["user_master_id"]??"",
+    createdDatetime: json["created_datetime"]??"",
+    updatedBy: json["updated_by"]??"",
+    updatedDatetime: json["updated_datetime"]??"",
+    isDelete: json["is_delete"]??"",
+    firstName: json["first_name"]??"",
+    lastName: json["last_name"]??"",
+    lawFirmCollege: json["law_firm_college"]??"",
   );
 
   Map<String, dynamic> toJson() => {
@@ -346,6 +346,242 @@ class EventsDatum {
     "first_name": firstName,
     "last_name": lastName,
     "law_firm_college": lawFirmCollege,
+  };
+}
+
+class Inquiry {
+  final String id;
+  final String queryId;
+  final String clientId;
+  final String firstName;
+  final String lastName;
+  final String contactNo;
+  final String email;
+  final String subject;
+  final String message;
+  final String lawyerId;
+  final String isRead;
+  final String isDelete;
+  final String createdBy;
+  final String createdDatetime;
+  final String updatedBy;
+  final String updatedDatetime;
+  final String uFirstName;
+  final String uLastName;
+  final String uMobile;
+  final String uEmail;
+
+  Inquiry({
+    required this.id,
+    required this.queryId,
+    required this.clientId,
+    required this.firstName,
+    required this.lastName,
+    required this.contactNo,
+    required this.email,
+    required this.subject,
+    required this.message,
+    required this.lawyerId,
+    required this.isRead,
+    required this.isDelete,
+    required this.createdBy,
+    required this.createdDatetime,
+    required this.updatedBy,
+    required this.updatedDatetime,
+    required this.uFirstName,
+    required this.uLastName,
+    required this.uMobile,
+    required this.uEmail,
+  });
+
+  factory Inquiry.fromJson(Map<String, dynamic> json) => Inquiry(
+    id: json["id"]??"",
+    queryId: json["query_id"]??"",
+    clientId: json["client_id"]??"",
+    firstName: json["first_name"]??"",
+    lastName: json["last_name"]??"",
+    contactNo: json["contact_no"]??"",
+    email: json["email"]??"",
+    subject: json["subject"]??"",
+    message: json["message"]??"",
+    lawyerId: json["lawyer_id"]??"",
+    isRead: json["is_read"]??"",
+    isDelete: json["is_delete"]??"",
+    createdBy: json["created_by"]??"",
+    createdDatetime: json["created_datetime"]??"",
+    updatedBy: json["updated_by"]??"",
+    updatedDatetime: json["updated_datetime"]??"",
+    uFirstName: json["u_first_name"]??"",
+    uLastName: json["u_last_name"]??"",
+    uMobile: json["u_mobile"]??"",
+    uEmail: json["u_email"]??"",
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "query_id": queryId,
+    "client_id": clientId,
+    "first_name": firstName,
+    "last_name": lastName,
+    "contact_no": contactNo,
+    "email": email,
+    "subject": subject,
+    "message": message,
+    "lawyer_id": lawyerId,
+    "is_read": isRead,
+    "is_delete": isDelete,
+    "created_by": createdBy,
+    "created_datetime": createdDatetime,
+    "updated_by": updatedBy,
+    "updated_datetime": updatedDatetime,
+    "u_first_name": uFirstName,
+    "u_last_name": uLastName,
+    "u_mobile": uMobile,
+    "u_email": uEmail,
+  };
+}
+
+class Job {
+  final String jpId;
+  final String jpSlug;
+  final String jpJobTitle;
+  final String jpDescription;
+  final String jpGender;
+  final String jpFresherApply;
+  final String jpExperience;
+  final String jpFromSalary;
+  final String jpToSalary;
+  final String jpWorkTime;
+  final String jpCountryId;
+  final String jpStateId;
+  final String jpCityId;
+  final String jpFacilites;
+  final DateTime jpStartDate;
+  final DateTime jpEndDate;
+  final String jpNoOfVacancy;
+  final dynamic jpEmploymentType;
+  final String jpIsLpo;
+  final String jpIsPw;
+  final String jpIsdelete;
+  final String jpCreatedBy;
+  final String behalfOfId;
+  final String userMasterId;
+  final String jpCreatedDatetime;
+  final dynamic jpUpdatedBy;
+  final String jpUpdatedDatetime;
+  final String cityName;
+  final String stateName;
+  final String countryName;
+  final String lawFirmCollege;
+  final String totalApplied;
+  final String mobile;
+
+  Job({
+    required this.jpId,
+    required this.jpSlug,
+    required this.jpJobTitle,
+    required this.jpDescription,
+    required this.jpGender,
+    required this.jpFresherApply,
+    required this.jpExperience,
+    required this.jpFromSalary,
+    required this.jpToSalary,
+    required this.jpWorkTime,
+    required this.jpCountryId,
+    required this.jpStateId,
+    required this.jpCityId,
+    required this.jpFacilites,
+    required this.jpStartDate,
+    required this.jpEndDate,
+    required this.jpNoOfVacancy,
+    required this.jpEmploymentType,
+    required this.jpIsLpo,
+    required this.jpIsPw,
+    required this.jpIsdelete,
+    required this.jpCreatedBy,
+    required this.behalfOfId,
+    required this.userMasterId,
+    required this.jpCreatedDatetime,
+    required this.jpUpdatedBy,
+    required this.jpUpdatedDatetime,
+    required this.cityName,
+    required this.stateName,
+    required this.countryName,
+    required this.lawFirmCollege,
+    required this.totalApplied,
+    required this.mobile,
+  });
+
+  factory Job.fromJson(Map<String, dynamic> json) => Job(
+    jpId: json["jp_id"]??"",
+    jpSlug: json["jp_slug"]??"",
+    jpJobTitle: json["jp_job_title"]??"",
+    jpDescription: json["jp_description"]??"",
+    jpGender: json["jp_gender"]??"",
+    jpFresherApply: json["jp_fresher_apply"]??"",
+    jpExperience: json["jp_experience"]??"",
+    jpFromSalary: json["jp_from_salary"]??"",
+    jpToSalary: json["jp_to_salary"]??"",
+    jpWorkTime: json["jp_work_time"]??"",
+    jpCountryId: json["jp_country_id"]??"",
+    jpStateId: json["jp_state_id"]??"",
+    jpCityId: json["jp_city_id"]??"",
+    jpFacilites: json["jp_facilites"]??"",
+    jpStartDate: DateTime.parse(json["jp_start_date"]),
+    jpEndDate: DateTime.parse(json["jp_end_date"]),
+    jpNoOfVacancy: json["jp_no_of_vacancy"]??"",
+    jpEmploymentType: json["jp_employment_type"],
+    jpIsLpo: json["jp_is_lpo"]??"",
+    jpIsPw: json["jp_is_pw"]??"",
+    jpIsdelete: json["jp_isdelete"]??"",
+    jpCreatedBy: json["jp_created_by"]??"",
+    behalfOfId: json["behalf_of_id"]??"",
+    userMasterId: json["user_master_id"]??"",
+    jpCreatedDatetime: json["jp_created_datetime"]??"",
+    jpUpdatedBy: json["jp_updated_by"],
+    jpUpdatedDatetime: json["jp_updated_datetime"]??"",
+    cityName: json["city_name"]??"",
+    stateName: json["state_name"]??"",
+    countryName: json["country_name"]??"",
+    lawFirmCollege: json["law_firm_college"]??"",
+    totalApplied: json["total_applied"]??"",
+    mobile: json["mobile"]??"",
+  );
+
+  Map<String, dynamic> toJson() => {
+    "jp_id": jpId,
+    "jp_slug": jpSlug,
+    "jp_job_title": jpJobTitle,
+    "jp_description": jpDescription,
+    "jp_gender": jpGender,
+    "jp_fresher_apply": jpFresherApply,
+    "jp_experience": jpExperience,
+    "jp_from_salary": jpFromSalary,
+    "jp_to_salary": jpToSalary,
+    "jp_work_time": jpWorkTime,
+    "jp_country_id": jpCountryId,
+    "jp_state_id": jpStateId,
+    "jp_city_id": jpCityId,
+    "jp_facilites": jpFacilites,
+    "jp_start_date": "${jpStartDate.year.toString().padLeft(4, '0')}-${jpStartDate.month.toString().padLeft(2, '0')}-${jpStartDate.day.toString().padLeft(2, '0')}",
+    "jp_end_date": "${jpEndDate.year.toString().padLeft(4, '0')}-${jpEndDate.month.toString().padLeft(2, '0')}-${jpEndDate.day.toString().padLeft(2, '0')}",
+    "jp_no_of_vacancy": jpNoOfVacancy,
+    "jp_employment_type": jpEmploymentType,
+    "jp_is_lpo": jpIsLpo,
+    "jp_is_pw": jpIsPw,
+    "jp_isdelete": jpIsdelete,
+    "jp_created_by": jpCreatedBy,
+    "behalf_of_id": behalfOfId,
+    "user_master_id": userMasterId,
+    "jp_created_datetime": jpCreatedDatetime,
+    "jp_updated_by": jpUpdatedBy,
+    "jp_updated_datetime": jpUpdatedDatetime,
+    "city_name": cityName,
+    "state_name": stateName,
+    "country_name": countryName,
+    "law_firm_college": lawFirmCollege,
+    "total_applied": totalApplied,
+    "mobile": mobile,
   };
 }
 
@@ -423,30 +659,30 @@ class VideosDatum {
   });
 
   factory VideosDatum.fromJson(Map<String, dynamic> json) => VideosDatum(
-    id: json["id"],
-    topicId: json["topic_id"],
-    userId: json["user_id"],
-    plainUrl: json["plain_url"],
-    url: json["url"],
-    title: json["title"],
-    desc: json["desc"],
-    status: json["status"],
+    id: json["id"]??"",
+    topicId: json["topic_id"]??"",
+    userId: json["user_id"]??"",
+    plainUrl: json["plain_url"]??"",
+    url: json["url"]??"",
+    title: json["title"]??"",
+    desc: json["desc"]??"",
+    status: json["status"]??"",
     reason: json["reason"],
-    isDelete: json["is_delete"],
-    isActive: json["is_active"],
-    createdBy: json["created_by"],
-    behalfOfId: json["behalf_of_id"],
+    isDelete: json["is_delete"]??"",
+    isActive: json["is_active"]??"",
+    createdBy: json["created_by"]??"",
+    behalfOfId: json["behalf_of_id"]??"",
     createdAt: DateTime.parse(json["created_at"]),
-    updatedBy: json["updated_by"],
-    updatedAt: json["updated_at"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    topic: json["topic"],
-    topicDesc: json["topic_desc"],
-    language: json["language"],
-    category: json["category"],
-    subCategory: json["sub_category"],
-    slug: json["slug"],
+    updatedBy: json["updated_by"]??"",
+    updatedAt: json["updated_at"]??"",
+    firstName: json["first_name"]??"",
+    lastName: json["last_name"]??"",
+    topic: json["topic"]??"",
+    topicDesc: json["topic_desc"]??"",
+    language: json["language"]??"",
+    category: json["category"]??"",
+    subCategory: json["sub_category"]??"",
+    slug: json["slug"]??"",
   );
 
   Map<String, dynamic> toJson() => {

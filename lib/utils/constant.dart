@@ -3,16 +3,63 @@ import 'package:vakalat_flutter/model/clsLoginResponseModel.dart';
 import 'package:vakalat_flutter/model/clsUser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Sharedpref/shared_pref.dart';
 import '../color/customcolor.dart';
 import '../helper.dart';
+import 'ToastMessage.dart';
 
 const apikey = '5Xf!-VQ*Zjad>@Q-}Bwb@w2/YrY#n';
 const device = '2';
 const drawertextstyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
 
 final buttonred = Color(0xffAF3F3F);
+final msgexpire =    ToastMessage().showmessage('Your Session is expire..!');
+
+imagesheet(BuildContext context,void Function() ontapcamera,void Function() ontapgallary) {
+return   showModalBottomSheet(
+  context: context,
+  builder: (BuildContext context) {
+    return SafeArea(
+      child: Wrap(
+        children: [
+          ListTile(
+              leading: Icon(Icons.camera_alt),
+              title: Text('Camera'),
+              onTap: ontapcamera
+          ),
+          ListTile(
+              leading: Icon(Icons.photo_library),
+              title: Text('Gallery'),
+              onTap:ontapgallary
+          ),
+        ],
+      ),
+    );
+  },
+);
+}
 
 class Const {
+
+
+
+
+
+
+  List<String> month = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12'
+  ];
   final decorationfield = BoxDecoration(
       borderRadius: const BorderRadius.all(Radius.circular(5)),
       border: Border.all(width: 1, color: Colors.grey));
@@ -48,12 +95,10 @@ class Const {
 
   static clsUser? currentUser;
 
-  Future getLoginPrefrences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // objUser.token_type = prefs.getString(Const().KEY_token_type);
-    prefs.getString(Const().KEY_access_token);
-    // objUser.userName = prefs.getString(Const().KEY_userName);
-    // objUser.accountId = prefs.getString(Const().KEY_accountId);
+  Future deleteprofilelofinandmenu() async {
+   await SharedPref.deleteSpecific(prefKey: PrefKey.getProfile);
+   await SharedPref.deleteSpecific(prefKey: PrefKey.getMenu);
+   await SharedPref.deleteSpecific(prefKey: PrefKey.loginDetails);
   }
 
   Future saveLoginPrefrences(ClsLoginResponseModel userResponseModel) async {
@@ -66,28 +111,34 @@ class Const {
     // prefs.setString(Const().KEY_accountId, userResponseModel.Data!.accountId!);
   }
 
-  textrow(String text, String answer, context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0, top: 5, bottom: 5),
-      child: Row(
-        children: [
-          Container(
-              width: screenwidth(context, dividedby: 2.5),
+  textrow(String text, String answer, context,Function() ontap) {
+    return InkWell(
+      onTap: ontap,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10.0, top: 5, bottom: 5),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                width: screenwidth(context, dividedby: 2.5),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                      fontSize: screenwidth(context, dividedby: 30),
+                      fontWeight: FontWeight.w600,
+                      color: CustomColor().colorPrimary),
+                )),
+            Expanded(
               child: Text(
-                text,
+                answer,
                 style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: CustomColor().colorPrimary),
-              )),
-          Text(
-            answer,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+                  fontSize: screenwidth(context, dividedby: 30),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -98,24 +149,52 @@ class Const {
       children: [
         SizedBox(
             // color: Colors.blue,
-            width: screenwidth(context, dividedby: 7),
+            width: screenwidth(context, dividedby: 6),
             child: Text(
               text,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              style:  TextStyle(fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30),),
             )),
-        const SizedBox(
-          width: 10,
-        ),
         Container(
           // color: Colors.blueAccent,
           width: screenwidth(context, dividedby: 2.2),
           child: Text(
             text2,
-            style: const TextStyle(
-                fontWeight: FontWeight.w600, fontSize: 14, color: Colors.grey),
+            style:  TextStyle(
+                fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30), color: Colors.grey),
           ),
         ),
       ],
+    );
+  }
+  Textinscreen2(String text, String text2, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+              // color: Colors.blue,
+              width: screenwidth(context, dividedby: 3),
+              child: Text(
+                text,
+                style:  TextStyle(fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30),),
+              )),
+          Text(
+            ':',
+            style:  TextStyle(fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30),),
+          ),
+          SizedBox(width: 10,),
+          Container(
+            // color: Colors.blueAccent,
+            width: screenwidth(context, dividedby: 2.2),
+            child: Text(
+              text2,
+              style:  TextStyle(
+                  fontWeight: FontWeight.w600, fontSize: screenwidth(context, dividedby: 30), color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

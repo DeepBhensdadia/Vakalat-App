@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../color/customcolor.dart';
 import '../../helper.dart';
 import '../../utils/constant.dart';
@@ -36,10 +37,16 @@ class _Joined_EventState extends State<Joined_Event> {
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
-                   Const().textrow('Title :', events.eventTitle,context),
+                   Const().textrow('Title :', events.eventTitle,context,() {
+
+                   }),
                    Const().textrow('Firm/Collage Name :',
-                        events.lawFirmCollege,context),
-                     Const().textrow('Contact :', events.contactNumber,context),
+                        events.lawFirmCollege,context,() {
+
+                        }),
+                     Const().textrow('Contact :', events.contactNumber,context,() {
+                       launch('tel:${events.contactNumber}');
+                     }),
                      // Const().textrow('Applied Date :',
                      //     formDate,context),
                 Padding(
@@ -110,6 +117,35 @@ class _Joined_EventState extends State<Joined_Event> {
               )),
         );
       },
-    ) : Center(child: Text('No Data'),);
+    ) : Container(
+      alignment: Alignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        verticalDirection: VerticalDirection.down,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Card(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              elevation: 4,
+              child:
+              Image.asset('assets/images/nodata_search.png')),
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text(
+              "No data found.",
+              style: TextStyle(
+                  color: CustomColor().colorPrimary,
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

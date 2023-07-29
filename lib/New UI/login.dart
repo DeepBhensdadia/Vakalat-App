@@ -1,7 +1,14 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vakalat_flutter/color/customcolor.dart';
+import 'package:vakalat_flutter/helper.dart';
 import 'package:vakalat_flutter/model/clsLoginResponseModel.dart';
 import 'package:vakalat_flutter/pages/dashboard.dart';
 import 'package:vakalat_flutter/pages/forgotpassword.dart';
@@ -15,6 +22,8 @@ import 'package:vakalat_flutter/api/postapi.dart';
 
 import '../Sharedpref/shared_pref.dart';
 import '../utils/constant.dart';
+import '../utils/design.dart';
+import 'Dashboard_screens/Dashboard_Screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.title}) : super(key: key);
@@ -39,7 +48,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
 
   bool _isLoading = false;
 
-  bool isUserSignedIn = false;
+  bool isUserSignedIn = true;
   final bool _isbuttonClicked = false;
 
   TextEditingController emailController = TextEditingController();
@@ -49,7 +58,8 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
   String strPassword = '';
 
   bool _passwordVisible = false;
-
+  String? username = SharedPref.get(prefKey: PrefKey.username) ?? "";
+  String? password = SharedPref.get(prefKey: PrefKey.password) ?? "";
   @override
   void initState() {
     _passwordVisible = false;
@@ -57,12 +67,14 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
     edtPassword = FocusNode();
     edtEmail!.unfocus();
     edtPassword!.unfocus();
-
+   remember = SharedPref.get(prefKey: PrefKey.passbool) == "true" ?  true : false;
     // Local
-    emailController.text = "meghalshukla";
-    passwordController.text = "test@1234";
+    emailController.text = username ?? "";
+    passwordController.text = password ?? "";
+    // emailController.text = "9265376681";
+    // passwordController.text = "123456";
     // emailController.text = "Deep_patel";
-    // passwordController.text = "9328143230";
+    // passwordController.text ="123456";
 
     // Production
     // emailController.text = "";
@@ -104,6 +116,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
     );
   }
 
+  bool remember = true;
   @override
   Widget build(BuildContext context) {
     PageOrientation().setOrientationPortrait();
@@ -112,7 +125,7 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
-           'Sign In',
+            'Sign In',
             style: TextStyle(
               color: Colors.white,
             ),
@@ -122,167 +135,216 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
           backgroundColor: CustomColor().colorPrimary,
         ),
         body: SingleChildScrollView(
-          child: Column(
-
-            children: [
-
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    Container(
-                        margin: const EdgeInsets.only(top: 20.0),
-                        height: 100.0,
-                        width: 100.0,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/logo.png'),
-                            fit: BoxFit.fitHeight,
-                          ),
-                          shape: BoxShape.rectangle,
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text('Sign In',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 22),
-                            textAlign: TextAlign.left),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: TextFormField(
-                        controller: emailController,
-                        focusNode: edtEmail,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'username',
-                          // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-
-                        ),
-                        onSaved: (newValue) {
-                          setState(
-                            () {
-                              strEmail = newValue!.trim();
-                            },
-                          );
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter username / email';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: TextFormField(
-                        obscureText: !_passwordVisible,
-                        controller: passwordController,
-                        focusNode: edtPassword,
-                        onSaved: (newValue) {
-                          setState(
-                            () {
-                              strPassword = newValue!.trim();
-                            },
-                          );
-                        },
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          labelText: 'password',
-                          // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              // Based on passwordVisible state choose the icon
-                              _passwordVisible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Theme.of(context).primaryColorDark,
+          child: Form(
+            key: _loginFormKey,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Container(
+                          margin: const EdgeInsets.only(top: 20.0),
+                          height: 100.0,
+                          width: 100.0,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/logo.png'),
+                              fit: BoxFit.fitHeight,
                             ),
-                            onPressed: () {
-                              // Update the state i.e. toogle the state of passwordVisible variable
+                            shape: BoxShape.rectangle,
+                          )),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text('Sign In',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 22),
+                              textAlign: TextAlign.left),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: TextFormField(
+                          controller: emailController,
+                          focusNode: edtEmail,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Username',
+                            // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
+                          ),
+                          onSaved: (newValue) {
+                            setState(
+                              () {
+                                strEmail = newValue!.trim();
+                              },
+                            );
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please Enter username';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: TextFormField(
+                          obscureText: !_passwordVisible,
+                          controller: passwordController,
+                          focusNode: edtPassword,
+                          onSaved: (newValue) {
+                            setState(
+                              () {
+                                strPassword = newValue!.trim();
+                              },
+                            );
+                          },
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'Password',
+                            // labelStyle: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                // Based on passwordVisible state choose the icon
+                                _passwordVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Theme.of(context).primaryColorDark,
+                              ),
+                              onPressed: () {
+
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter password';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: remember,
+                            onChanged: (value) {
                               setState(() {
-                                _passwordVisible = !_passwordVisible;
+                                remember = !remember;
+                                SharedPref.save(value: remember.toString(), prefKey: PrefKey.passbool);
                               });
                             },
                           ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter password';
-                          }
-                          return null;
-                        },
+                          Text(
+                            'Remember Me ?',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: CustomColor().colorPrimary,
-                          ),
-                          onPressed: () {
-                            gotoForgotPasswordPage();
-                          },
-                          child: const Text('Forgot Password?')),
-                    ),
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: CustomColor().colorPrimary,
+                                ),
+                                onPressed: () {
+                                  Get.off(DashboardPage(title: ""));
+                                },
+                                child: const Text('Go to Home')),
+                            TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: CustomColor().colorPrimary,
+                                ),
+                                onPressed: () {
+                                  gotoForgotPasswordPage();
+                                },
+                                child: const Text('Forgot Password?')),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                    height: 65,
+                    width: 150,
+                    padding: const EdgeInsets.all(10),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: CustomColor().colorPrimary,
+                            textStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        onPressed: () {
+                          // ignore: avoid_print
+                          if (_loginFormKey.currentState!.validate()) {
+                            APICALL_userLogin.call();
+                          }
+                        },
+                        child: const Text('Sign in'))),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't Have An Account? "),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Register(),
+                            ));
+                        // Map<String, dynamic> parameters = {
+                        //   "apiKey": apikey,
+                        //   'device': '2',
+                        // };
+                        // EasyLoading.show(status: 'loading...');
+                        // await get_user_type(body: parameters).then((value) {
+                        //   EasyLoading.dismiss();
+                        //   Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => Register(
+                        //           user_type: value,
+                        //         ),
+                        //       ));
+                        // }).onError((error, stackTrace) {
+                        //   EasyLoading.dismiss();
+                        // });
+                      },
+                      child: const Text("Register"),
+                    )
                   ],
                 ),
-              ),
-              Container(
-                  height: 65,
-                  width: 150,
-                  padding: const EdgeInsets.all(10),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: CustomColor().colorPrimary,
-                          textStyle: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      onPressed: () {
-                        // ignore: avoid_print
-                        APICALL_userLogin.call();
-                      },
-                      child: const Text('Sign in'))),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't Have An Account? "),
-                  TextButton(
-                    onPressed: () async {
-                      Map<String, dynamic> parameters = {
-                        "apiKey":apikey,
-                        'device': '2',
-                      };
-                      EasyLoading.show(status: 'loading...');
-                      await get_user_type(body: parameters).then((value) {
-                        EasyLoading.dismiss();
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>  Register(
-                          user_type:value,
-                        ),));
-                      }).onError((error, stackTrace) {
-                        EasyLoading.dismiss();
-                      });
-
-                    },
-                    child: const Text("Register"),
-                  )
-                ],
-              )
-            ],
+                SizedBox(
+                  height: screenheight(context, dividedby: 25),
+                ),
+                Button_For_Update_Save(
+                  text: "Please visit vakalatHouse.com also!!",
+                  onpressed: () {
+                    launch("https://vakalathouse.com");
+                  },
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -319,7 +381,8 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
   /*Calling Login API goes here*/
   Future APICALL_userLogin() async {
     EasyLoading.show(status: 'loading...');
-
+    await SharedPref.deleteSpecific(prefKey: PrefKey.username);
+    await SharedPref.deleteSpecific(prefKey: PrefKey.password);
     try {
       /*Retriving Parent Object*/
 
@@ -349,33 +412,42 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
         await SharedPref.save(
             value: jsonEncode(userResponseModel.toJson()),
             prefKey: PrefKey.loginDetails);
+        if (remember == true) {
+          await SharedPref.save(
+              value: emailController.text, prefKey: PrefKey.username);
+          await SharedPref.save(
+              value: passwordController.text, prefKey: PrefKey.password);
+        }
 
-        // ClsLoginResponseModel logindetails = clsLoginResponseModelFromJson(SharedPref.get(prefKey: PrefKey.loginDetails)!);
         Map<String, dynamic> parameters = {
           "apiKey": apikey,
           'device': '2',
-          "user_id":userResponseModel.userData.userId
+          'accessToken': userResponseModel.accessToken,
+          'csrf_token': '',
+          'user_id': userResponseModel.userData.userId,
+          'user_type': userResponseModel.userData.userType,
+          'current_pkg_id': userResponseModel.userData.currentPkgId,
         };
         EasyLoading.show(status: 'loading...');
-        await get_profile(body: parameters).then((value) async {
+        await getdrawermenu(body: parameters).then((value) async {
           await SharedPref.save(
-              value: jsonEncode(value.toJson()),
-              prefKey: PrefKey.get_profile);
-          setState(() {
+              value: jsonEncode(value.toJson()), prefKey: PrefKey.getMenu);
 
-            print(jsonEncode(value));
-            gotoHomePage();
-          });
           EasyLoading.dismiss();
         }).onError((error, stackTrace) {
+          ToastMessage().showmessage(error.toString());
           print(error);
+          print(stackTrace);
           EasyLoading.dismiss();
         });
+        userResponseModel.userData.currentPkgId == "0"
+            ? Get.off(() => DashboardPage(title: ""))
+            : getdashboard(userResponseModel);
       } else {
         setState(() {
           _isLoading = false;
         });
-EasyLoading.dismiss();
+        EasyLoading.dismiss();
         ToastMessage().showmessage(userResponseModel.message);
       }
     } catch (exception) {
@@ -388,5 +460,37 @@ EasyLoading.dismiss();
 
       ToastMessage().showmessage('Enter valid Username and Password!');
     }
+  }
+
+  getdashboard(logindetails) async {
+    Map<String, dynamic> parameters = {
+      "apiKey": apikey,
+      'device': '2',
+      "accessToken": logindetails.accessToken,
+      "user_id": logindetails.userData.userId,
+      "csrf_token": ""
+    };
+    EasyLoading.show(status: 'loading...');
+    await get_Deshboard(body: parameters).then((value) {
+      EasyLoading.dismiss();
+
+      log(value.toString());
+      Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => DashBoard_Screen(data: value),
+          ));
+    }).onError((error, stackTrace) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashboardPage(title: ''),
+          ));
+      msgexpire;
+      Const().deleteprofilelofinandmenu();
+      print(error);
+      // ToastMessage().showmessage(error.toString());
+      EasyLoading.dismiss();
+    });
   }
 }

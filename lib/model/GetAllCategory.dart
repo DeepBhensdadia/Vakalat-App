@@ -33,6 +33,22 @@ class GetAllCategory {
     for (Category element in categories) {
       temp.addAll(element.getMainWithSub());
     }
+    temp.sort((a, b) => a.name.compareTo(b.name));
+
+    return temp;
+  }
+  
+  List<String> getCategoryFromID(List<String> value) {
+    List<String> temp = <String>[];
+
+    for (String single in value) {
+      getAllCategory().forEach((element) {
+        if (element.id == single) {
+          temp.add(element.name);
+        }
+      });
+    }
+
     return temp;
   }
 
