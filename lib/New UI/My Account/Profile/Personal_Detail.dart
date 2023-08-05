@@ -366,8 +366,7 @@ class _Personal_DetailState extends State<Personal_Detail> {
                                       Map<String, dynamic> parameters = {
                                         "apiKey": apikey,
                                         'device': '2',
-                                        "user_type_id":
-                                            logindetails.userData.userType,
+                                        "user_type_id": logindetails.userData.userType,
                                       };
                                       await GetUserpackages(body: parameters)
                                           .then((value) {

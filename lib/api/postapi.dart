@@ -57,6 +57,7 @@ import '../model/getallLanguage.dart';
 import '../model/getallLanguage.dart';
 import '../model/getallLanguage.dart';
 import '../model/getallLanguage.dart';
+import '../model/getalldeshboard.dart';
 import '../model/getbar_councilModel.dart';
 import '../model/getdiscountModel.dart';
 import '../model/getdocumentdetails.dart';
@@ -110,12 +111,12 @@ Future<GetProfileModel> get_profile({required Map body}) {
 }
 
 Future userRegister({required Map body}) {
-  String url = '$baseUrl/register';
+  String url = '$baseUrl/register_mobile';
   return http.post(Uri.parse(url), body: body ).then((http.Response response) {
     if (kDebugMode) {
       // print(json.decode(response.body));
     }
-    return clsRegisterResponseModelFromJson(response.body);
+    return clsLoginResponseModelFromJson(response.body);
   });
 }
 Future userForgotPassword({required Map body}) {
@@ -490,6 +491,27 @@ Future<Getdocumentdetails>  getdoctype({required Map body}) {
       // print(json.decode(response.body));
     }
     return getdocumentdetailsFromJson(response.body);
+  });
+}
+
+Future<DeleteServicesModel>  getsendmail({required Map body}) {
+  // https://www.vakalat.com/user_api//participations_master_delete
+  String url = '$baseUrl//welcome_email';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return deleteServicesModelFromJson(response.body);
+  });
+}
+Future<GetAllDeshboard> getalldashboard({required Map body}) {
+  // https://www.vakalat.com/user_api//participations_master_delete
+  String url = '$baseUrl/get_main_dashboard';
+  return http.post(Uri.parse(url), body: body ).then((http.Response response) {
+    if (kDebugMode) {
+      // print(json.decode(response.body));
+    }
+    return getAllDeshboardFromJson(response.body);
   });
 }
 

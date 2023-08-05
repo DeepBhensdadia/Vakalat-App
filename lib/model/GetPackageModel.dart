@@ -140,7 +140,7 @@ class Menu {
   final String menuTitle;
 
   factory Menu.fromJson(Map<String, dynamic> json) => Menu(
-    menuTitle: json["menu_title"],
+    menuTitle: json["menu_title"].toString(),
   );
 
   Map<String, dynamic> toJson() => {

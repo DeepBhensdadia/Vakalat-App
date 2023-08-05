@@ -1010,7 +1010,7 @@ class Button_For_Update_Save extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 backgroundColor: CustomColor().colorPrimary,
                 textStyle:
-                     TextStyle(fontSize: screenwidth(context, dividedby: 22), fontWeight: FontWeight.bold)),
+                     TextStyle(fontSize: screenwidth(context, dividedby: 25), fontWeight: FontWeight.bold)),
             onPressed: onpressed,
             child: Text(text)));
   }

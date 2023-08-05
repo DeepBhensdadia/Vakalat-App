@@ -417,10 +417,10 @@ class _Drawer_ScreenState extends State<Drawer_Screen> {
                                       ),
                                       Text(
                                         textAlign: TextAlign.center,
-                                        'Something else',
+                                        'Subscribe \n For Access',
                                         style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
                                         ),
                                       )
                                     ],

@@ -174,6 +174,8 @@ class _LoginPageState extends State<LoginPage> with KeyboardHiderMixin {
                       Container(
                         padding: const EdgeInsets.all(10),
                         child: TextFormField(
+                          keyboardType: TextInputType.phone,
+                          maxLength: 10,
                           controller: emailController,
                           focusNode: edtEmail,
                           decoration: const InputDecoration(

@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum PrefKey { loginDetails, getProfile, getMenu,username,password ,passbool}
+enum PrefKey { loginDetails,saveuse, getProfile, getMenu,username,password ,passbool}
 
 class SharedPref {
   static late SharedPreferences _sharedPreferences;

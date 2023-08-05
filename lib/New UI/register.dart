@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vakalat_flutter/model/clsUserTypeResponseModel.dart';
 import 'package:vakalat_flutter/New%20UI/login.dart';
@@ -157,20 +158,26 @@ class _RegisterState extends State<Register> {
                 //     Controller: mobilecontroller,
                 //     labelname: ,
                 //     suffixicon:),
-                SizedBox(height: 5,),
+                SizedBox(
+                  height: 5,
+                ),
 
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text("Mobile / Username",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+                      child: Text(
+                        "Mobile / Username",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
                     ),
                     Container(
                       height: 85,
                       padding: const EdgeInsets.all(10),
                       child: TextFormField(
-                        // maxLength: 10,
+                        maxLength: 10,
                         // buildCounter: ,
                         controller: mobilecontroller,
                         validator: (p0) {
@@ -180,7 +187,7 @@ class _RegisterState extends State<Register> {
                           return null;
                         },
                         // focusNode: edtEmail,
-                        // keyboardType: TextInputType.,
+                        keyboardType: TextInputType.phone,
                         decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             // labelText: 'Mobile/Username',
@@ -260,10 +267,21 @@ class _RegisterState extends State<Register> {
                     )
                   ],
                 ),
-          Button_For_Update_Save(text: "Please visit VakalatHouse.com also!!" , onpressed: () {
-            launch("https://vakalathouse.com");
+                Container(
+                    // height: 65,
+                    width: screenwidth(context, dividedby: 1),
+                    padding: const EdgeInsets.all(10),
+                    child: ElevatedButton(
 
-          },)
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: CustomColor().colorPrimary,
+                            textStyle:
+                            TextStyle(fontSize: screenwidth(context, dividedby: 25), fontWeight: FontWeight.bold)),
+                        onPressed:() {
+                          launch("https://vakalathouse.com");
+                        },
+                        child: Text( "Please visit VakalatHouse.com also!!")))
+
               ],
             ),
           ),
@@ -579,8 +597,7 @@ class _Register_NowState extends State<Register_Now> {
                       ),
                       TextButton(
                           onPressed: () {
-                            launch(
-                                'https://www.vakalat.com/privacy-policy');
+                            launch('https://www.vakalat.com/privacy-policy');
                             // Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyPolicyPage(title: ''),));
                           },
                           child: Text(
@@ -596,17 +613,17 @@ class _Register_NowState extends State<Register_Now> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor:CustomColor().colorPrimary,
-                              // value == true
-                              //     ?
-                              //     : CustomColor().colorPrimary.withOpacity(0.4),
+                              backgroundColor:
+                              value == true
+                                  ? CustomColor().colorPrimary
+                                  : CustomColor().colorPrimary.withOpacity(0.4),
                               textStyle: const TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold)),
                           onPressed: () {
-                            APICALL_userRegister.call();
-                            // if (value == true) {
-                            //
-                            // }
+                            if (value == true) {
+                              APICALL_userRegister.call();
+
+                            }
                           },
                           child: const Text('Register Now'))),
                   Row(
@@ -665,32 +682,150 @@ class _Register_NowState extends State<Register_Now> {
                 "city": citicode.toString(),
               };
 
-              ClsRegisterResponseModel userResponseModel =
+              ClsLoginResponseModel userResponseModel =
                   await userRegister(body: parameters);
 
-              // Mounted is for disposing the calling of Api if User click back button
-              if (!mounted) {
-                return;
-              }
-
               if (userResponseModel.status == 1) {
-                ToastMessage()
-                    .showmessage("Registration Successfully!");
-                APICALL_userLogin.call();
-                // Const.currentUser = userResponseModel.Data!;
+                ToastMessage().showmessage("Registration Successfully!");
+                await SharedPref.save(
+                    value: jsonEncode(userResponseModel.toJson()),
+                    prefKey: PrefKey.loginDetails);
+                Map<String, dynamic> parameters = {
+                  "apiKey": apikey,
+                  'device': '2',
+                  'accessToken': userResponseModel.accessToken,
+                  'csrf_token': '',
+                  'user_id': userResponseModel.userData.userId,
+                  'user_type': userResponseModel.userData.userType,
+                  'current_pkg_id': "0",
+                  "customname": userResponseModel.userData.userFname +
+                      userResponseModel.userData.userLname
+                };
 
-                // APICALL_RegisterDevice(userResponseModel);
-                // gotologinPage();
-                // await SharedPref.save(
-                //     value: userResponseModel.userData.userFname.toString(),
-                //     prefKey: PrefKey.loginDetails);
+                await getalldashboard(body: parameters).then((value) async {
+                  await SharedPref.save(
+                      value: jsonEncode(value.data.getprofile.toJson()),
+                      prefKey: PrefKey.getProfile);
+
+                  await SharedPref.save(
+                      value: jsonEncode(value.data.getAppMenu.toJson()),
+                      prefKey: PrefKey.getMenu);
+
+                  Get.offAll(
+                    Cart_Screen(
+                        name: value.data.handlers.customhandler.first.name,
+                        packages: value.data.getUserWisePkg),
+                  );
+                  EasyLoading.dismiss();
+                  Map<String, dynamic> parameters = {
+                    "apiKey": apikey,
+                    'device': '2',
+                    "accessToken": userResponseModel.accessToken,
+                    "csrf_token": "",
+                    "user_id": userResponseModel.userData.userId,
+                  };
+                  await getsendmail(body: parameters);
+                }).onError((error, stackTrace) {
+                  print("...$error");
+                });
+
+                // Map<String, dynamic> parameters = {
+                //   "apiKey": apikey,
+                //   'device': '2',
+                //   "user_id": userResponseModel.userData.userId
+                // };
+                // await get_profile(body: parameters).then((value) async {
+                //   await SharedPref.save(
+                //       value: jsonEncode(value.toJson()), prefKey: PrefKey.getProfile);
+                //
+                //   Map<String, dynamic> parameters = {
+                //     "apiKey": apikey,
+                //     'device': '2',
+                //     'accessToken': userResponseModel.accessToken,
+                //     'csrf_token': '',
+                //     'user_id': userResponseModel.userData.userId,
+                //     'user_type': userResponseModel.userData.userType,
+                //     'current_pkg_id': value.profile.currentPkgId,
+                //   };
+                //
+                //   await getdrawermenu(body: parameters).then((value) async {
+                //     log(jsonEncode(value));
+                //     await SharedPref.save(
+                //         value: jsonEncode(value.toJson()), prefKey: PrefKey.getMenu);
+                //
+                //     Map<String, dynamic> parameters = {
+                //       "apiKey": apikey,
+                //       'device': '2',
+                //       "city_id": userResponseModel.userData.userCity,
+                //       "first_name": userResponseModel.userData.userFname,
+                //       "last_name": userResponseModel.userData.userLname,
+                //       "customname": userResponseModel.userData.userFname +
+                //           userResponseModel.userData.userLname
+                //     };
+                //
+                //     await get_handler_list(body: parameters).then((value) async {
+                //       GetHandlerList list = value;
+                //       Map<String, dynamic> parameters = {
+                //         "apiKey": apikey,
+                //         'device': '2',
+                //         "user_type_id": userResponseModel.userData.userType,
+                //       };
+                //       await GetUserpackages(body: parameters).then((value) async {
+                //         if (value.packages.isNotEmpty) {
+                //           Navigator.push(
+                //               context,
+                //               CupertinoPageRoute(
+                //                 builder: (context) => Cart_Screen(
+                //                     name: list.customhandler.first.name, packages: value),
+                //               ));
+                //
+                //           EasyLoading.dismiss();
+                //         } else {
+                //           ToastMessage().showmessage('Do Not Have Any Packages');
+                //         }
+                //
+                //
+                //         log(jsonEncode(value));
+                //         Map<String, dynamic> parameters = {
+                //           "apiKey": apikey,
+                //           'device': '2',
+                //           "accessToken": userResponseModel.accessToken,
+                //           "csrf_token": "",
+                //           "user_id": userResponseModel.userData.userId,
+                //         };
+                //         await getsendmail(body: parameters);
+                //       }).onError((error, stackTrace) {
+                //         print(error);
+                //
+                //         EasyLoading.dismiss();
+                //       });
+                //
+                //       EasyLoading.dismiss();
+                //     }).onError((error, stackTrace) {
+                //       print(error);
+                //       EasyLoading.dismiss();
+                //     });
+                //
+                //   }).onError((error, stackTrace) {
+                //     // ToastMessage().showmessage(error.toString());
+                //     print(error);
+                //     print(stackTrace);
+                //     EasyLoading.dismiss();
+                //   });
+                // }).onError((error, stackTrace) {
+                //   print(error);
+                //
+                //   EasyLoading.dismiss();
+                // });
               } else {
                 EasyLoading.dismiss();
-                ToastMessage().showmessage(userResponseModel.message);
+                ToastMessage()
+                    .showmessage(userResponseModel.message.toString());
               }
             } catch (exception) {
               EasyLoading.dismiss();
-              ToastMessage().showmessage(exception.toString());
+              ToastMessage().showmessage(
+                  "Entered Username or Email is taken by other user please enter new one and unique!");
             }
           } else {
             EasyLoading.dismiss();
@@ -705,124 +840,43 @@ class _Register_NowState extends State<Register_Now> {
     }
   }
 
-  Future APICALL_userLogin() async {
+  Future APICALL_userLogin(userResponseModel) async {
     EasyLoading.show(status: 'Loading...');
     await SharedPref.deleteSpecific(prefKey: PrefKey.username);
     await SharedPref.deleteSpecific(prefKey: PrefKey.password);
-    try {
-      /*Retriving Parent Object*/
+    // try {
+    /*Retriving Parent Object*/
 
-      Map<String, dynamic> parameters = {
-        "apiKey": '5Xf!-VQ*Zjad>@Q-}Bwb@w2/YrY#n',
-        'device': '2',
-        "user_name": usernamecontroller.text,
-        "password": confirmpasswordController.text
-      };
+    // Map<String, dynamic> parameters = {
+    //   "apiKey": '5Xf!-VQ*Zjad>@Q-}Bwb@w2/YrY#n',
+    //   'device': '2',
+    //   "user_name": usernamecontroller.text,
+    //   "password": confirmpasswordController.text
+    // };
 
-      ClsLoginResponseModel userResponseModel =
-          await userLogin(body: parameters);
+    // ClsLoginResponseModel userResponseModel =
+    //     await userLogin(body: parameters);
 
-      // Mounted is for disposing the calling of Api if User click back button
-      if (!mounted) {
-        return;
-      }
+    // Mounted is for disposing the calling of Api if User click back button
+    // if (!mounted) {
+    //   return;
+    // }
 
-      if (userResponseModel.status == 1) {
-        ToastMessage()
-            .showmessage("Welcome ${userResponseModel.userData.userFname}");
+    // if (userResponseModel.status == 1) {
+    //   ToastMessage()
+    //       .showmessage("Welcome ${userResponseModel.userData.userFname}");
 
-        // Const.currentUser = userResponseModel.Data!;
+    // Const.currentUser = userResponseModel.Data!;
 
-        // APICALL_RegisterDevice(userResponseModel);
+    // APICALL_RegisterDevice(userResponseModel);
 
-        await SharedPref.save(
-            value: jsonEncode(userResponseModel.toJson()),
-            prefKey: PrefKey.loginDetails);
-        Map<String, dynamic> parameters = {
-          "apiKey": apikey,
-          'device': '2',
-          "user_id": userResponseModel.userData.userId
-        };
-        await get_profile(body: parameters).then((value) async {
-          await SharedPref.save(
-              value: jsonEncode(value.toJson()), prefKey: PrefKey.getProfile);
-
-          Map<String, dynamic> parameters = {
-            "apiKey": apikey,
-            'device': '2',
-            'accessToken': userResponseModel.accessToken,
-            'csrf_token': '',
-            'user_id': userResponseModel.userData.userId,
-            'user_type': userResponseModel.userData.userType,
-            'current_pkg_id': value.profile.currentPkgId,
-          };
-
-          await getdrawermenu(body: parameters).then((value) async {
-            log(jsonEncode(value));
-            await SharedPref.save(
-                value: jsonEncode(value.toJson()), prefKey: PrefKey.getMenu);
-
-            Map<String, dynamic> parameters = {
-              "apiKey": apikey,
-              'device': '2',
-              "city_id": userResponseModel.userData.userCity,
-              "first_name": userResponseModel.userData.userFname,
-              "last_name": userResponseModel.userData.userLname,
-              "customname": userResponseModel.userData.userFname +
-                  userResponseModel.userData.userLname
-            };
-
-            await get_handler_list(body: parameters).then((value) async {
-              GetHandlerList list = value;
-              Map<String, dynamic> parameters = {
-                "apiKey": apikey,
-                'device': '2',
-                "user_type_id": userResponseModel.userData.userType,
-              };
-              await GetUserpackages(body: parameters).then((value) {
-                if (value.packages.isNotEmpty) {
-                  Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => Cart_Screen(
-                            name: list.customhandler.first.name, packages: value),
-                      ));
-                } else {
-                  ToastMessage().showmessage('Do Not Have Any Packages');
-                }
-
-                EasyLoading.dismiss();
-                log(jsonEncode(value));
-              }).onError((error, stackTrace) {
-                print(error);
-
-                EasyLoading.dismiss();
-              });
-
-              EasyLoading.dismiss();
-            }).onError((error, stackTrace) {
-              print(error);
-              EasyLoading.dismiss();
-            });
-
-          }).onError((error, stackTrace) {
-            // ToastMessage().showmessage(error.toString());
-            print(error);
-            print(stackTrace);
-            EasyLoading.dismiss();
-          });
-        }).onError((error, stackTrace) {
-          print(error);
-
-          EasyLoading.dismiss();
-        });
-      } else {
-        EasyLoading.dismiss();
-        ToastMessage().showmessage(userResponseModel.message);
-      }
-    } catch (exception) {
-      EasyLoading.dismiss();
-      // ToastMessage().showmessage('Enter valid Username and Password!');
-    }
+    // } else {
+    //   EasyLoading.dismiss();
+    //   ToastMessage().showmessage(userResponseModel.message);
+    // }
+    // } catch (exception) {
+    //   EasyLoading.dismiss();
+    //   // ToastMessage().showmessage('Enter valid Username and Password!');
+    // }
   }
 }

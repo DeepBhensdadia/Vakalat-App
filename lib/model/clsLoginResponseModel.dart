@@ -13,10 +13,10 @@ class ClsLoginResponseModel {
     required this.userData,
   });
 
-  final int status;
-  final String message;
-  final String accessToken;
-  final UserData userData;
+   int status;
+   String message;
+   String accessToken;
+   UserData userData;
 
   factory ClsLoginResponseModel.fromJson(Map<String, dynamic> json) => ClsLoginResponseModel(
     status: json["status"],

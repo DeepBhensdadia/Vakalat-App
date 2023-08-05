@@ -26,7 +26,7 @@ import 'handler_search.dart';
 
 class Cart_Screen extends StatefulWidget {
   final String name;
-  final GetPackagesModel packages;
+  final dynamic packages;
 
   const Cart_Screen({Key? key, required this.name, required this.packages})
       : super(key: key);
