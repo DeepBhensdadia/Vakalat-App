@@ -26,11 +26,8 @@ class Contact_Details extends StatefulWidget {
   State<Contact_Details> createState() => _Contact_DetailsState();
 }
 
-class _Contact_DetailsState extends State<Contact_Details>{
-
-
+class _Contact_DetailsState extends State<Contact_Details> {
   final ProfileControl getxController = Get.put(ProfileControl());
-
 
   TextEditingController mobilecontroller = TextEditingController();
   TextEditingController emailcontroller = TextEditingController();
@@ -40,6 +37,7 @@ class _Contact_DetailsState extends State<Contact_Details>{
   TextEditingController officepincodecontroller = TextEditingController();
   TextEditingController officeaddresscontroller = TextEditingController();
 
+  bool isdisplayweb = true;
   bool show = false;
   bool _isLoading = false;
   String countriecode_home = '101';
@@ -63,15 +61,10 @@ class _Contact_DetailsState extends State<Contact_Details>{
     countriecode_office = widget.detail.profile.officeCountryId;
     rajyacode_office = widget.detail.profile.officeStateId;
     citicode_office = widget.detail.profile.officeCityId;
+    isdisplayweb = widget.detail.profile.isDisplayWeb == "1" ? true : false;
     // getxController.stateApi_office(value: widget.detail.profile.countryId);
     super.initState();
   }
-
-
-
-
-
-
 
   final RegExp _emailRegExp = RegExp(
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
@@ -109,6 +102,23 @@ class _Contact_DetailsState extends State<Contact_Details>{
                   return null;
                 },
                 maxlength: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Display Mobile No To Public Profile?",  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
+                  Switch(
+                    value: isdisplayweb,
+                    onChanged: (value) {
+                      setState(() {
+                        isdisplayweb = !isdisplayweb;
+                      });
+                    },
+                  )
+                ],
+              ),
+            ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
@@ -130,8 +140,8 @@ class _Contact_DetailsState extends State<Contact_Details>{
               Controller: homeadresscontroller,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
               child: Column(
                 children: [
                   CustomDropDownCountry(
@@ -151,34 +161,32 @@ class _Contact_DetailsState extends State<Contact_Details>{
                   ),
                   ValueListenableBuilder(
                       valueListenable: getxController.rajyaBuilder,
-                      builder: (context, value, child) => value
-                          .isNotEmpty ||
-                          widget.detail.profile.stateId.isNotEmpty
+                      builder: (context, value, child) => value.isNotEmpty ||
+                              widget.detail.profile.stateId.isNotEmpty
                           ? CustomDropDownState(
-                        raja: value,
-                        initialValue: widget.detail.profile.stateId,
-                        onSelection: (p0) async {
-                          rajyacode_home = p0.toString();
-                          getxController.citiesBuilder.value = [];
-                          getxController.cityApi(value: p0);
-                        },
-                      )
+                              raja: value,
+                              initialValue: widget.detail.profile.stateId,
+                              onSelection: (p0) async {
+                                rajyacode_home = p0.toString();
+                                getxController.citiesBuilder.value = [];
+                                getxController.cityApi(value: p0);
+                              },
+                            )
                           : SizedBox.shrink()),
                   const SizedBox(
                     height: 10,
                   ),
                   ValueListenableBuilder(
                     valueListenable: getxController.citiesBuilder,
-                    builder: (context, value, child) => value
-                        .isNotEmpty ||
-                        widget.detail.profile.cityId.isNotEmpty
+                    builder: (context, value, child) => value.isNotEmpty ||
+                            widget.detail.profile.cityId.isNotEmpty
                         ? CustomDropCities(
-                      citi: value,
-                      initialValue: widget.detail.profile.cityId,
-                      onSelection: (p0) {
-                        citicode_home = p0.toString();
-                      },
-                    )
+                            citi: value,
+                            initialValue: widget.detail.profile.cityId,
+                            onSelection: (p0) {
+                              citicode_home = p0.toString();
+                            },
+                          )
                         : SizedBox.shrink(),
                   ),
                 ],
@@ -232,12 +240,14 @@ class _Contact_DetailsState extends State<Contact_Details>{
               Controller: officeaddresscontroller,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
               child: Column(
                 children: [
                   CustomDropDownCountry(
-                    initialValue: widget.detail.profile.officeCountryId == "0" ? "101" : widget.detail.profile.officeCountryId,
+                    initialValue: widget.detail.profile.officeCountryId == "0"
+                        ? "101"
+                        : widget.detail.profile.officeCountryId,
                     onSelection: (var value) async {
                       log(value.toString());
                       countriecode_office = value.toString();
@@ -252,19 +262,17 @@ class _Contact_DetailsState extends State<Contact_Details>{
                   ),
                   ValueListenableBuilder(
                     valueListenable: getxController.rajyaBuilder_office,
-                    builder: (context, value, child) => value
-                        .isNotEmpty ||
-                        widget.detail.profile.officeStateId.isNotEmpty
+                    builder: (context, value, child) => value.isNotEmpty ||
+                            widget.detail.profile.officeStateId.isNotEmpty
                         ? CustomDropDownState(
-                      initialValue:
-                      widget.detail.profile.officeStateId,
-                      raja: value,
-                      onSelection: (p0) async {
-                        rajyacode_office = p0.toString();
-                        getxController.citiesBuilder_office.value = [];
-                        getxController.cityApi_office(value: p0);
-                      },
-                    )
+                            initialValue: widget.detail.profile.officeStateId,
+                            raja: value,
+                            onSelection: (p0) async {
+                              rajyacode_office = p0.toString();
+                              getxController.citiesBuilder_office.value = [];
+                              getxController.cityApi_office(value: p0);
+                            },
+                          )
                         : const SizedBox.shrink(),
                   ),
                   const SizedBox(
@@ -272,17 +280,15 @@ class _Contact_DetailsState extends State<Contact_Details>{
                   ),
                   ValueListenableBuilder(
                     valueListenable: getxController.citiesBuilder_office,
-                    builder: (context, value, child) => value
-                        .isNotEmpty ||
-                        widget.detail.profile.officeCityId.isNotEmpty
+                    builder: (context, value, child) => value.isNotEmpty ||
+                            widget.detail.profile.officeCityId.isNotEmpty
                         ? CustomDropCities(
-                      initialValue:
-                      widget.detail.profile.officeCityId,
-                      citi: value,
-                      onSelection: (p0) {
-                        citicode_office = p0.toString();
-                      },
-                    )
+                            initialValue: widget.detail.profile.officeCityId,
+                            citi: value,
+                            onSelection: (p0) {
+                              citicode_office = p0.toString();
+                            },
+                          )
                         : const SizedBox.shrink(),
                   ),
                 ],
@@ -308,7 +314,6 @@ class _Contact_DetailsState extends State<Contact_Details>{
               text: 'Update',
               onpressed: () {
                 APICALL_Update_Contect_Details.call();
-
               },
             ),
           ],
@@ -351,7 +356,7 @@ class _Contact_DetailsState extends State<Contact_Details>{
           "ofc_city_id": citicode_office,
           "ofc_pincode": officepincodecontroller.text,
 
-          "is_display_web": ""
+          "is_display_web": isdisplayweb == true ? "1" : "0"
         };
 
         ClsUpdateContactResponseModel userResponseModel =

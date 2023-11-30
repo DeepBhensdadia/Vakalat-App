@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:search_choices/search_choices.dart';
 import 'package:vakalat_flutter/helper.dart';
@@ -132,8 +131,8 @@ class CustomTextfield extends StatelessWidget {
   String? Function(String?)? validator;
   IconData? suffixicon;
   Function()? ontap;
-int? maxline  ;
-  final int? maxlength ;
+  int? maxline;
+  final int? maxlength;
   final TextInputType? type;
   CustomTextfield(
       {Key? key,
@@ -142,7 +141,7 @@ int? maxline  ;
       required this.labelname,
       this.suffixicon,
       this.maxlength,
-        this.ontap,
+      this.ontap,
       this.maxline = 1,
       this.type})
       : super(key: key);
@@ -150,12 +149,17 @@ int? maxline  ;
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(labelname,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-          SizedBox(height: 5,),
+          Text(
+            labelname,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            height: 5,
+          ),
           TextFormField(
             onTap: ontap,
             controller: Controller,
@@ -165,7 +169,8 @@ int? maxline  ;
             textAlign: TextAlign.start,
             // focusNode: edtEmail,
             decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                 border: const OutlineInputBorder(),
                 alignLabelWithHint: true,
                 // labelText: labelname,
@@ -178,7 +183,6 @@ int? maxline  ;
     );
   }
 }
-
 
 class CustomDropDownCountry extends StatefulWidget {
   const CustomDropDownCountry({
@@ -212,8 +216,13 @@ class _CustomDropDownCountryState extends State<CustomDropDownCountry> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Country",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-        SizedBox(height: 5,),
+        Text(
+          "Country",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(
+          height: 5,
+        ),
         Container(
           // height: 50,
           width: screenwidth(context, dividedby: 1),
@@ -226,13 +235,12 @@ class _CustomDropDownCountryState extends State<CustomDropDownCountry> {
             items: widget.country
                 .map<DropdownMenuItem<String>>(
                   (element) => DropdownMenuItem<String>(
-                value: element.countryId,
-                child: Text(element.countryName),
-              ),
-            )
+                    value: element.countryId,
+                    child: Text(element.countryName),
+                  ),
+                )
                 .toList(),
             value: _selectedCountry,
-
             hint: "Select Country",
             searchHint: "Select Country",
             onChanged: (value) {
@@ -250,7 +258,8 @@ class _CustomDropDownCountryState extends State<CustomDropDownCountry> {
                   for (DropdownMenuItem item in items) {
                     if (!filterdata.contains(i) &&
                         k.isNotEmpty &&
-                        ((item.child as Text).data
+                        ((item.child as Text)
+                            .data
                             .toString()
                             .toLowerCase()
                             .contains(k.toLowerCase()))) {
@@ -267,11 +276,11 @@ class _CustomDropDownCountryState extends State<CustomDropDownCountry> {
             },
             searchResultDisplayFn: (
                 {required displayItem,
-                  required emptyListWidget,
-                  required itemTapped,
-                  required itemsToDisplay,
-                  required scrollController,
-                  required thumbVisibility}) {
+                required emptyListWidget,
+                required itemTapped,
+                required itemsToDisplay,
+                required scrollController,
+                required thumbVisibility}) {
               return Expanded(
                 child: Scrollbar(
                   controller: scrollController,
@@ -279,27 +288,27 @@ class _CustomDropDownCountryState extends State<CustomDropDownCountry> {
                   child: itemsToDisplay.isEmpty
                       ? emptyListWidget
                       : ListView.builder(
-                    controller: scrollController,
-                    itemBuilder: (context, index) {
-                      int itemIndex = itemsToDisplay[index].item1;
-                      DropdownMenuItem item = itemsToDisplay[index].item2;
-                      bool isItemSelected = itemsToDisplay[index].item3;
-                      return InkWell(
-                        onTap: () {
-                          itemTapped(
-                            itemIndex,
-                            item.value,
-                            isItemSelected,
-                          );
-                        },
-                        child: displayItem(
-                          item,
-                          isItemSelected,
+                          controller: scrollController,
+                          itemBuilder: (context, index) {
+                            int itemIndex = itemsToDisplay[index].item1;
+                            DropdownMenuItem item = itemsToDisplay[index].item2;
+                            bool isItemSelected = itemsToDisplay[index].item3;
+                            return InkWell(
+                              onTap: () {
+                                itemTapped(
+                                  itemIndex,
+                                  item.value,
+                                  isItemSelected,
+                                );
+                              },
+                              child: displayItem(
+                                item,
+                                isItemSelected,
+                              ),
+                            );
+                          },
+                          itemCount: itemsToDisplay.length,
                         ),
-                      );
-                    },
-                    itemCount: itemsToDisplay.length,
-                  ),
                 ),
               );
             },
@@ -329,21 +338,25 @@ class CustomDropDownState extends StatefulWidget {
 }
 
 class _CustomDropDownStateState extends State<CustomDropDownState> {
-  String?  _selectedstate;
+  String? _selectedstate;
   @override
   void initState() {
-    _selectedstate= widget.initialValue;
+    _selectedstate = widget.initialValue;
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("State",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-SizedBox(height: 5,),
+        Text(
+          "State",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(
+          height: 5,
+        ),
         Container(
           // height: 50,
           width: screenwidth(context, dividedby: 1),
@@ -356,12 +369,12 @@ SizedBox(height: 5,),
             items: widget.raja
                 .map<DropdownMenuItem<String>>(
                   (element) => DropdownMenuItem<String>(
-                value: element.stateId,
-                child: Text(element.stateName),
-              ),
-            )
+                    value: element.stateId,
+                    child: Text(element.stateName),
+                  ),
+                )
                 .toList(),
-            value:  _selectedstate,
+            value: _selectedstate,
             hint: "Select State",
             searchHint: "Select State",
             onChanged: (value) {
@@ -379,7 +392,8 @@ SizedBox(height: 5,),
                   for (DropdownMenuItem item in items) {
                     if (!filterdata.contains(i) &&
                         k.isNotEmpty &&
-                        ((item.child as Text).data
+                        ((item.child as Text)
+                            .data
                             .toString()
                             .toLowerCase()
                             .contains(k.toLowerCase()))) {
@@ -396,11 +410,11 @@ SizedBox(height: 5,),
             },
             searchResultDisplayFn: (
                 {required displayItem,
-                  required emptyListWidget,
-                  required itemTapped,
-                  required itemsToDisplay,
-                  required scrollController,
-                  required thumbVisibility}) {
+                required emptyListWidget,
+                required itemTapped,
+                required itemsToDisplay,
+                required scrollController,
+                required thumbVisibility}) {
               return Expanded(
                 child: Scrollbar(
                   controller: scrollController,
@@ -408,27 +422,27 @@ SizedBox(height: 5,),
                   child: itemsToDisplay.isEmpty
                       ? emptyListWidget
                       : ListView.builder(
-                    controller: scrollController,
-                    itemBuilder: (context, index) {
-                      int itemIndex = itemsToDisplay[index].item1;
-                      DropdownMenuItem item = itemsToDisplay[index].item2;
-                      bool isItemSelected = itemsToDisplay[index].item3;
-                      return InkWell(
-                        onTap: () {
-                          itemTapped(
-                            itemIndex,
-                            item.value,
-                            isItemSelected,
-                          );
-                        },
-                        child: displayItem(
-                          item,
-                          isItemSelected,
+                          controller: scrollController,
+                          itemBuilder: (context, index) {
+                            int itemIndex = itemsToDisplay[index].item1;
+                            DropdownMenuItem item = itemsToDisplay[index].item2;
+                            bool isItemSelected = itemsToDisplay[index].item3;
+                            return InkWell(
+                              onTap: () {
+                                itemTapped(
+                                  itemIndex,
+                                  item.value,
+                                  isItemSelected,
+                                );
+                              },
+                              child: displayItem(
+                                item,
+                                isItemSelected,
+                              ),
+                            );
+                          },
+                          itemCount: itemsToDisplay.length,
                         ),
-                      );
-                    },
-                    itemCount: itemsToDisplay.length,
-                  ),
                 ),
               );
             },
@@ -457,21 +471,25 @@ class CustomDropCities extends StatefulWidget {
 }
 
 class _CustomDropCitiesState extends State<CustomDropCities> {
-  String?  _selectedcity;
+  String? _selectedcity;
   @override
   void initState() {
-     _selectedcity = widget.initialValue;
+    _selectedcity = widget.initialValue;
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("City",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-        SizedBox(height: 5,),
+        Text(
+          "City",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(
+          height: 5,
+        ),
         Container(
           // height: 50,
           width: screenwidth(context, dividedby: 1),
@@ -484,17 +502,17 @@ class _CustomDropCitiesState extends State<CustomDropCities> {
             items: widget.citi
                 .map<DropdownMenuItem<String>>(
                   (element) => DropdownMenuItem<String>(
-                value: element.cityId,
-                child: Text(element.cityName),
-              ),
-            )
+                    value: element.cityId,
+                    child: Text(element.cityName),
+                  ),
+                )
                 .toList(),
-            value:  _selectedcity,
+            value: _selectedcity,
             hint: "Select City",
             searchHint: "Select City",
             onChanged: (value) {
               setState(() {
-                 _selectedcity = value;
+                _selectedcity = value;
                 print(value);
               });
               widget.onSelection(value);
@@ -507,7 +525,8 @@ class _CustomDropCitiesState extends State<CustomDropCities> {
                   for (DropdownMenuItem item in items) {
                     if (!filterdata.contains(i) &&
                         k.isNotEmpty &&
-                        ((item.child as Text).data
+                        ((item.child as Text)
+                            .data
                             .toString()
                             .toLowerCase()
                             .contains(k.toLowerCase()))) {
@@ -524,11 +543,11 @@ class _CustomDropCitiesState extends State<CustomDropCities> {
             },
             searchResultDisplayFn: (
                 {required displayItem,
-                  required emptyListWidget,
-                  required itemTapped,
-                  required itemsToDisplay,
-                  required scrollController,
-                  required thumbVisibility}) {
+                required emptyListWidget,
+                required itemTapped,
+                required itemsToDisplay,
+                required scrollController,
+                required thumbVisibility}) {
               return Expanded(
                 child: Scrollbar(
                   controller: scrollController,
@@ -536,27 +555,27 @@ class _CustomDropCitiesState extends State<CustomDropCities> {
                   child: itemsToDisplay.isEmpty
                       ? emptyListWidget
                       : ListView.builder(
-                    controller: scrollController,
-                    itemBuilder: (context, index) {
-                      int itemIndex = itemsToDisplay[index].item1;
-                      DropdownMenuItem item = itemsToDisplay[index].item2;
-                      bool isItemSelected = itemsToDisplay[index].item3;
-                      return InkWell(
-                        onTap: () {
-                          itemTapped(
-                            itemIndex,
-                            item.value,
-                            isItemSelected,
-                          );
-                        },
-                        child: displayItem(
-                          item,
-                          isItemSelected,
+                          controller: scrollController,
+                          itemBuilder: (context, index) {
+                            int itemIndex = itemsToDisplay[index].item1;
+                            DropdownMenuItem item = itemsToDisplay[index].item2;
+                            bool isItemSelected = itemsToDisplay[index].item3;
+                            return InkWell(
+                              onTap: () {
+                                itemTapped(
+                                  itemIndex,
+                                  item.value,
+                                  isItemSelected,
+                                );
+                              },
+                              child: displayItem(
+                                item,
+                                isItemSelected,
+                              ),
+                            );
+                          },
+                          itemCount: itemsToDisplay.length,
                         ),
-                      );
-                    },
-                    itemCount: itemsToDisplay.length,
-                  ),
                 ),
               );
             },
@@ -569,8 +588,6 @@ class _CustomDropCitiesState extends State<CustomDropCities> {
     );
   }
 }
-
-
 
 class CustomDropDownUser_Type extends StatefulWidget {
   final List<UserType> user_type;
@@ -635,24 +652,25 @@ class _CustomDropDownUser_TypeState extends State<CustomDropDownUser_Type> {
 
 class drodownbar_council extends StatefulWidget {
   final List<BarCouncil> bar_council;
- final String? initialvalue;
+  final String? initialvalue;
   final void Function(String?) onSelection;
 
-  const drodownbar_council({super.key, required this.bar_council, this.initialvalue, required this.onSelection});
-
-
-
+  const drodownbar_council(
+      {super.key,
+      required this.bar_council,
+      this.initialvalue,
+      required this.onSelection});
 
   @override
   State<drodownbar_council> createState() => _drodownbar_councilState();
 }
 
 class _drodownbar_councilState extends State<drodownbar_council> {
-  String?  _selectedvalue;
+  String? _selectedvalue;
   @override
   void initState() {
     // TODO: implement initState
-   _selectedvalue = widget.initialvalue;
+    _selectedvalue = widget.initialvalue;
     super.initState();
   }
 
@@ -661,8 +679,13 @@ class _drodownbar_councilState extends State<drodownbar_council> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Bar Council",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-        SizedBox(height: 5,),
+        Text(
+          "Bar Council",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(
+          height: 5,
+        ),
         Container(
           // height: 50,
           width: screenwidth(context, dividedby: 1),
@@ -673,14 +696,14 @@ class _drodownbar_councilState extends State<drodownbar_council> {
               color: Colors.transparent,
             ),
             items: widget.bar_council
-                        .map<DropdownMenuItem<String>>(
-                          (element) => DropdownMenuItem<String>(
-                        value: element.userId,
-                        child: Text(element.lawFirmCollege),
-                      ),
-                    )
-                        .toList(),
-            value:  _selectedvalue,
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                    value: element.userId,
+                    child: Text(element.lawFirmCollege),
+                  ),
+                )
+                .toList(),
+            value: _selectedvalue,
             hint: "Select BarCouncil",
             searchHint: "Select BarCouncil",
             onChanged: (value) {
@@ -698,7 +721,8 @@ class _drodownbar_councilState extends State<drodownbar_council> {
                   for (DropdownMenuItem item in items) {
                     if (!filterdata.contains(i) &&
                         k.isNotEmpty &&
-                        ((item.child as Text).data
+                        ((item.child as Text)
+                            .data
                             .toString()
                             .toLowerCase()
                             .contains(k.toLowerCase()))) {
@@ -715,11 +739,11 @@ class _drodownbar_councilState extends State<drodownbar_council> {
             },
             searchResultDisplayFn: (
                 {required displayItem,
-                  required emptyListWidget,
-                  required itemTapped,
-                  required itemsToDisplay,
-                  required scrollController,
-                  required thumbVisibility}) {
+                required emptyListWidget,
+                required itemTapped,
+                required itemsToDisplay,
+                required scrollController,
+                required thumbVisibility}) {
               return Expanded(
                 child: Scrollbar(
                   controller: scrollController,
@@ -727,27 +751,27 @@ class _drodownbar_councilState extends State<drodownbar_council> {
                   child: itemsToDisplay.isEmpty
                       ? emptyListWidget
                       : ListView.builder(
-                    controller: scrollController,
-                    itemBuilder: (context, index) {
-                      int itemIndex = itemsToDisplay[index].item1;
-                      DropdownMenuItem item = itemsToDisplay[index].item2;
-                      bool isItemSelected = itemsToDisplay[index].item3;
-                      return InkWell(
-                        onTap: () {
-                          itemTapped(
-                            itemIndex,
-                            item.value,
-                            isItemSelected,
-                          );
-                        },
-                        child: displayItem(
-                          item,
-                          isItemSelected,
+                          controller: scrollController,
+                          itemBuilder: (context, index) {
+                            int itemIndex = itemsToDisplay[index].item1;
+                            DropdownMenuItem item = itemsToDisplay[index].item2;
+                            bool isItemSelected = itemsToDisplay[index].item3;
+                            return InkWell(
+                              onTap: () {
+                                itemTapped(
+                                  itemIndex,
+                                  item.value,
+                                  isItemSelected,
+                                );
+                              },
+                              child: displayItem(
+                                item,
+                                isItemSelected,
+                              ),
+                            );
+                          },
+                          itemCount: itemsToDisplay.length,
                         ),
-                      );
-                    },
-                    itemCount: itemsToDisplay.length,
-                  ),
                 ),
               );
             },
@@ -758,27 +782,26 @@ class _drodownbar_councilState extends State<drodownbar_council> {
         ),
       ],
     );
-
   }
 }
 
-
 class dropdownbar_assoc extends StatefulWidget {
   final List<BarAssoc> bar_assoc;
- final String? initialvalue;
+  final String? initialvalue;
   final void Function(String?) onSelection;
 
-  const dropdownbar_assoc({super.key, required this.bar_assoc, this.initialvalue, required this.onSelection});
-
-
-
+  const dropdownbar_assoc(
+      {super.key,
+      required this.bar_assoc,
+      this.initialvalue,
+      required this.onSelection});
 
   @override
   State<dropdownbar_assoc> createState() => _dropdownbar_assocState();
 }
 
 class _dropdownbar_assocState extends State<dropdownbar_assoc> {
-  String?  _selectedvalue;
+  String? _selectedvalue;
 
   @override
   void initState() {
@@ -793,8 +816,13 @@ class _dropdownbar_assocState extends State<dropdownbar_assoc> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Bar Association",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-        SizedBox(height: 5,),
+        Text(
+          "Bar Association",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(
+          height: 5,
+        ),
         Container(
           // height: 50,
           width: screenwidth(context, dividedby: 1),
@@ -805,14 +833,14 @@ class _dropdownbar_assocState extends State<dropdownbar_assoc> {
               color: Colors.transparent,
             ),
             items: widget.bar_assoc
-                      .map<DropdownMenuItem<String>>(
-                        (element) => DropdownMenuItem<String>(
-                      value: element.userId,
-                      child: Text(element.lawFirmCollege),
-                    ),
-                  )
-                      .toList(),
-            value:  _selectedvalue,
+                .map<DropdownMenuItem<String>>(
+                  (element) => DropdownMenuItem<String>(
+                    value: element.userId,
+                    child: Text(element.lawFirmCollege),
+                  ),
+                )
+                .toList(),
+            value: _selectedvalue,
             hint: "Select BarCouncil",
             searchHint: "Select BarCouncil",
             onChanged: (value) {
@@ -830,7 +858,8 @@ class _dropdownbar_assocState extends State<dropdownbar_assoc> {
                   for (DropdownMenuItem item in items) {
                     if (!filterdata.contains(i) &&
                         k.isNotEmpty &&
-                        ((item.child as Text).data
+                        ((item.child as Text)
+                            .data
                             .toString()
                             .toLowerCase()
                             .contains(k.toLowerCase()))) {
@@ -847,11 +876,11 @@ class _dropdownbar_assocState extends State<dropdownbar_assoc> {
             },
             searchResultDisplayFn: (
                 {required displayItem,
-                  required emptyListWidget,
-                  required itemTapped,
-                  required itemsToDisplay,
-                  required scrollController,
-                  required thumbVisibility}) {
+                required emptyListWidget,
+                required itemTapped,
+                required itemsToDisplay,
+                required scrollController,
+                required thumbVisibility}) {
               return Expanded(
                 child: Scrollbar(
                   controller: scrollController,
@@ -859,27 +888,27 @@ class _dropdownbar_assocState extends State<dropdownbar_assoc> {
                   child: itemsToDisplay.isEmpty
                       ? emptyListWidget
                       : ListView.builder(
-                    controller: scrollController,
-                    itemBuilder: (context, index) {
-                      int itemIndex = itemsToDisplay[index].item1;
-                      DropdownMenuItem item = itemsToDisplay[index].item2;
-                      bool isItemSelected = itemsToDisplay[index].item3;
-                      return InkWell(
-                        onTap: () {
-                          itemTapped(
-                            itemIndex,
-                            item.value,
-                            isItemSelected,
-                          );
-                        },
-                        child: displayItem(
-                          item,
-                          isItemSelected,
+                          controller: scrollController,
+                          itemBuilder: (context, index) {
+                            int itemIndex = itemsToDisplay[index].item1;
+                            DropdownMenuItem item = itemsToDisplay[index].item2;
+                            bool isItemSelected = itemsToDisplay[index].item3;
+                            return InkWell(
+                              onTap: () {
+                                itemTapped(
+                                  itemIndex,
+                                  item.value,
+                                  isItemSelected,
+                                );
+                              },
+                              child: displayItem(
+                                item,
+                                isItemSelected,
+                              ),
+                            );
+                          },
+                          itemCount: itemsToDisplay.length,
                         ),
-                      );
-                    },
-                    itemCount: itemsToDisplay.length,
-                  ),
                 ),
               );
             },
@@ -930,13 +959,14 @@ class _dropdownbar_assocState extends State<dropdownbar_assoc> {
 
 class dropdowngetdoctype extends StatefulWidget {
   final List<DocType> doctype;
- final String? initialvalue;
+  final String? initialvalue;
   final void Function(String?) onSelection;
 
-  const dropdowngetdoctype({super.key, required this.doctype, this.initialvalue, required this.onSelection});
-
-
-
+  const dropdowngetdoctype(
+      {super.key,
+      required this.doctype,
+      this.initialvalue,
+      required this.onSelection});
 
   @override
   State<dropdowngetdoctype> createState() => _dropdowngetdoctypeState();
@@ -949,6 +979,7 @@ class _dropdowngetdoctypeState extends State<dropdowngetdoctype> {
     valueNotifier = ValueNotifier(widget.initialvalue);
     super.initState();
   }
+
   late ValueNotifier<String?> valueNotifier;
   @override
   Widget build(BuildContext context) {
@@ -957,7 +988,9 @@ class _dropdowngetdoctypeState extends State<dropdowngetdoctype> {
       // width: screenwidth(context, dividedby: 1),
       // decoration: Const().decorationfield,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10,),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+        ),
         child: ValueListenableBuilder(
           valueListenable: valueNotifier,
           builder: (context, value, child) => DropdownButton<String>(
@@ -971,10 +1004,10 @@ class _dropdowngetdoctypeState extends State<dropdowngetdoctype> {
             items: widget.doctype
                 .map<DropdownMenuItem<String>>(
                   (element) => DropdownMenuItem<String>(
-                value: element.id,
-                child: Text(element.name),
-              ),
-            )
+                    value: element.id,
+                    child: Text(element.name),
+                  ),
+                )
                 .toList(),
             onChanged: (value) {
               widget.onSelection(value);
@@ -989,7 +1022,6 @@ class _dropdowngetdoctypeState extends State<dropdowngetdoctype> {
     );
   }
 }
-
 
 class Button_For_Update_Save extends StatelessWidget {
   final String text;
@@ -1009,13 +1041,13 @@ class Button_For_Update_Save extends StatelessWidget {
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
                 backgroundColor: CustomColor().colorPrimary,
-                textStyle:
-                     TextStyle(fontSize: screenwidth(context, dividedby: 25), fontWeight: FontWeight.bold)),
+                textStyle: TextStyle(
+                    fontSize: screenwidth(context, dividedby: 25),
+                    fontWeight: FontWeight.bold)),
             onPressed: onpressed,
             child: Text(text)));
   }
 }
-
 
 class Select_Category extends StatefulWidget {
   const Select_Category({
@@ -1036,7 +1068,7 @@ class Select_Category extends StatefulWidget {
 }
 
 class _Select_CategoryState extends State<Select_Category> {
- String? _selectedcategori ;
+  String? _selectedcategori;
 
   @override
   void initState() {
@@ -1055,16 +1087,17 @@ class _Select_CategoryState extends State<Select_Category> {
         underline: Container(
           color: Colors.transparent,
         ),
-        items: widget.categori.getAllCategory()
+        items: widget.categori
+            .getAllCategory()
             .map<DropdownMenuItem<String>>(
               (element) => DropdownMenuItem<String>(
-            value: element.id,
-            child: Text(element.name),
-          ),
-        )
+                value: element.id,
+                child: Text(element.name),
+              ),
+            )
             .toList(),
         // futureSelectedValues: ,
-       value: _selectedcategori,
+        value: _selectedcategori,
 //         selectedItems: _selectedcategori.map((e) => int.pa).toList(),
         hint: "Select Categories",
         searchHint: "Select Categories",
@@ -1083,7 +1116,8 @@ class _Select_CategoryState extends State<Select_Category> {
               for (DropdownMenuItem item in items) {
                 if (!filterdata.contains(i) &&
                     k.isNotEmpty &&
-                    ((item.child as Text).data
+                    ((item.child as Text)
+                        .data
                         .toString()
                         .toLowerCase()
                         .contains(k.toLowerCase()))) {
@@ -1100,11 +1134,11 @@ class _Select_CategoryState extends State<Select_Category> {
         },
         searchResultDisplayFn: (
             {required displayItem,
-              required emptyListWidget,
-              required itemTapped,
-              required itemsToDisplay,
-              required scrollController,
-              required thumbVisibility}) {
+            required emptyListWidget,
+            required itemTapped,
+            required itemsToDisplay,
+            required scrollController,
+            required thumbVisibility}) {
           return Expanded(
             child: Scrollbar(
               controller: scrollController,
@@ -1112,27 +1146,27 @@ class _Select_CategoryState extends State<Select_Category> {
               child: itemsToDisplay.isEmpty
                   ? emptyListWidget
                   : ListView.builder(
-                controller: scrollController,
-                itemBuilder: (context, index) {
-                  int itemIndex = itemsToDisplay[index].item1;
-                  DropdownMenuItem item = itemsToDisplay[index].item2;
-                  bool isItemSelected = itemsToDisplay[index].item3;
-                  return InkWell(
-                    onTap: () {
-                      itemTapped(
-                        itemIndex,
-                        item.value,
-                        isItemSelected,
-                      );
-                    },
-                    child: displayItem(
-                      item,
-                      isItemSelected,
+                      controller: scrollController,
+                      itemBuilder: (context, index) {
+                        int itemIndex = itemsToDisplay[index].item1;
+                        DropdownMenuItem item = itemsToDisplay[index].item2;
+                        bool isItemSelected = itemsToDisplay[index].item3;
+                        return InkWell(
+                          onTap: () {
+                            itemTapped(
+                              itemIndex,
+                              item.value,
+                              isItemSelected,
+                            );
+                          },
+                          child: displayItem(
+                            item,
+                            isItemSelected,
+                          ),
+                        );
+                      },
+                      itemCount: itemsToDisplay.length,
                     ),
-                  );
-                },
-                itemCount: itemsToDisplay.length,
-              ),
             ),
           );
         },
@@ -1144,23 +1178,23 @@ class _Select_CategoryState extends State<Select_Category> {
   }
 }
 
-
 class Get_language_drop extends StatefulWidget {
   final List<Language> languages;
   final String? initialvalue;
   final void Function(String?) onSelection;
 
-  const Get_language_drop({super.key, required this.languages, this.initialvalue, required this.onSelection});
-
-
-
+  const Get_language_drop(
+      {super.key,
+      required this.languages,
+      this.initialvalue,
+      required this.onSelection});
 
   @override
   State<Get_language_drop> createState() => _Get_language_dropState();
 }
 
 class _Get_language_dropState extends State<Get_language_drop> {
-  String?  _selectedvalue;
+  String? _selectedvalue;
   @override
   void initState() {
     // TODO: implement initState
@@ -1182,14 +1216,14 @@ class _Get_language_dropState extends State<Get_language_drop> {
         items: widget.languages
             .map<DropdownMenuItem<String>>(
               (element) => DropdownMenuItem<String>(
-            value: element.id,
-            child: Text(element.title),
-          ),
-        )
+                value: element.id,
+                child: Text(element.title),
+              ),
+            )
             .toList(),
-
-        value:  _selectedvalue,
-        hint: "Select",style:TextStyle(fontSize: 12,color: Colors.black) ,
+        value: _selectedvalue,
+        hint: "Select",
+        style: TextStyle(fontSize: 12, color: Colors.black),
         searchHint: "Select",
         onChanged: (value) {
           setState(() {
@@ -1206,7 +1240,8 @@ class _Get_language_dropState extends State<Get_language_drop> {
               for (DropdownMenuItem item in items) {
                 if (!filterdata.contains(i) &&
                     k.isNotEmpty &&
-                    ((item.child as Text).data
+                    ((item.child as Text)
+                        .data
                         .toString()
                         .toLowerCase()
                         .contains(k.toLowerCase()))) {
@@ -1223,11 +1258,11 @@ class _Get_language_dropState extends State<Get_language_drop> {
         },
         searchResultDisplayFn: (
             {required displayItem,
-              required emptyListWidget,
-              required itemTapped,
-              required itemsToDisplay,
-              required scrollController,
-              required thumbVisibility}) {
+            required emptyListWidget,
+            required itemTapped,
+            required itemsToDisplay,
+            required scrollController,
+            required thumbVisibility}) {
           return Expanded(
             child: Scrollbar(
               controller: scrollController,
@@ -1235,27 +1270,27 @@ class _Get_language_dropState extends State<Get_language_drop> {
               child: itemsToDisplay.isEmpty
                   ? emptyListWidget
                   : ListView.builder(
-                controller: scrollController,
-                itemBuilder: (context, index) {
-                  int itemIndex = itemsToDisplay[index].item1;
-                  DropdownMenuItem item = itemsToDisplay[index].item2;
-                  bool isItemSelected = itemsToDisplay[index].item3;
-                  return InkWell(
-                    onTap: () {
-                      itemTapped(
-                        itemIndex,
-                        item.value,
-                        isItemSelected,
-                      );
-                    },
-                    child: displayItem(
-                      item,
-                      isItemSelected,
+                      controller: scrollController,
+                      itemBuilder: (context, index) {
+                        int itemIndex = itemsToDisplay[index].item1;
+                        DropdownMenuItem item = itemsToDisplay[index].item2;
+                        bool isItemSelected = itemsToDisplay[index].item3;
+                        return InkWell(
+                          onTap: () {
+                            itemTapped(
+                              itemIndex,
+                              item.value,
+                              isItemSelected,
+                            );
+                          },
+                          child: displayItem(
+                            item,
+                            isItemSelected,
+                          ),
+                        );
+                      },
+                      itemCount: itemsToDisplay.length,
                     ),
-                  );
-                },
-                itemCount: itemsToDisplay.length,
-              ),
             ),
           );
         },
@@ -1264,6 +1299,5 @@ class _Get_language_dropState extends State<Get_language_drop> {
         dialogBox: true,
       ),
     );
-
   }
 }

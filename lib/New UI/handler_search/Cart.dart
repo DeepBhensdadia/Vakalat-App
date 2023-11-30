@@ -26,7 +26,7 @@ import 'handler_search.dart';
 
 class Cart_Screen extends StatefulWidget {
   final String name;
-  final dynamic packages;
+  final GetPackagesModel packages;
 
   const Cart_Screen({Key? key, required this.name, required this.packages})
       : super(key: key);
@@ -184,7 +184,7 @@ EasyLoading.show(status: 'Loading...' );
                               width: 10,
                             ),
                             widget.packages.packages[index].packageName ==
-                                    'Supreme'
+                                    'Premium'
                                 ? badges.Badge(
                                     badgeContent: const Text('Popular',
                                         style: TextStyle(
@@ -202,6 +202,7 @@ EasyLoading.show(status: 'Loading...' );
                         ),
                         TextButton(
                             onPressed: () {
+                              log(widget.packages.packages[index].menus.last.menuTitle);
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(

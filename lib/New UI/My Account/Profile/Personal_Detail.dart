@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart'as a;
+import 'package:get/get.dart' as a;
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -210,8 +210,7 @@ class _Personal_DetailState extends State<Personal_Detail> {
     lastnamecontoller.text = widget.detail.profile.lastName;
     shortnamecontoller.text = widget.detail.profile.shortName;
     physicallydetailscontoller.text = widget.detail.profile.physicalDetail;
-    _selectedGender =
-        widget.detail.profile.gender == 'Male' ? Gender.Male : Gender.Female;
+    _selectedGender = widget.detail.profile.gender;
     _selectedphycally = widget.detail.profile.isPhysicalChal;
     birthdatecontoller.text = widget.detail.profile.dateOfBirth;
     _bloodGroups.forEach((key, value) {
@@ -233,7 +232,7 @@ class _Personal_DetailState extends State<Personal_Detail> {
   TextEditingController birthdatecontoller = TextEditingController();
   TextEditingController physicallydetailscontoller = TextEditingController();
 
-  Gender _selectedGender = Gender.Male;
+  String _selectedGender = "M";
   String _selectedphycally = "0";
   String? selectedBlood;
 
@@ -366,7 +365,8 @@ class _Personal_DetailState extends State<Personal_Detail> {
                                       Map<String, dynamic> parameters = {
                                         "apiKey": apikey,
                                         'device': '2',
-                                        "user_type_id": logindetails.userData.userType,
+                                        "user_type_id":
+                                            logindetails.userData.userType,
                                       };
                                       await GetUserpackages(body: parameters)
                                           .then((value) {
@@ -760,25 +760,38 @@ class _Personal_DetailState extends State<Personal_Detail> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    Row(
-                      children: Gender.values
-                          .map((e) => Row(
-                                children: <Widget>[
-                                  Radio<Gender>(
-                                    value: e,
-                                    groupValue: _selectedGender,
-                                    onChanged: (Gender? value) {
-                                      setState(() {
-                                        _selectedGender = value!;
-                                        print(_selectedGender);
-                                      });
-                                    },
-                                  ),
-                                  Text(e.name),
-                                ],
-                              ))
-                          .toList(),
-                    ),
+                    Row(children: [
+                      Row(
+                        children: <Widget>[
+                          Radio(
+                            value: "M",
+                            groupValue: _selectedGender,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender = value!;
+                                print(_selectedGender);
+                              });
+                            },
+                          ),
+                          Text("Male"),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Radio(
+                            value: "F",
+                            groupValue: _selectedGender,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender = value!;
+                                print(_selectedGender);
+                              });
+                            },
+                          ),
+                          Text("Female"),
+                        ],
+                      )
+                    ]),
                   ],
                 );
               }),
@@ -876,7 +889,7 @@ class _Personal_DetailState extends State<Personal_Detail> {
       shortName: shortnamecontoller.text,
       lastName: lastnamecontoller.text,
       dateOfBirth: birthdatecontoller.text,
-      gender: _selectedGender.name,
+      gender: _selectedGender,
       bloodGroup: selectedBlood,
       isPhysicalChal: _selectedphycally,
       isPhysicaldet: physicallydetailscontoller.text,

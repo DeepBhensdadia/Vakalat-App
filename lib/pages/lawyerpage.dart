@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -307,7 +306,8 @@ class _LawyerPageState extends State<LawyerPage> {
                       side: BorderSide(
                         width: 1.0,
                         color: CustomColor().colorPrimary,
-                      ), backgroundColor: Colors.white,
+                      ),
+                      backgroundColor: Colors.white,
                     ),
                     onPressed: () {
                       // op press
@@ -375,11 +375,12 @@ class _LawyerPageState extends State<LawyerPage> {
     switch (index) {
       case 0:
         strCount = (arrCategory_filter.isEmpty)
-                ? ""
-                : arrCategory_filter.length.toString();
+            ? ""
+            : arrCategory_filter.length.toString();
         break;
       case 1:
-        strCount = (arrCity_filter.isEmpty) ? "" : arrCity_filter.length.toString();
+        strCount =
+            (arrCity_filter.isEmpty) ? "" : arrCity_filter.length.toString();
         break;
       default:
         break;
@@ -432,11 +433,11 @@ class _LawyerPageState extends State<LawyerPage> {
                             ? Container()
                             : Container(
                                 decoration: BoxDecoration(
-                                    borderRadius:
-                                        const BorderRadius.all(Radius.circular(30)),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(30)),
                                     color: CustomColor().colorPrimary),
-                                padding:
-                                    const EdgeInsets.fromLTRB(5.0, 1.0, 5.0, 1.0),
+                                padding: const EdgeInsets.fromLTRB(
+                                    5.0, 1.0, 5.0, 1.0),
                                 child: Text(strCount,
                                     style: TextStyle(
                                       color: CustomColor().colorWhite,
@@ -744,7 +745,8 @@ class _LawyerPageState extends State<LawyerPage> {
         (objLawyer.country_name!.isEmpty == true)) {
       strLocation = " Not Provided";
     } else {
-      strLocation = " ${objLawyer.city_name!}, ${objLawyer.state_name!}, ${objLawyer.country_name!}";
+      strLocation =
+          " ${objLawyer.city_name!}, ${objLawyer.state_name!}, ${objLawyer.country_name!}";
     }
 
     MediaQueryData queryData;
@@ -802,7 +804,8 @@ class _LawyerPageState extends State<LawyerPage> {
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                             elevation: 4,
-                            child: Stack(alignment: Alignment.bottomCenter,
+                            child: Stack(
+                                alignment: Alignment.bottomCenter,
                                 //alignment:new Alignment(x, y)
                                 children: <Widget>[
                                   Container(
@@ -829,41 +832,45 @@ class _LawyerPageState extends State<LawyerPage> {
                                               'assets/images/default.png'),
                                     ),
                                   ),
-                                  (objLawyer.is_verified! == "1" )
+                                  (objLawyer.is_verified! == "1")
                                       ? Container(
-                                    width: double.maxFinite,
-                                    padding: const EdgeInsets.all(2),
-                                    margin: const EdgeInsets.only(bottom: 0),
-                                    decoration: BoxDecoration(
-                                        color: CustomColor()
-                                            .colorGreen_verified,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(0))),
-                                    child: Text(
-                                      "Verified",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: CustomColor().colorWhite,
-                                          fontSize: 14.0),
-                                    ),
-                                  )
+                                          width: double.maxFinite,
+                                          padding: const EdgeInsets.all(2),
+                                          margin:
+                                              const EdgeInsets.only(bottom: 0),
+                                          decoration: BoxDecoration(
+                                              color: CustomColor()
+                                                  .colorGreen_verified,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(0))),
+                                          child: Text(
+                                            "Verified",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: CustomColor().colorWhite,
+                                                fontSize: 14.0),
+                                          ),
+                                        )
                                       : Container(
-                                    width: double.maxFinite,
-                                    padding: const EdgeInsets.all(2),
-                                    margin: const EdgeInsets.only(bottom: 0),
-                                    decoration: BoxDecoration(
-                                        color: CustomColor()
-                                            .colorRed_notverified,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(0))),
-                                    child: Text(
-                                      "Not Verified",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: CustomColor().colorWhite,
-                                          fontSize: 14.0),
-                                    ),
-                                  ),
+                                          width: double.maxFinite,
+                                          padding: const EdgeInsets.all(2),
+                                          margin:
+                                              const EdgeInsets.only(bottom: 0),
+                                          decoration: BoxDecoration(
+                                              color: CustomColor()
+                                                  .colorRed_notverified,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(0))),
+                                          child: Text(
+                                            "Not Verified",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: CustomColor().colorWhite,
+                                                fontSize: 14.0),
+                                          ),
+                                        ),
                                 ]),
                           ),
                         ]),
@@ -878,7 +885,6 @@ class _LawyerPageState extends State<LawyerPage> {
                         verticalDirection: VerticalDirection.down,
                         textBaseline: TextBaseline.alphabetic,
                         children: [
-
                           Text(
                             strFullName,
                             overflow: TextOverflow.ellipsis,
@@ -1010,7 +1016,7 @@ class _LawyerPageState extends State<LawyerPage> {
                       }
 
                       var encoded =
-                      Uri.encodeFull(CommonFunctions.checkHttp(url));
+                          Uri.encodeFull(CommonFunctions.checkHttp(url));
                       // launch(encoded);
                       FlutterWebBrowser.openWebPage(url: encoded);
                     },
@@ -1018,36 +1024,35 @@ class _LawyerPageState extends State<LawyerPage> {
                   (objLawyer.is_display_web! == "0")
                       ? Container()
                       : IconButton(
-                    icon: FaIcon(FontAwesomeIcons.sms,
-                        color: CustomColor().colorPrimary),
-                    onPressed: () {
-                      String url = "sms:${objLawyer.mobile!}";
-                      var encoded = Uri.encodeFull(url);
-                      launch(encoded);
-                    },
-                  ),
+                          icon: FaIcon(FontAwesomeIcons.sms,
+                              color: CustomColor().colorPrimary),
+                          onPressed: () {
+                            String url = "sms:${objLawyer.mobile!}";
+                            var encoded = Uri.encodeFull(url);
+                            launch(encoded);
+                          },
+                        ),
                   // SMS
                   (objLawyer.is_display_web! == "0")
                       ? Container()
                       : IconButton(
-                    icon: FaIcon(FontAwesomeIcons.phoneAlt,
-                        color: CustomColor().colorPrimary),
-                    onPressed: () {
-                      CommonFunctions.makePhoneCall(objLawyer.mobile!);
-                    },
-                  ),
+                          icon: FaIcon(FontAwesomeIcons.phoneAlt,
+                              color: CustomColor().colorPrimary),
+                          onPressed: () {
+                            CommonFunctions.makePhoneCall(objLawyer.mobile!);
+                          },
+                        ),
                   // Call
                   (objLawyer.is_display_web! == "0")
                       ? Container()
                       : IconButton(
-                    icon: FaIcon(FontAwesomeIcons.whatsapp,
-                        color: CustomColor().colorPrimary),
-                    onPressed: () {
-
-                      launch(CommonFunctions.whatsapp_LawyerContact(
-                          objLawyer.mobile!, strFullName));
-                    },
-                  ),
+                          icon: FaIcon(FontAwesomeIcons.whatsapp,
+                              color: CustomColor().colorPrimary),
+                          onPressed: () {
+                            launch(CommonFunctions.whatsapp_LawyerContact(
+                                objLawyer.mobile!, strFullName));
+                          },
+                        ),
                   // Whatsapp
                   IconButton(
                     icon: FaIcon(FontAwesomeIcons.envelope,
@@ -1074,15 +1079,15 @@ class _LawyerPageState extends State<LawyerPage> {
                   // Linkedin
                   (objLawyer.linkedin_url!.isNotEmpty)
                       ? IconButton(
-                    icon: FaIcon(FontAwesomeIcons.linkedin,
-                        color: CustomColor().colorPrimary),
-                    onPressed: () {
-                      String url = objLawyer.linkedin_url!;
-                      var encoded =
-                      Uri.encodeFull(CommonFunctions.checkHttp(url));
-                      launch(encoded);
-                    },
-                  )
+                          icon: FaIcon(FontAwesomeIcons.linkedin,
+                              color: CustomColor().colorPrimary),
+                          onPressed: () {
+                            String url = objLawyer.linkedin_url!;
+                            var encoded =
+                                Uri.encodeFull(CommonFunctions.checkHttp(url));
+                            launch(encoded);
+                          },
+                        )
                       : Container(),
                   //Facebook
                   (objLawyer.fb_url!.isNotEmpty)
@@ -1123,7 +1128,6 @@ class _LawyerPageState extends State<LawyerPage> {
                           },
                         )
                       : Container(),
-
                 ]),
           ),
         ],
@@ -1234,7 +1238,8 @@ class _LawyerPageState extends State<LawyerPage> {
           updateData_Lawyer(objResponse.lawyers!);
         }
 
-        if (objResponse.lawyers!.length < objResponse.total! || objResponse.total! == 0 ) {
+        if (objResponse.lawyers!.length < objResponse.total! ||
+            objResponse.total! == 0) {
           setState(() {
             _hasNextPage = true;
           });
@@ -1275,7 +1280,6 @@ class _LawyerPageState extends State<LawyerPage> {
       offset = 0;
       loadData(false);
     });
-
   }
 
   void onSearchTextChanged_City() {

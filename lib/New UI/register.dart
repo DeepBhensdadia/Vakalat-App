@@ -703,6 +703,28 @@ class _Register_NowState extends State<Register_Now> {
                 };
 
                 await getalldashboard(body: parameters).then((value) async {
+                  Map<String, dynamic> parametersuser = {
+                    "apiKey": apikey,
+                    'device': '2',
+                    "user_type_id":
+                    userResponseModel.userData.userType,
+                  };
+                  await GetUserpackages(body: parametersuser)
+                      .then((valu) {
+                    if(valu.packages.isNotEmpty){
+                      Get.offAll(
+                        Cart_Screen(
+                            name: value.data.handlers.customhandler.first.name,
+                            packages: valu),
+                      );
+                    }else{
+                      ToastMessage().showmessage('Do Not Have Any Packages');
+                    }
+                    // EasyLoading.dismiss();
+                    log(jsonEncode(value));
+                  }).onError((error, stackTrace) {
+                    // EasyLoading.dismiss();
+                  });
                   await SharedPref.save(
                       value: jsonEncode(value.data.getprofile.toJson()),
                       prefKey: PrefKey.getProfile);
@@ -710,12 +732,6 @@ class _Register_NowState extends State<Register_Now> {
                   await SharedPref.save(
                       value: jsonEncode(value.data.getAppMenu.toJson()),
                       prefKey: PrefKey.getMenu);
-
-                  Get.offAll(
-                    Cart_Screen(
-                        name: value.data.handlers.customhandler.first.name,
-                        packages: value.data.getUserWisePkg),
-                  );
                   EasyLoading.dismiss();
                   Map<String, dynamic> parameters = {
                     "apiKey": apikey,
