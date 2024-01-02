@@ -350,12 +350,9 @@ class _Contact_DetailsState extends State<Contact_Details> {
           "state_id": rajyacode_home,
           "city_id": citicode_home,
           "ofc_country_id": countriecode_office,
-
           "ofc_state_id": rajyacode_office,
-
           "ofc_city_id": citicode_office,
           "ofc_pincode": officepincodecontroller.text,
-
           "is_display_web": isdisplayweb == true ? "1" : "0"
         };
 
